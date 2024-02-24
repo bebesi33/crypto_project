@@ -35,5 +35,5 @@ def generate_x_month_price_change(
             df_temp["exposure"] > 10, 10, df_temp["exposure"]
         )
         df_temp.fillna(0, inplace=True)
-        return_map[key] = df_temp.tail(-x_len * month_len)
+        return_map[key] = df_temp
     return return_map

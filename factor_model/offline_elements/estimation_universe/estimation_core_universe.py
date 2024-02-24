@@ -11,22 +11,20 @@ def generate_estimation_basis(
     for key in return_data_map.keys():
         core_univ_by_age[key] = max(
             0,
-            (
-                min(return_data_map[key]["date"])
-                - (market_cap_date - timedelta(parameters["PRESENT_IN_MARKET"]))
-            ).days,
+            (market_cap_date - min(return_data_map[key]["date"])).days,
         )
         univ_first_appearence[key] = min(return_data_map[key]["date"])
-
     # 1.1 generate the new coin style
     market_cap_df["new_coin"] = (
         market_cap_df["ticker"].map(core_univ_by_age) / parameters["PRESENT_IN_MARKET"]
     )
+    market_cap_df["new_coin"] = np.where(
+        market_cap_df["new_coin"] > 1, 0, 1 - market_cap_df["new_coin"]
+    )
 
-    # 2 universe generation for rest of elements
     filtered_cap_data = market_cap_df[
         market_cap_df["new_coin"]
-        < parameters["NEW_COIN_INCLUSION"] / parameters["PRESENT_IN_MARKET"]
+        < (1 - parameters["NEW_COIN_INCLUSION"] / parameters["PRESENT_IN_MARKET"])
     ].copy()
 
     filtered_cap_data["cumsum"] = (
