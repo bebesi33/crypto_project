@@ -4,11 +4,12 @@ import os
 import sys
 import logging
 logger = logging.getLogger("manage.py")
+from pathlib import Path
 
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'DjangoTemplate.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'database_server.settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -21,5 +22,5 @@ def main():
 
 
 if __name__ == '__main__':
-    print("Run started in main: manage.py")
+    print( Path(__file__).resolve().parent )
     main()
