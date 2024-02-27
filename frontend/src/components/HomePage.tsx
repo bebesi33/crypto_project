@@ -1,6 +1,6 @@
 function HomePage() {
     return (
-        <h1> Home Page</h1>
+        <h1> <br></br><br></br>Home Page</h1>
     )
 }
 

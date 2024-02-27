@@ -1,6 +1,6 @@
 function ExplorerPage() {
     return (
-        <div> Explorer Page</div>
+        <div> <br></br><br></br> Explorer Page</div>
     )
 }
 
