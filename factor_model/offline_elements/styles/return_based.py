@@ -4,8 +4,7 @@ from typing import Dict, List
 
 
 def generate_x_month_price_change(
-    price_data_map: Dict[str, pd.DataFrame], 
-    x_len: int = 12, month_len: int = 30
+    price_data_map: Dict[str, pd.DataFrame], x_len: int = 12, month_len: int = 30
 ) -> Dict[str, pd.DataFrame]:
     """
     Analyzes price data to generate momentum and reversal like exposure values.

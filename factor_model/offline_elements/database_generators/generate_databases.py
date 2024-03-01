@@ -14,7 +14,5 @@ def refresh_raw_price_database(price_data_map: Dict, database_location: str):
         for key in price_data_map:
             df_temp = price_data_map[key].copy()
             df_temp["symbol"] = key
-            df_temp.columns = [col.lower().replace(" ","_") for col in df_temp.columns]
-            df_temp.to_sql(
-                "raw_price_data", conn, if_exists="append", index=False
-            )
+            df_temp.columns = [col.lower().replace(" ", "_") for col in df_temp.columns]
+            df_temp.to_sql("raw_price_data", conn, if_exists="append", index=False)
