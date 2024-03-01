@@ -30,6 +30,8 @@ ALLOWED_HOSTS = []
 
 VITE_APP_DIR = os.path.join(BASE_DIR, "frontend")
 
+DATABASE_LOCATION = os.path.join(BASE_DIR.parent, "database")
+
 
 # Application definition
 
@@ -79,9 +81,9 @@ WSGI_APPLICATION = 'database_server.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'default':{
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': DATABASE_LOCATION / Path('raw_price_data.db'),   
     }
 }
 
