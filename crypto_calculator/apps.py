@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class DatabaseCallsConfig(AppConfig):
+class CryptoCalculatorConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "database_calls"
+    name = "crypto_calculator"
