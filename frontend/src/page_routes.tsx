@@ -8,13 +8,13 @@ import RiskCalculationInfo from './components/documentation/RiskCalculationInfo'
 
 
 const page_routes = [
-  { path: '/', component: HomePage },
-  { path: '/explorer', component: ExplorerPage },
-  { path: '/risk_calc', component: RiskCalcPage },
-  { path: '/contacts', component: Contacts },
-  { path: '/tutorial', component: Tutorial },
-  { path: '/factor_model_info', component: RiskCalculationInfo },
-  { path: '/risk_calculation_info', component: FactorModelInfo },
+  { path: '/', element: <HomePage /> },
+  { path: '/explorer', element: <ExplorerPage /> },
+  { path: '/risk_calc', element: <RiskCalcPage /> },
+  { path: '/contacts', element: <Contacts /> },
+  { path: '/tutorial', element: <Tutorial /> },
+  { path: '/factor_model_info', element: <RiskCalculationInfo /> },
+  { path: '/risk_calculation_info', element: <FactorModelInfo /> },
 
 
   // Add more routes as needed
