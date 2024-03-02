@@ -19,9 +19,10 @@ class TestGenerateVolume(unittest.TestCase):
 
     def test_generate_x_month_price_change(self):
         result = generate_x_month_price_change(
-            self.price_data_map, x_len=6, month_len=20
+            self.price_data_map, x_len=3, month_len=20
         )
-        self.assertEqual(len(result["BTC-USD"]), 80)
+        self.assertTrue(abs(sum(result["BTC-USD"]["exposure"]) - 20.27429337724)<0.000001)
+        self.assertEqual(len(result["BTC-USD"]), 40)
 
 
 if __name__ == "__main__":

@@ -13,10 +13,11 @@ class TestGenerateVolume(unittest.TestCase):
         }
 
         # Call the function
-        result = generate_x_month_aggregate_volume(price_data_map, x_len=6, month_len=20)
+        result = generate_x_month_aggregate_volume(price_data_map, x_len=3, month_len=20)
 
         # Assert expected output
-        self.assertEqual(len(result["BTC-USD"]), 80)  # Check the length of the resulting DataFrame
+        self.assertTrue(abs(sum(result["BTC-USD"]["exposure"]) - 2.400000)<0.000001)
+        self.assertEqual(len(result["BTC-USD"]), 40)  # Check the length of the resulting DataFrame
 
 if __name__ == "__main__":
     unittest.main()

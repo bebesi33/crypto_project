@@ -1,13 +1,28 @@
 import numpy as np
 from datetime import timedelta
+from typing import Dict, Union
 
 
-def create_expo_from_daily_data(date, daily_expo_map, variable_name="exposure"):
+def create_expo_from_daily_data(
+    date: str, daily_expo_map: Dict[str, np.ndarray], variable_name: str = "exposure"
+) -> Dict[str, Union[float, None]]:
+    """
+    Creates a dictionary mapping keys to exposure values for a specific date.
+
+    Args:
+        date (str): The target date in the format "YYYY-MM-DD".
+        daily_expo_map (Dict[str, np.ndarray]): A dictionary where keys represent data sources and values are NumPy arrays.
+            Each array should have a "date" column and a column corresponding to the specified variable_name.
+        variable_name (str, optional): The name of the exposure variable. Defaults to "exposure".
+
+    Returns:
+        Dict[str, Union[float, None]]: A dictionary mapping keys to exposure values. If no value is found for a key, the value is None.
+    """
     expo_map = dict()
     for key in daily_expo_map.keys():
-        v = daily_expo_map[key][daily_expo_map[key]["date"] == date][variable_name]
-        if len(v) > 0:
-            expo_map[key] = v.values[0]
+        daily_df = daily_expo_map[key][daily_expo_map[key]["date"] == date][variable_name]
+        if len(daily_df) > 0:
+            expo_map[key] = daily_df.values[0]
         else:
             expo_map[key] = None
     return expo_map
@@ -16,12 +31,10 @@ def create_expo_from_daily_data(date, daily_expo_map, variable_name="exposure"):
 def create_factor_return_data(estimation_basis, parameters, date, daily_data_maps):
     estimation_basis_current = estimation_basis.copy()
 
-    estimation_basis_current["reversal"] = estimation_basis_current["ticker"].map(
-        create_expo_from_daily_data(date + timedelta(-1), daily_data_maps["reversal"])
-    )
-    estimation_basis_current["momentum"] = estimation_basis_current["ticker"].map(
-        create_expo_from_daily_data(date + timedelta(-1), daily_data_maps["momentum"])
-    )
+    for style in list(set(parameters["REGRESSORS_SET1"]) - set(["market", "size"])):
+        estimation_basis_current[style] = estimation_basis_current["ticker"].map(
+            create_expo_from_daily_data(date + timedelta(-1), daily_data_maps[style])
+        )
 
     estimation_basis_current["market"] = 1
     estimation_basis_current["size"] = np.log1p(estimation_basis_current["market_cap"])
