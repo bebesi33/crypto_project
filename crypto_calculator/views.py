@@ -5,7 +5,6 @@ from asgiref.sync import sync_to_async
 import pandas as pd
 
 
-# @require_http_methods(["GET"])
 async def get_raw_price_data(request):
     raw_price_data = await sync_to_async(list)(RawPriceData.objects.filter(symbol='BTC-USD').values())
     df = pd.DataFrame(list(raw_price_data))
