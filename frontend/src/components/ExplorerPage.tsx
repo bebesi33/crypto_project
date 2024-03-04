@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 
 
 function ExplorerPage() {
@@ -7,15 +6,11 @@ function ExplorerPage() {
     const [jsonData, setJsonData] = useState(null);
 
     useEffect(() => {
-        async function fetchData() {
-            try {
-                const response = await axios.get('/api/get_raw_price_data/');
-                setJsonData(response.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        }
-        fetchData();
+        // Simple data fetch
+        fetch('/explorer/api/get_raw_price_data')  // fetch json value from url
+            .then(response => response.json())
+            .then(data => setJsonData(data))
+            .catch(error => console.error('Error fetching data:', error));
     }, []);
 
 
@@ -24,6 +19,8 @@ function ExplorerPage() {
             <br></br>
             <br></br>
             Explorer Page
+            The json content should be here
+            <br></br>
             {jsonData && (
                 <pre>{JSON.stringify(jsonData, null, 2)}</pre>
             )}
