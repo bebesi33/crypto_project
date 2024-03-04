@@ -1,9 +1,8 @@
-from django.urls import include, path
-from django.contrib import admin
-
+from django.urls import path
 from . import views
 
+
+app_name="crypto_calculator"
 urlpatterns = [
-    path("crypto_calculator/", include("crypto_calculator.urls")),
-    path("admin/", admin.site.urls),
+    path("get_raw_price_data/", views.get_raw_price_data, name='get_raw_price_data')
 ]
