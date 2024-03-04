@@ -13,15 +13,6 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="RawPriceData",
             fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
                 ("open", models.FloatField(blank=True, null=True)),
                 ("high", models.FloatField(blank=True, null=True)),
                 ("low", models.FloatField(blank=True, null=True)),
