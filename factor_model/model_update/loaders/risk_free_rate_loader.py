@@ -21,20 +21,19 @@ def get_risk_free_rate_history(estimation_dates: List[datetime.date]) -> pd.Data
     """
 
     # first get SOFR from FED through pandas_datareader
-    sofr_symbol = "SOFR"
-    data_source = "fred"
     risk_free_rate_data = pdr.DataReader(
-        sofr_symbol, data_source, str(min(estimation_dates) - timedelta(10))
+        name="SOFR",
+        data_source="fred",
+        start=str(min(estimation_dates) - timedelta(10)),
     ).reset_index()
     risk_free_rate_data.rename(
         columns={"DATE": "date", "SOFR": "risk_free_rate"}, inplace=True
     )
     # second get 3M treasury rate for ealier time periods
     # Note: SOFR start date was in April 2018, hence for longer horizon we need another close to risk free rate
-    treasury_3m_symbol = "^IRX"
     treasury_data = yf.download(
-        tickers=treasury_3m_symbol,
-        start=str(min(estimation_dates) - timedelta(100)),
+        tickers="^IRX",
+        start=datetime.date(2005, 1, 1),
         end=str(max(estimation_dates)),
         interval="1d",
     )
@@ -55,7 +54,7 @@ def get_risk_free_rate_history(estimation_dates: List[datetime.date]) -> pd.Data
     # and Monday's SOFR should be applciable for the preceeding weekend
     risk_free_rate_data = risk_free_rate_data.set_index("date").reindex(
         pd.date_range(
-            start=risk_free_rate_data["date"].min(),
+            start=datetime.date(2005, 1, 1),
             end=max(estimation_dates),
         )
     )
@@ -64,6 +63,7 @@ def get_risk_free_rate_history(estimation_dates: List[datetime.date]) -> pd.Data
     ].fillna(method="backfill")
     risk_free_rate_data["date"] = risk_free_rate_data.index
     risk_free_rate_data.reset_index(inplace=True, drop=True)
+    risk_free_rate_data["source"] = "SOFR"
 
     treasury_data = (
         treasury_data.set_index("date")
@@ -79,6 +79,7 @@ def get_risk_free_rate_history(estimation_dates: List[datetime.date]) -> pd.Data
     )
     treasury_data["date"] = list(treasury_data.index)
     treasury_data.reset_index(inplace=True, drop=True)
+    risk_free_rate_data["source"] = "3M US treasury rate, ticker ^IRX"
 
     # four: these ON rates are between T and T+1. or in case of treasury between T and T+90 or so...
     # This means that we need to adjust day T's crypto currency return by day T-1's risk free rate.
@@ -97,4 +98,5 @@ def get_risk_free_rate_history(estimation_dates: List[datetime.date]) -> pd.Data
     )
     # finally if for the last estim days SOFR is not available, we ffwd the lates
     risk_free_rate_data["risk_free_rate"].fillna(method="ffill", inplace=True)
+    risk_free_rate_data["date"] = risk_free_rate_data["date"].dt.date
     return risk_free_rate_data

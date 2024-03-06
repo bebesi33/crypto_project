@@ -3,15 +3,20 @@ import logging
 import pandas as pd
 import yfinance as yf
 from typing import Dict
+logger = logging.getLogger(__name__)
 
 
 def generate_market_cap_only(ticker_map: Dict):
     market_caps = list()
     for ticker in ticker_map.keys():
-        crypto_info = yf.Ticker(ticker).info
-        market_caps.append(
-            pd.DataFrame({"ticker": [ticker], "market_cap": [crypto_info["marketCap"]]})
-        )
+        try:
+            crypto_info = yf.Ticker(ticker).info
+            market_caps.append(
+                pd.DataFrame({"ticker": [ticker], "market_cap": [crypto_info["marketCap"]]})
+            )
+        except KeyError:
+            logger.info(f"No data for ticker: {ticker}")
+
     return pd.concat(market_caps)
 
 
@@ -34,9 +39,9 @@ def generate_market_cap_data(ticker_map: Dict):
                 .T.rename(columns=col_name_map)
             )
             temp_df["ticker"] = ticker
+            market_caps.append(temp_df)
         except (AttributeError, KeyError):
-            logging.info(f"No data for ticker: {ticker}")
-        market_caps.append(temp_df)
+            logger.info(f"No data for ticker: {ticker}")
     market_cap_df = pd.concat(market_caps)
     market_cap_df.drop(columns=["max_supply"], inplace=True)
     for col in market_cap_df.columns[:-1]:

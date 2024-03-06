@@ -1,6 +1,6 @@
 import pandas as pd
 import unittest
-from offline_elements.styles.volume_based import generate_x_month_aggregate_volume
+from model_update.styles.volume_based import generate_x_month_aggregate_volume
 
 class TestGenerateVolume(unittest.TestCase):
     def test_generate_volume(self):

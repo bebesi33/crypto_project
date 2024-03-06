@@ -1,8 +1,14 @@
+from typing import Dict
 import numpy as np
+import datetime
+import pandas as pd
 
 
 def generate_estimation_basis(
-    return_data_map, market_cap_df, market_cap_date, parameters
+    return_data_map: Dict[str, pd.DataFrame],
+    market_cap_df: pd.DataFrame,
+    market_cap_date: datetime.date,
+    parameters: Dict,
 ):
     # 1. universe element is present in the last X years...
     core_univ_by_age = {}

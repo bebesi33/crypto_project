@@ -6,5 +6,5 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", TemplateView.as_view(template_name="index.html")),
-    path('explorer/', include('crypto_calculator.urls')),  # Include app-specific URLs
+    path('crypto/', include('crypto_calculator.urls'))  # Include app-specific URLs
 ]

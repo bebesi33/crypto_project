@@ -1,5 +1,5 @@
 import numpy as np
-from datetime import timedelta
+import datetime
 from typing import Dict, Union
 
 
@@ -20,20 +20,24 @@ def create_expo_from_daily_data(
     """
     expo_map = dict()
     for key in daily_expo_map.keys():
-        daily_df = daily_expo_map[key][daily_expo_map[key]["date"] == date][variable_name]
-        if len(daily_df) > 0:
-            expo_map[key] = daily_df.values[0]
+        temp_mask = daily_expo_map[key]["date"] == date
+        if np.any(temp_mask):
+            expo_map[key] = daily_expo_map[key][temp_mask][variable_name].values[0]
         else:
             expo_map[key] = None
     return expo_map
 
 
-def create_factor_return_data(estimation_basis, parameters, date, daily_data_maps):
+def create_factor_return_data(
+    estimation_basis, parameters: Dict, date: datetime.date, daily_data_maps: Dict
+):
     estimation_basis_current = estimation_basis.copy()
 
-    for style in list(set(parameters["REGRESSORS_SET1"]) - set(["market", "size"])):
+    for style in list(set(parameters["REGRESSORS_SET1"]) - set(["market", "size", "new_coin"])):
         estimation_basis_current[style] = estimation_basis_current["ticker"].map(
-            create_expo_from_daily_data(date + timedelta(-1), daily_data_maps[style])
+            create_expo_from_daily_data(
+                date + datetime.timedelta(-1), daily_data_maps[style]
+            )
         )
 
     estimation_basis_current["market"] = 1
@@ -70,15 +74,8 @@ def create_factor_return_data(estimation_basis, parameters, date, daily_data_map
             estimation_basis_current[style].copy() - calc_mean
         ) / calc_sd
 
-    estimation_basis_final["return"] = (
-        estimation_basis_final["return"]
-        .replace(np.inf, np.nan)
-        .replace(-np.inf, np.nan)
-    )
-    estimation_basis_final["return"] = np.where(
-        estimation_basis_final["return"] > 1, 1, estimation_basis_final["return"]
-    )
-    estimation_basis_final["return"] = np.where(
-        estimation_basis_final["return"] < -1, -1, estimation_basis_final["return"]
-    )
+    estimation_basis_final["return"] = estimation_basis_final["return"].replace([np.inf, -np.inf], np.nan)
+
+    estimation_basis_final["return"] = estimation_basis_final["return"].clip(-1, 1)
+
     return estimation_basis_final.dropna()

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API } from '../Api';
 
 
 function ExplorerPage() {
@@ -7,7 +8,7 @@ function ExplorerPage() {
 
     useEffect(() => {
         // Simple data fetch
-        fetch('/explorer/api/get_raw_price_data')  // fetch json value from url
+        fetch(API + 'crypto/api/get_raw_price_data')  // fetch json value from url
             .then(response => response.json())
             .then(data => setJsonData(data))
             .catch(error => console.error('Error fetching data:', error));

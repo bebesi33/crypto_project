@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from offline_elements.styles.return_based import (
+from model_update.styles.return_based import (
     generate_x_month_price_change,
 )
 

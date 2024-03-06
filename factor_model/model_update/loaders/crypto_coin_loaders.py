@@ -6,7 +6,8 @@ from typing import List
 
 def grab_yahoo_finance_symbols() -> List[str]:
     html_session = HTMLSession()
-    currency_limit = 250  # this is the upper limit
+    currency_limit = 100  # this is the upper limit
+
     resp = html_session.get(
         f"https://finance.yahoo.com/crypto?offset=0&count={currency_limit}"
     )
@@ -14,6 +15,26 @@ def grab_yahoo_finance_symbols() -> List[str]:
     df = tables[0].copy()
     tickers = df.Symbol.tolist()
     return tickers
+
+
+def grab_all_yahoo_finance_crypto_symbols(
+    max_number_of_crypto: int = 3000,
+) -> List[str]:
+    html_session = HTMLSession()
+    currency_increment = 100  # this is the upper limit
+    all_tickers = list()
+    offset = 0
+    for i in range(0, int(max_number_of_crypto / 100) + 1):
+
+        resp = html_session.get(
+            f"https://finance.yahoo.com/crypto?count={currency_increment}&offset={offset}"
+        )
+        tables = pd.read_html(resp.html.raw_html)
+        df = tables[0].copy()
+        tickers = df.Symbol.tolist()
+        offset += 100
+        all_tickers = all_tickers + tickers
+    return all_tickers
 
 
 # to be kept for historical reason
@@ -71,5 +92,16 @@ TICKER_LIST = [
 ]
 
 
-def get_ticker_list():
+def get_ticker_list() -> List[str]:
     return sorted(list(set(TICKER_LIST + grab_yahoo_finance_symbols())))
+
+
+def get_extended_ticker_list(max_number_of_crypto: int = 3000) -> List[str]:
+    return sorted(
+        list(
+            set(
+                TICKER_LIST
+                + grab_all_yahoo_finance_crypto_symbols(max_number_of_crypto)
+            )
+        )
+    )
