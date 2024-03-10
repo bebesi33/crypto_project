@@ -1,5 +1,6 @@
 from typing import Dict
 import pandas as pd
+import numpy as np
 
 NON_FACTOR_COLUMNS = ["id", "date", "version_date"]
 
@@ -72,3 +73,24 @@ def get_factor_return_standard_deviation(
             .values[0]
         )
     return pd.Series(standard_deviations)
+
+
+def assemble_factor_covariance_matrix(
+    std: pd.Series, correlation: pd.DataFrame
+) -> pd.DataFrame:
+    """
+    Calculates the covariance matrix for factor returns based on standard deviations
+    and correlation coefficients.
+
+    Args:
+        std (pd.Series): Series containing standard deviations for each factor.
+        correlation (pd.DataFrame): DataFrame containing correlation coefficients
+            between factors. Rows and columns correspond to factor names.
+
+    Returns:
+        pd.DataFrame: Covariance matrix with factor names as row and column indices.
+    """
+    covariance_matrix = np.matmul(np.matmul(np.diag(std), correlation), np.diag(std))
+    covariance_matrix.columns = correlation.columns
+    covariance_matrix.index = correlation.columns
+    return covariance_matrix
