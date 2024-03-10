@@ -21,7 +21,9 @@ class TestGenerateVolume(unittest.TestCase):
         result = generate_x_month_price_change(
             self.price_data_map, x_len=3, month_len=20
         )
-        self.assertTrue(abs(sum(result["BTC-USD"]["exposure"]) - 20.27429337724)<0.000001)
+        self.assertTrue(
+            abs(sum(result["BTC-USD"]["exposure"]) - 20.27429337724) < 0.000001
+        )
         self.assertEqual(len(result["BTC-USD"]), 40)
 
 
