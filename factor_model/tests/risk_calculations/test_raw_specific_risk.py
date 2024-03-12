@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from risk_calculations.specific_risk import generate_raw_specific_risk  # Replace with your actual module name
+from risk_calculations.specific_risk import generate_raw_specific_risk
 
 
 class TestGenerateRawSpecificRisk(unittest.TestCase):
@@ -35,7 +35,7 @@ class TestGenerateRawSpecificRisk(unittest.TestCase):
 
         self.parameters = {
             "date": "2024-03-03",
-            "variance_half_life": 10,
+            "specific_risk_half_life": 10,
         }
 
         self.portfolio_details = {
