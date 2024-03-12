@@ -1,2 +1,3 @@
 # crypto_project
 Ideally this will be my thesis project...
+The model presented in this repository is for education purposes only, it is not intended for commercial use.
