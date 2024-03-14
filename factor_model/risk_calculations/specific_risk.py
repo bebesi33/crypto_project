@@ -59,7 +59,7 @@ def generate_raw_portfolio_specific_risk(
     spec_risk_total = 0
     weight_coverage = 0
     port_total = sum(portfolio_details.values())
-    for ticker in spec_std.keys():
+    for ticker in portfolio_details.keys():
         spec_risk = spec_std.get(ticker)
         if spec_risk:
             current_weight = portfolio_details.get(ticker) / port_total
