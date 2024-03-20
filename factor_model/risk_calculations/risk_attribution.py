@@ -67,7 +67,7 @@ def generate_factor_covariance_table(
 
 def calculate_spec_risk_mctr(
     spec_std: Dict[str, float], portfolio_details: Dict[str, float]
-) -> Tuple[Dict, Dict]:
+) -> Tuple[pd.Series, pd.Series]:
     """
     Calculates the specific risk marginal contribution to risk
 
@@ -131,7 +131,7 @@ def get_specific_risk_beta(
     portfolio_details: Dict[str, float],
     market_portfolio: Dict[str, float],
     spec_risk: Dict[str, float],
-):
+) -> float:
     """
     Calculates the specific risk beta for a given portfolio.
 
@@ -153,7 +153,7 @@ def get_specific_risk_beta(
         result = get_specific_risk_beta(portfolio_details, market_portfolio, spec_risk)
         # Returns the specific risk beta for the given portfolio.
     """
-    spec_risk_total = 0
+    spec_risk_beta = 0
     port_total = sum(portfolio_details.values())
     market_total = sum(market_portfolio.values())
     for ticker in set(portfolio_details.keys()).union(market_portfolio.keys()):
@@ -161,7 +161,7 @@ def get_specific_risk_beta(
         if spec_risk_temp:
             port_w = portfolio_details.get(ticker, 0)
             market_w = market_portfolio.get(ticker, 0)
-            spec_risk_total += (
+            spec_risk_beta += (
                 (port_w / port_total) * (spec_risk_temp**2) * (market_w / market_total)
             )
-    return spec_risk_total
+    return spec_risk_beta
