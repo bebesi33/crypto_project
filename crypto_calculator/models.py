@@ -18,3 +18,134 @@ class RawPriceData(models.Model):
 
     class Meta:
         db_table = "raw_price_data"
+
+
+class Returns(models.Model):
+    id = models.IntegerField(blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
+    return_field = models.FloatField(
+        db_column="return", blank=True, null=True
+    )  # Field renamed because it was a Python reserved word.
+    risk_free_rate = models.FloatField(blank=True, null=True)
+    total_return = models.FloatField(blank=True, null=True)
+    symbol = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = "returns"
+
+
+class RiskFreeRates(models.Model):
+    id = models.IntegerField(blank=True, null=True)
+    risk_free_rate = models.FloatField(blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
+    source = models.TextField(blank=True, null=True)
+    symbol = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = "risk_free_rates"
+
+
+class Exposures(models.Model):
+    id = models.IntegerField(blank=True, null=True)
+    ticker = models.TextField(blank=True, null=True)
+    return_field = models.FloatField(
+        db_column="return", blank=True, null=True
+    )  # Field renamed because it was a Python reserved word.
+    core_universe = models.IntegerField(blank=True, null=True)
+    market = models.IntegerField(blank=True, null=True)
+    transformed_market_cap = models.FloatField(blank=True, null=True)
+    reversal = models.FloatField(blank=True, null=True)
+    volume = models.FloatField(blank=True, null=True)
+    new_coin = models.FloatField(blank=True, null=True)
+    momentum = models.FloatField(blank=True, null=True)
+    size = models.FloatField(blank=True, null=True)
+    date = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = "exposures"
+
+
+class FactorReturns(models.Model):
+    id = models.IntegerField(blank=True, null=True)
+    market = models.FloatField(blank=True, null=True)
+    size = models.FloatField(blank=True, null=True)
+    momentum = models.FloatField(blank=True, null=True)
+    reversal = models.FloatField(blank=True, null=True)
+    volume = models.FloatField(blank=True, null=True)
+    new_coin = models.FloatField(blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
+    version_date = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = "factor_returns"
+
+
+class RSquares(models.Model):
+    id = models.IntegerField(blank=True, null=True)
+    r2_core = models.FloatField(blank=True, null=True)
+    r2_adj = models.FloatField(blank=True, null=True)
+    nobs = models.FloatField(blank=True, null=True)
+    version_date = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = "r_squares"
+
+
+class SpecificReturns(models.Model):
+    id = models.IntegerField(blank=True, null=True)
+    ticker = models.TextField(blank=True, null=True)
+    specific_return = models.FloatField(blank=True, null=True)
+    date = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = "specific_returns"
+
+
+class TStatistics(models.Model):
+    id = models.IntegerField(blank=True, null=True)
+    market = models.FloatField(blank=True, null=True)
+    size = models.FloatField(blank=True, null=True)
+    momentum = models.FloatField(blank=True, null=True)
+    reversal = models.FloatField(blank=True, null=True)
+    volume = models.FloatField(blank=True, null=True)
+    new_coin = models.FloatField(blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
+    version_date = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = "t_statistics"
+
+
+class Vifs(models.Model):
+    id = models.IntegerField(blank=True, null=True)
+    market = models.FloatField(blank=True, null=True)
+    size = models.FloatField(blank=True, null=True)
+    momentum = models.FloatField(blank=True, null=True)
+    reversal = models.FloatField(blank=True, null=True)
+    volume = models.FloatField(blank=True, null=True)
+    new_coin = models.FloatField(blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
+    version_date = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = "vifs"
+
+
+class CoreSpecificRisk(models.Model):
+    id = models.IntegerField(blank=True, null=True)
+    date = models.TextField(blank=True, null=True)
+    half_life = models.IntegerField(blank=True, null=True)
+    specific_risk = models.FloatField(blank=True, null=True)
+    version_date = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = "core_specific_risk"

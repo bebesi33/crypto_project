@@ -85,6 +85,18 @@ DATABASES = {
     'default':{
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': DATABASE_LOCATION / Path('raw_price_data.sqlite3'),   
+    },
+    'returns':{
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': DATABASE_LOCATION / Path('returns.sqlite3'),   
+    },
+    'factor_model_estimates':{
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': DATABASE_LOCATION / Path('factor_model_estimates.sqlite3'),   
+    },
+    'specific_risk_estimates':{
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': DATABASE_LOCATION / Path('specific_risk_estimates.sqlite3'),   
     }
 }
 
