@@ -94,3 +94,25 @@ def assemble_factor_covariance_matrix(
     covariance_matrix.columns = correlation.columns
     covariance_matrix.index = correlation.columns
     return covariance_matrix
+
+
+def generate_factor_covariance_matrix(
+    factor_returns: pd.DataFrame, parameters: Dict
+) -> pd.DataFrame:
+    """
+    Calculates the covariance matrix of factor returns based on
+    separate half lifes for correlation and standard deviation.
+
+    Args:
+        factor_returns (pd.DataFrame): A DataFrame containing factor returns.
+        parameters (Dict): A dictionary of parameters (e.g., risk model parameters).
+
+    Returns:
+        pd.DataFrame: A covariance matrix of factor returns.
+    """
+    factor_correlation = get_factor_return_correlation(factor_returns, parameters)
+    factor_std = get_factor_return_standard_deviation(factor_returns, parameters)
+    factor_covariance = assemble_factor_covariance_matrix(
+        factor_std, factor_correlation
+    )
+    return factor_covariance

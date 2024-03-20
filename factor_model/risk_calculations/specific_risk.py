@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Tuple
 import pandas as pd
 import numpy as np
 
@@ -7,7 +7,7 @@ def generate_raw_specific_risk(
     specific_returns: pd.DataFrame,
     parameters: Dict,
     portfolio_details: Dict[str, float],
-) -> tuple[Dict[str, float], Dict[str, float]]:
+) -> Tuple[Dict[str, float], Dict[str, float]]:
     """
     Calculates raw specific risk for each symbol in a portfolio.
 
