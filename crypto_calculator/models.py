@@ -21,7 +21,7 @@ class RawPriceData(models.Model):
 
 
 class Returns(models.Model):
-    id = models.IntegerField(blank=True, null=True)
+    id = models.AutoField(primary_key=True, default=-1)
     date = models.DateField(blank=True, null=True)
     return_field = models.FloatField(
         db_column="return", blank=True, null=True
@@ -36,7 +36,7 @@ class Returns(models.Model):
 
 
 class RiskFreeRates(models.Model):
-    id = models.IntegerField(blank=True, null=True)
+    id = models.AutoField(primary_key=True, default=-1)
     risk_free_rate = models.FloatField(blank=True, null=True)
     date = models.DateField(blank=True, null=True)
     source = models.TextField(blank=True, null=True)
@@ -48,7 +48,7 @@ class RiskFreeRates(models.Model):
 
 
 class Exposures(models.Model):
-    id = models.IntegerField(blank=True, null=True)
+    id = models.AutoField(primary_key=True, default=-1)
     ticker = models.TextField(blank=True, null=True)
     return_field = models.FloatField(
         db_column="return", blank=True, null=True
@@ -69,7 +69,7 @@ class Exposures(models.Model):
 
 
 class FactorReturns(models.Model):
-    id = models.IntegerField(blank=True, null=True)
+    id = models.AutoField(primary_key=True, default=-1)
     market = models.FloatField(blank=True, null=True)
     size = models.FloatField(blank=True, null=True)
     momentum = models.FloatField(blank=True, null=True)
@@ -85,7 +85,7 @@ class FactorReturns(models.Model):
 
 
 class RSquares(models.Model):
-    id = models.IntegerField(blank=True, null=True)
+    id = models.AutoField(primary_key=True, default=-1)
     r2_core = models.FloatField(blank=True, null=True)
     r2_adj = models.FloatField(blank=True, null=True)
     nobs = models.FloatField(blank=True, null=True)
@@ -97,7 +97,7 @@ class RSquares(models.Model):
 
 
 class SpecificReturns(models.Model):
-    id = models.IntegerField(blank=True, null=True)
+    id = models.AutoField(primary_key=True, default=-1)
     ticker = models.TextField(blank=True, null=True)
     specific_return = models.FloatField(blank=True, null=True)
     date = models.TextField(blank=True, null=True)
@@ -108,7 +108,7 @@ class SpecificReturns(models.Model):
 
 
 class TStatistics(models.Model):
-    id = models.IntegerField(blank=True, null=True)
+    id = models.AutoField(primary_key=True, default=-1)
     market = models.FloatField(blank=True, null=True)
     size = models.FloatField(blank=True, null=True)
     momentum = models.FloatField(blank=True, null=True)
@@ -124,7 +124,7 @@ class TStatistics(models.Model):
 
 
 class Vifs(models.Model):
-    id = models.IntegerField(blank=True, null=True)
+    id = models.AutoField(primary_key=True, default=-1)
     market = models.FloatField(blank=True, null=True)
     size = models.FloatField(blank=True, null=True)
     momentum = models.FloatField(blank=True, null=True)
@@ -140,7 +140,7 @@ class Vifs(models.Model):
 
 
 class CoreSpecificRisk(models.Model):
-    id = models.IntegerField(blank=True, null=True)
+    id = models.AutoField(primary_key=True, default=-1)
     date = models.TextField(blank=True, null=True)
     half_life = models.IntegerField(blank=True, null=True)
     specific_risk = models.FloatField(blank=True, null=True)
