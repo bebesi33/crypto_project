@@ -1,0 +1,15 @@
+.parent-container {
+  position: relative;
+}
+.ticker_input-label{
+    position: absolute; left: 1%; top: 0px; min-width: 200px;
+}
+.form-control {position: absolute; top: 35px; min-width: 200px; max-width: 400px; width: 150px;}
+.btn {position: absolute; top: 85px; left: 1%; width: 100px;}
+
+.form-group {
+  position: absolute;
+  top: 1%;
+  left: 1%;
+}
+
