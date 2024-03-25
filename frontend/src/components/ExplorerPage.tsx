@@ -70,9 +70,10 @@ function ExplorerPage() {
           </button>
         </div>
       </form>
+      <br></br><br></br>
       {jsonData !== null && (<LineChart
         input_values={jsonData["raw_price"]["close"]}
-        title= {jsonData["symbol"]}
+        title_text= {jsonData["symbol"]}
         x_axis_title="Date"
         y_axis_title="Close Price (USD)"
       />)}

@@ -7,19 +7,20 @@ import {
   LinearScale,
   PointElement,
   LineElement,
+  Title,
 } from "chart.js";
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title);
 
 interface LineChartProps {
   input_values: Map<string, number>;
-  title: string;
+  title_text: string;
   x_axis_title: string;
   y_axis_title: string;
 } // end LineChartProps
 
 const LineChart: React.FC<LineChartProps> = ({
   input_values,
-  title,
+  title_text,
   x_axis_title,
   y_axis_title,
 }) => {
@@ -28,8 +29,9 @@ const LineChart: React.FC<LineChartProps> = ({
     labels: Array.from(Object.keys(input_values)),
     datasets: [
       {
-        label: title,
+        label: title_text,
         data: Array.from(Object.values(input_values)),
+        pointRadius: 0,
         borderColor: "blue",
         fill: false,
       },
@@ -37,6 +39,16 @@ const LineChart: React.FC<LineChartProps> = ({
   }; // end chartData
 
   const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      title: {
+        display: true,
+        text: title_text,
+      },
+    },
     scales: {
       x: {
         title: {
