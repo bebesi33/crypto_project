@@ -1,6 +1,8 @@
 import { SetStateAction, useState } from "react";
 import "./ExplorerPage.css";
 import { API } from "../Api";
+import LineChart from "./charts/LineChart";
+
 
 function ExplorerPage() {
   const [jsonData, setJsonData] = useState(null);
@@ -30,9 +32,11 @@ function ExplorerPage() {
       });
       console.log(response);
       if (response.ok) {
-        const data = await response.json();
-        setJsonData(data);
-        console.log("Data sent successfully!");
+        const jsonData = await response.json();
+        console.log("Data received successfully!");
+        console.log(jsonData["symbol"])
+        console.log(jsonData["symbol"])        
+        setJsonData(jsonData);
       } else {
         console.error("Error sending data to the backend.");
       }
@@ -65,8 +69,14 @@ function ExplorerPage() {
             Explore
           </button>
         </div>
-        {jsonData && <pre>{JSON.stringify(jsonData, null, 2)}</pre>}
       </form>
+      {jsonData !== null && (<LineChart
+        input_values={jsonData["raw_price"]["close"]}
+        title= {jsonData["symbol"]}
+        x_axis_title="Date"
+        y_axis_title="Close Price (USD)"
+      />)}
+      {/* {jsonData && <pre>{JSON.stringify(jsonData, null, 2)}</pre>} */}
     </div>
   );
 }

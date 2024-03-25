@@ -15,8 +15,9 @@ def get_raw_price_data(request):
         raw_price_data = RawPriceData.objects.filter(symbol=all_input["symbol"]).values("close", "date")
         df = pd.DataFrame(list(raw_price_data))
         df["date"] = df['date'].apply(lambda x: x.strftime('%Y-%m-%d'))
+        df.set_index("date", inplace=True, drop=True)
         if len(df) > 0:
-            json_data = {"raw_price": df.to_dict()}
+            json_data = {"raw_price": df.to_dict(), "symbol": all_input["symbol"]}
             return JsonResponse(json_data)
     # default return
     return {"ERROR_CODE": 404}
