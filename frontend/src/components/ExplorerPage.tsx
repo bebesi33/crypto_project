@@ -1,4 +1,4 @@
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import "./ExplorerPage.css";
 import { API } from "../Api";
 import LineChart from "./charts/LineChart";
@@ -8,9 +8,12 @@ import { getTextAlign } from "./Utilities";
 
 function ExplorerPage() {
   const [jsonData, setJsonData] = useState(null);
-  // const [hlInputValue, setHlInputValue] = useState("30");
-  // const [obsInputValue, setObsInputValue] = useState("30");
-  // const [inputValue, setInputValue] = useState("BTC-USD");
+
+  const errorStyles = {
+    "0": "alert alert-info",
+    "1": "alert alert-warning",
+    "404": "alert alert-danger",
+  };
 
   const initialValues = {
     symbol: "BTC-USD",
@@ -19,26 +22,16 @@ function ExplorerPage() {
   };
   const [values, setValues] = useState(initialValues);
 
-  const handleInputChange = (event: {
-    target: {
-      name: string;
-      value: SetStateAction<string>;
+  const handleInputChange =
+    (property: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      setValues({
+        ...values,
+        [property]: event.target.value,
+      });
     };
-  }) => {
-    //const name = e.target.name
-    //const value = e.target.value
-    const name = event.target.name;
-    const value = event.target.value;
-
-    setValues({
-      ...values,
-      [name]: value,
-    });
-  };
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
-
     try {
       const response = await fetch(API + "crypto/api/get_raw_price_data", {
         method: "POST",
@@ -52,10 +45,10 @@ function ExplorerPage() {
           min_obs: values["min_obs"],
         }),
       });
-      console.log(response);
       if (response.ok) {
         const jsonData = await response.json();
         console.log("Data received successfully!");
+        console.log(jsonData);
         setJsonData(jsonData);
       } else {
         console.error("Error sending data to the backend.");
@@ -81,24 +74,24 @@ function ExplorerPage() {
             type="ticker_input"
             className="form-control"
             id="ticker_input"
-            placeholder="BTC-USD"
+            // placeholder="BTC-USD"
             value={values.symbol}
-            onChange={handleInputChange}
+            onChange={handleInputChange("symbol")}
           ></input>
           <label
             htmlFor="half-life"
             className="half-life-label"
             style={{ textAlign: getTextAlign("left") }}
           >
-            Specify half life parameter (in days)
+            Specify half-life parameter (in days)
           </label>
           <input
             type="halflife_input"
             className="half-life-input"
             id="half_life_input"
-            placeholder="30"
+            // placeholder="30"
             value={values.halflife}
-            onChange={handleInputChange}
+            onChange={handleInputChange("halflife")}
           ></input>
           <label
             htmlFor="obs-number"
@@ -111,9 +104,9 @@ function ExplorerPage() {
             type="obs_number_input"
             className="obs-number-input"
             id="obs_number_input"
-            placeholder="30"
+            // placeholder="30"
             value={values.min_obs}
-            onChange={handleInputChange}
+            onChange={handleInputChange("min_obs")}
           ></input>
           <button
             type="submit"
@@ -125,7 +118,7 @@ function ExplorerPage() {
         </div>
       </form>
       <div className="chart-container">
-        {jsonData !== null && (
+        {jsonData !== null && "raw_price" in jsonData && jsonData["ERROR_CODE"]!= "404" && (
           <LineChart
             primary_data={jsonData["raw_price"]["close"]}
             title_text={"Price data for " + jsonData["symbol"]}
@@ -134,7 +127,7 @@ function ExplorerPage() {
             y_axis_title="Close Price (USD)"
           />
         )}
-        {jsonData !== null && (
+        {jsonData !== null && "return_data" in jsonData && "ewma" in jsonData && (
           <ReturnChart
             primary_data={jsonData["return_data"]["total_return"]}
             primary_data_label="Total returns"
@@ -146,6 +139,11 @@ function ExplorerPage() {
             secondary_data={jsonData["ewma"]["ewma_std"]}
             secondary_data_label="EWMA Std. Dev. Estimates"
           />
+        )}
+        {jsonData !== null && (
+          <div className={errorStyles[jsonData["ERROR_CODE"]]} role="alert">
+            {jsonData["log"]}
+          </div>
         )}
       </div>
     </div>
