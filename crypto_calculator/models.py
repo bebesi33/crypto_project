@@ -13,9 +13,6 @@ class RawPriceData(models.Model):
     date = models.DateField(blank=True, null=True)
     symbol = models.TextField(blank=True, null=True)
 
-    def __str__(self):
-        return self.symbol
-
     class Meta:
         db_table = "raw_price_data"
 

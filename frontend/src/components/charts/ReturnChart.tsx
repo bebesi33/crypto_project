@@ -11,31 +11,44 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
-import { DEFAULT_BLUE } from "../Colors";
+import { DEFAULT_BLUE, LIGHT_BLUE } from "../Colors";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 interface LineChartProps {
   primary_data: Map<string, number>;
-  title_text: string;
   primary_data_label: string;
+  title_text: string;
   x_axis_title: string;
   y_axis_title: string;
+  secondary_data: Map<string, number>;
+  secondary_data_label: string;
 } // end LineChartProps
 
-const LineChart: React.FC<LineChartProps> = ({
+const ReturnChart: React.FC<LineChartProps> = ({
   primary_data,
-  title_text,
   primary_data_label,
+  title_text,
   x_axis_title,
   y_axis_title,
+  secondary_data,
+  secondary_data_label
 }) => {
   console.log(typeof primary_data);
   const chartData = {
-    labels: Array.from(Object.keys(primary_data)),
+    labels: Array.from(Object.keys(secondary_data)),
     datasets: [
       {
         label: primary_data_label,
         data: Array.from(Object.values(primary_data)),
+        pointRadius: 2,
+        lineThickness: 0,
+        borderWidth: 0,
+        borderColor: LIGHT_BLUE,
+        fill: false,
+      },
+      {
+        label: secondary_data_label,
+        data: Array.from(Object.values(secondary_data)),
         pointRadius: 0,
         borderColor: DEFAULT_BLUE,
         fill: false,
@@ -77,4 +90,4 @@ const LineChart: React.FC<LineChartProps> = ({
   ); // end return
 };
 
-export default LineChart;
+export default ReturnChart;

@@ -1,15 +1,72 @@
 .parent-container {
   position: relative;
 }
-.ticker_input-label{
-    position: absolute; left: 1%; top: 0px; min-width: 200px;
+.ticker_input-label {
+  position: absolute;
+  left: 1%;
+  top: 0px;
+  width: 200px;
+  min-width: 200px;
+  max-width: 19%;
 }
-.form-control {position: absolute; top: 35px; min-width: 200px; max-width: 400px; width: 150px;}
-.btn {position: absolute; top: 85px; left: 1%; width: 100px;}
+.form-control {
+  position: absolute;
+  top: 35px;
+  width: 200px;
+  min-width: 200px;
+  max-width: 19%;
+  width: 150px;
+}
+.btn {
+  position: absolute;
+  top: 295px;
+  left: 1%;
+  min-width: 100px;
+  max-width: 19%;
+}
+
+.half-life-label {
+  position: absolute;
+  left: 1%;
+  top: 85px;
+  width: 200px;
+  min-width: 200px;
+  max-width: 19%;
+}
+.half-life-input {
+  position: absolute;
+  top: 140px;
+  width: 200px;
+  min-width: 200px;
+  max-width: 19%;
+  width: 150px;
+}
+.obs-number-label {
+  position: absolute;
+  left: 1%;
+  top: 175px;
+  width: 200px;
+  min-width: 200px;
+  max-width: 19%;
+}
+.obs-number-input {
+  position: absolute;
+  top: 250px;
+  width: 200px;
+  min-width: 200px;
+  max-width: 19%;
+  width: 150px;
+}
 
 .form-group {
   position: absolute;
   top: 1%;
   left: 1%;
 }
-
+.chart-container {
+  position: absolute;
+  top: 35px;
+  left: 250px;
+  width: 80%;
+  max-height: 400px;
+}

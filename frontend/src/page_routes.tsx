@@ -15,9 +15,7 @@ const page_routes = [
   { path: '/tutorial', element: <Tutorial /> },
   { path: '/factor_model_info', element: <RiskCalculationInfo /> },
   { path: '/risk_calculation_info', element: <FactorModelInfo /> },
-
-
-  // Add more routes as needed
+  // Add more routes as needed (Todo...)
 ];
 
 export default page_routes;
