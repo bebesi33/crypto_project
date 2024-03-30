@@ -1,4 +1,4 @@
-# crypto_project
+# Laszlo's crypto risk calculator : "crypto_project" repository
 Ideally this will be my thesis project...
 The model presented in this repository is for education purposes only, it is not intended for commercial use.
 Please do not use it for portfolio management, the risk estimates provided by the model are for informative purposes only.
