@@ -31,7 +31,7 @@ def check_input_param_correctness(
                 halflife = parameter_default
                 override_code = 1
                 log_elements.append(
-                    f"The {parameter_nickname} should be a positive number, at least 2"
+                    f"The {parameter_nickname} should be a positive number, at least 2."
                 )
             else:
                 log_elements.append(
