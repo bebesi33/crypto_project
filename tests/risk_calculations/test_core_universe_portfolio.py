@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from risk_calculations.core_universe_portfolio import generate_market_portfolio  # Replace with the actual module name
+from factor_model.risk_calculations.core_universe_portfolio import generate_market_portfolio  # Replace with the actual module name
 
 class TestGenerateMarketPortfolio(unittest.TestCase):
     def test_market_portfolio_calculation(self):

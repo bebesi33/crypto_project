@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from scipy.stats import norm, lognorm
-from risk_calculations.risk_metrics import (
+from factor_model.risk_calculations.risk_metrics import (
     calculate_lognormal_es_var,
 )
 

@@ -1,6 +1,6 @@
 import pandas as pd
 import unittest
-from risk_calculations.factor_covariance import get_factor_return_standard_deviation
+from factor_model.risk_calculations.factor_covariance import get_factor_return_standard_deviation
 
 class TestFactorReturnStandardDeviation(unittest.TestCase):
     def test_ewma_standard_deviations(self):

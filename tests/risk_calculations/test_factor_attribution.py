@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 import numpy as np
-from risk_calculations.risk_attribution import generate_factor_covariance_attribution
+from factor_model.risk_calculations.risk_attribution import generate_factor_covariance_attribution
 
 class TestGenerateFactorCovarianceAttribution(unittest.TestCase):
     def test_no_market_exposure(self):

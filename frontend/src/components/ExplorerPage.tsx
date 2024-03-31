@@ -86,7 +86,7 @@ function ExplorerPage() {
             Specify half-life parameter (in days)
           </label>
           <input
-            type="halflife_input"
+            type="ticker_input"
             className="half-life-input"
             id="half_life_input"
             // placeholder="30"
@@ -101,7 +101,7 @@ function ExplorerPage() {
             Minimum number of observations for risk calculation (in days)
           </label>
           <input
-            type="obs_number_input"
+            type="ticker_input"
             className="obs-number-input"
             id="obs_number_input"
             // placeholder="30"
@@ -141,7 +141,7 @@ function ExplorerPage() {
           />
         )}
         {jsonData !== null && (
-          <div className={errorStyles[jsonData["ERROR_CODE"]]} role="alert">
+          <div className={errorStyles[jsonData["ERROR_CODE"]]} role="alert" style={{ textAlign: getTextAlign("left") }}>
             {jsonData["log"]}
           </div>
         )}

@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from risk_calculations.specific_risk import generate_raw_specific_risk
+from factor_model.risk_calculations.specific_risk import generate_raw_specific_risk
 
 
 class TestGenerateRawSpecificRisk(unittest.TestCase):

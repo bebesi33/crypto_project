@@ -42,6 +42,7 @@ def get_raw_price_data(request):
             returns = get_return_data(symbol=symbol)
             halflife = all_input.get("halflife")
             min_periods = all_input.get("min_obs")
+            print(all_input)
             if halflife is not None and min_periods is not None:
                 ewma_std = create_ewma_std_estimates(
                     returns, halflife=halflife, min_periods=min_periods
@@ -51,7 +52,7 @@ def get_raw_price_data(request):
                 returns = returns[returns.index.isin(ewma_std.index)].copy()
                 json_data["return_data"] = returns.to_dict()
                 json_data["ewma"] = ewma_std.to_dict()
-                json_data["ERROR_CODE"] = override_code
+                json_data["ERROR_CODE"] = 1 if override_code > 0 else 0
             else:
                 log_elements.append(
                     "Either the halflife or the minimum number of observations is incorrect, no risk estimate calculated!"

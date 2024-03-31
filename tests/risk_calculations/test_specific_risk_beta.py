@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from risk_calculations.risk_attribution import get_specific_risk_beta
+from factor_model.risk_calculations.risk_attribution import get_specific_risk_beta
 
 class TestGetSpecificRiskBeta(unittest.TestCase):
     def setUp(self):

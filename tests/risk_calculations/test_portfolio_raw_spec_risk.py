@@ -1,5 +1,5 @@
 import unittest
-from risk_calculations.specific_risk import (
+from factor_model.risk_calculations.specific_risk import (
     generate_raw_portfolio_specific_risk,
 )
 

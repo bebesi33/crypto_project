@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from risk_calculations.factor_covariance import get_factor_return_correlation
+from factor_model.risk_calculations.factor_covariance import get_factor_return_correlation
 
 
 class TestFactorReturnCorrelation(unittest.TestCase):
@@ -13,13 +13,13 @@ class TestFactorReturnCorrelation(unittest.TestCase):
             }
         )
 
-    def test_1(self):
+    def factor_return_correlation_test_1(self):
         params = {"date": "2024-03-03", "correlation_half_life": 10}
         result = get_factor_return_correlation(self.factor_returns_data, params)
         self.assertTrue(abs(result["factor2"].values[0] - 0.95990131006) < 0.000001)
         self.assertTrue(result.shape[0] > 0)
 
-    def test_2(self):
+    def tesfactor_return_correlation_test_2(self):
         params = {"date": "2024-03-03", "correlation_half_life": 1}
         result = get_factor_return_correlation(self.factor_returns_data, params)
         self.assertTrue(abs(result["factor2"].values[0] - 0.950933) < 0.000001)

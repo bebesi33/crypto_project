@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from risk_calculations.risk_attribution import create_portfolio_exposures  # Replace 'your_module' with the actual module name
+from factor_model.risk_calculations.risk_attribution import create_portfolio_exposures
 
 class TestCreatePortfolioExposures(unittest.TestCase):
     def setUp(self):

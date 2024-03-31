@@ -1,9 +1,10 @@
 import json
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 from crypto_calculator.models import RawPriceData, Returns
 import pandas as pd
 
 from factor_model.risk_calculations import HALF_LIFE_DEFAULT, MIN_OBS_DEFAULT
+from factor_model.risk_calculations.parameter_processing import check_input_param_correctness
 
 
 def get_close_data(symbol: str) -> pd.DataFrame:
@@ -43,54 +44,21 @@ def decode_explorer_input(request) -> Tuple[Dict, str, int]:
     override_code = 0  # we set it to one if any override occurs
 
     # half life checks
-    halflife = all_input.get("halflife")
-    if halflife is not None:
-        try:
-            halflife = float(halflife)
-            if halflife < 0.0001:
-                log_elements.append(
-                    f"In half-life smaller than 0.01: {halflife}, half-life set to default {HALF_LIFE_DEFAULT} days."
-                )
-                halflife = HALF_LIFE_DEFAULT
-                override_code = 1
-                log_elements.append("The half-life should be a positive number.")
-            else:
-                log_elements.append(f"The half-life input {halflife} is correct.")
-        except ValueError:
-            log_elements.append(
-                f"Incorrect half-life value: {halflife}, half-life is set to default {HALF_LIFE_DEFAULT} days."
-            )
-            halflife = HALF_LIFE_DEFAULT
-            override_code = 1
-        processed_input["halflife"] = halflife
-    else:
-        log_elements.append(f"No half-life input!")
+    override_code += check_input_param_correctness(
+        parameter_name="halflife",
+        parameter_default=HALF_LIFE_DEFAULT,
+        parameter_nickname="half-life",
+        all_input=all_input,
+        log_elements=log_elements,
+        processed_input=processed_input,
+    )
 
-    min_obs = all_input.get("min_obs")
-    if min_obs is not None:
-        try:
-            min_obs = float(min_obs)
-            if min_obs < 0.0001:
-                log_elements.append(
-                    f"In minimum observation number is smaller than 0.0001: {min_obs}, minimum observation number is set to default {MIN_OBS_DEFAULT} days."
-                )
-                min_obs = MIN_OBS_DEFAULT
-                log_elements.append(
-                    "The minimum observation number should be a positive integer number."
-                )
-                override_code = 1
-            else:
-                log_elements.append(
-                    f"The minimum observation number input {min_obs} is correct."
-                )
-        except ValueError:
-            log_elements.append(
-                f"Incorrect minimum observation number value: {min_obs}, minimum observation number is set to default {MIN_OBS_DEFAULT} days."
-            )
-            min_obs = MIN_OBS_DEFAULT
-            override_code = 1
-
-        processed_input["min_obs"] = min_obs
-    else:
-        log_elements.append(f"No minimum number of observations input!")
+    override_code += check_input_param_correctness(
+        parameter_name="min_obs",
+        parameter_default=MIN_OBS_DEFAULT,
+        parameter_nickname="minimum number of observations for risk calculation",
+        all_input=all_input,
+        log_elements=log_elements,
+        processed_input=processed_input,
+    )
     return processed_input, log_elements, override_code

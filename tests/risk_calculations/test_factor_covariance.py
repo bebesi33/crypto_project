@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 import numpy as np
-from risk_calculations.factor_covariance import assemble_factor_covariance_matrix
+from factor_model.risk_calculations.factor_covariance import assemble_factor_covariance_matrix
 
 class TestFactorCovarianceMatrix(unittest.TestCase):
     def test_covariance_matrix(self):

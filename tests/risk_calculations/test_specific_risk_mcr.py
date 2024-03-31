@@ -1,5 +1,5 @@
 import unittest
-from risk_calculations.risk_attribution import calculate_spec_risk_mctr
+from factor_model.risk_calculations.risk_attribution import calculate_spec_risk_mctr
 import pandas as pd
 
 
