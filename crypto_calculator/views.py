@@ -1,23 +1,28 @@
-from django.views.decorators.http import require_http_methods
 from django.http import JsonResponse
 from crypto_calculator.models import RawPriceData
 from asgiref.sync import sync_to_async
 import pandas as pd
 from django.views.decorators.csrf import csrf_exempt
 import json
-from crypto_calculator.request_processing import (
+from crypto_calculator.sample_risk_input import market_portfolio, portfolio_details
+from crypto_calculator.explorer_request_processing import (
     decode_explorer_input,
     get_close_data,
     get_return_data,
 )
+from crypto_calculator.risk_calc_request_processing import risk_calc_request_full
 from factor_model.risk_calculations.simple_risk_calculation import (
     create_ewma_std_estimates,
+)
+from crypto_calculator.sample_risk_input import (
+    portfolio_details,
+    market_portfolio,
+    risk_calculation_parameters,
 )
 
 
 @csrf_exempt
 def get_raw_price_data(request):
-    print(request.method)
     if request.method == "POST":
         all_input, log_elements, override_code = decode_explorer_input(request)
         # handle raw price data
@@ -58,6 +63,22 @@ def get_raw_price_data(request):
             json_data["ERROR_CODE"] = 404
             log_elements.append(f"No price data for {symbol}!")
             json_data["log"] = " ".join(log_elements)
+        return JsonResponse(json_data)
+    # default return
+    return {"ERROR_CODE": 404, "log": "404 Not Found"}
+
+
+@csrf_exempt
+def get_risk_calculation_output(request):
+    print(request.method)
+    json_data = {}
+    if request.method == "POST":
+        print("start risk_calc_request_full")
+        json_data["risk_metrics"] = risk_calc_request_full(
+            portfolio_details=portfolio_details,
+            market_portfolio=market_portfolio,
+            risk_calculation_parameters=risk_calculation_parameters,
+        )
         return JsonResponse(json_data)
     # default return
     return {"ERROR_CODE": 404, "log": "404 Not Found"}
