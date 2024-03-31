@@ -59,6 +59,21 @@ class TestCheckInputParamCorrectness(unittest.TestCase):
         self.assertNotIn("halflife", processed_input)
         self.assertIn("No half-life input!", log_elements[0])
 
+    def test_nobs_too_small(self):
+        # Test when halflife is negative
+        all_input = {"nobs": "0.05"}
+        log_elements = []
+        processed_input = {}
+        override_code = check_input_param_correctness(
+            "nobs", 10.0, "nobs", all_input, log_elements, processed_input, True
+        )
+        self.assertEqual(override_code, 1)
+        self.assertEqual(processed_input["nobs"], 10.0)
+        self.assertIn(
+            "If nobs smaller than 2: nobs, nobs set to default 10.0 days.",
+            log_elements[0],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
