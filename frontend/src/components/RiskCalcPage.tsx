@@ -2,6 +2,7 @@ import { useState } from "react";
 import { API } from "../Api";
 import "./RiskCalcPage.css";
 import SimpleTable from "./tables/SimpleTable";
+import ExposureChart from "./charts/ExposureChart";
 
 function RiskCalcPage() {
   const [jsonData, setJsonData] = useState(null);
@@ -186,16 +187,19 @@ function RiskCalcPage() {
       <div className="table-container">
         {jsonData !== null && "risk_metrics" in jsonData && (
           <SimpleTable
-            primary_data={jsonData["risk_metrics"]}
-            metric_column="Risk Measure"
-            value_column="Value in pct"
-            table_title="High level risk summary"
+            primaryData={jsonData["risk_metrics"]}
+            metricColumn="Risk Measure"
+            valueColumn="Value in pct"
+            tableTitle="High level risk summary"
           />
         )}
       </div>
       <div className="chart-container" id="top-right-chart-container">
         {jsonData !== null && "exposures" in jsonData && (
-            <div/>
+          <ExposureChart
+            primaryData={jsonData["exposures"]}
+            titleText="Exposure breakdown"
+          />
         )}
       </div>
     </div>

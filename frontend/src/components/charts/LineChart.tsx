@@ -31,19 +31,18 @@ interface LineChartProps {
 } // end LineChartProps
 
 const LineChart: React.FC<LineChartProps> = ({
-  primaryData: primary_data,
-  titleText: title_text,
-  primaryDataLabel: primary_data_label,
-  xAxisTitle: x_axis_title,
-  yAxisTitle: y_axis_title,
+  primaryData,
+  titleText,
+  primaryDataLabel,
+  xAxisTitle,
+  yAxisTitle,
 }) => {
-  console.log(typeof primary_data);
   const chartData = {
-    labels: Array.from(Object.keys(primary_data)),
+    labels: Array.from(Object.keys(primaryData)),
     datasets: [
       {
-        label: primary_data_label,
-        data: Array.from(Object.values(primary_data)),
+        label: primaryDataLabel,
+        data: Array.from(Object.values(primaryData)),
         pointRadius: 0,
         borderColor: DEFAULT_BLUE,
         fill: false,
@@ -59,20 +58,23 @@ const LineChart: React.FC<LineChartProps> = ({
       },
       title: {
         display: true,
-        text: title_text,
+        text: titleText,
+        font: {
+          size: 18,
+        },
       },
     },
     scales: {
       x: {
         title: {
           display: true,
-          text: x_axis_title,
+          text: xAxisTitle,
         },
       },
       y: {
         title: {
           display: true,
-          text: y_axis_title,
+          text: yAxisTitle,
         },
       },
     },

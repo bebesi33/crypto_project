@@ -73,6 +73,9 @@ const ReturnChart: React.FC<LineChartProps> = ({
       title: {
         display: true,
         text: titleText,
+        font: {
+          size: 18,
+        },
       },
     },
     scales: {

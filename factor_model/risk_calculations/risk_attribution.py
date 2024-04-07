@@ -67,7 +67,9 @@ def generate_factor_covariance_table(
 
 
 def calculate_spec_risk_mctr(
-    spec_std: Dict[str, float], portfolio_details: Dict[str, float]
+    spec_std: Dict[str, float],
+    portfolio_details: Dict[str, float],
+    is_total_space: bool = True,
 ) -> Tuple[pd.Series, pd.Series]:
     """
     Calculates the specific risk marginal contribution to risk
@@ -81,7 +83,10 @@ def calculate_spec_risk_mctr(
         Dict: The variance decomposition for specific risk
     """
     weight_coverage = 0
-    port_total = sum(portfolio_details.values())
+    if is_total_space:
+        port_total = sum(portfolio_details.values())
+    else:
+        port_total = 1
     spec_risk_mctr = {}
     spec_risk_var_contrib = {}
     for ticker in portfolio_details.keys():
@@ -95,7 +100,10 @@ def calculate_spec_risk_mctr(
     spec_risk_mctr = pd.Series(spec_risk_mctr)
     spec_risk_mctr = spec_risk_mctr / weight_coverage
     spec_risk_var_contrib = pd.Series(spec_risk_var_contrib)
-    spec_risk_var_contrib = spec_risk_var_contrib / (weight_coverage**2)
+    if is_total_space:
+        spec_risk_var_contrib = spec_risk_var_contrib / (weight_coverage**2)
+    else:
+        spec_risk_var_contrib = spec_risk_var_contrib
     return spec_risk_mctr, spec_risk_var_contrib
 
 

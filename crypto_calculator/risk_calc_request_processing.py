@@ -144,7 +144,11 @@ def risk_calc_request_full(
 
         factor_mctrs[port] = factor_attributions[port] / total_risks[port]
         spec_risk_attributions[port], spec_risk_var_decomps[port] = (
-            calculate_spec_risk_mctr(raw_specific_risks[port], portolios[port])
+            calculate_spec_risk_mctr(
+                raw_specific_risks[port],
+                portolios[port],
+                True if port != "active" else False,
+            )
         )
         spec_risk_mctrs[port] = spec_risk_attributions[port] / total_risks[port]
     print("Step 2: calculate risk - READY")
