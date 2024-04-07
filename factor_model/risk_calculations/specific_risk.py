@@ -44,7 +44,9 @@ def generate_raw_specific_risk(
 
 
 def generate_raw_portfolio_specific_risk(
-    spec_std: Dict[str, float], portfolio_details: Dict[str, float]
+    spec_std: Dict[str, float],
+    portfolio_details: Dict[str, float],
+    is_total_space: bool = True,
 ) -> float:
     """
     Calculates the raw specific risk (also known as idiosyncratic risk) of a portfolio.
@@ -58,7 +60,10 @@ def generate_raw_portfolio_specific_risk(
     """
     spec_risk_total = 0
     weight_coverage = 0
-    port_total = sum(portfolio_details.values())
+    if is_total_space:
+        port_total = sum(portfolio_details.values())
+    else:
+        port_total = 1
     for ticker in portfolio_details.keys():
         spec_risk = spec_std.get(ticker)
         if spec_risk:
@@ -66,5 +71,8 @@ def generate_raw_portfolio_specific_risk(
             spec_risk_total += spec_risk**2 * current_weight**2
             weight_coverage += current_weight
 
-    spec_risk_total = np.sqrt(spec_risk_total / (weight_coverage**2))
+    if is_total_space:
+        spec_risk_total = np.sqrt(spec_risk_total / (weight_coverage**2))
+    else:
+        spec_risk_total = np.sqrt(spec_risk_total)
     return spec_risk_total

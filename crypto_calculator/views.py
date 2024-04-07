@@ -75,7 +75,7 @@ def get_risk_calculation_output(request):
     json_data = {}
     if request.method == "POST":
         print("start risk_calc_request_full")
-        json_data["risk_metrics"] = risk_calc_request_full(
+        json_data = risk_calc_request_full(
             portfolio_details=portfolio_details,
             market_portfolio=market_portfolio,
             risk_calculation_parameters=risk_calculation_parameters,

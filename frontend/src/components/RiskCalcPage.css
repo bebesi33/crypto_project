@@ -46,24 +46,24 @@
 }
 
 .parameters {
-    position: absolute;
-    left: 1%;
-    top: 210px;
-    width: 340px;
-  }
+  position: absolute;
+  left: 1%;
+  top: 210px;
+  width: 340px;
+}
 
 .hl-risk-input-label {
-    position: absolute;
-    left: 1%;
-    top: 260px;
-    width: 200px;
-  }
-  #hl-risk-input {
-    position: absolute;
-    left: 240px;
-    top: 255px;
-    width: 100px;
-  }
+  position: absolute;
+  left: 1%;
+  top: 260px;
+  width: 200px;
+}
+#hl-risk-input {
+  position: absolute;
+  left: 240px;
+  top: 255px;
+  width: 100px;
+}
 
 .hl-corr-input-label {
   position: absolute;
@@ -79,33 +79,30 @@
 }
 
 .min-ret-hist-input-label {
-    position: absolute;
-    left: 1%;
-    top: 360px;
-    width: 200px;
-  }
-  #min-ret-hist-input {
-    position: absolute;
-    left: 240px;
-    top: 355px;
-    width: 100px;
-  }
-  
-
+  position: absolute;
+  left: 1%;
+  top: 360px;
+  width: 200px;
+}
+#min-ret-hist-input {
+  position: absolute;
+  left: 240px;
+  top: 355px;
+  width: 100px;
+}
 
 .spec-hl-risk-input-label {
-    position: absolute;
-    left: 1%;
-    top: 410px;
-    width: 200px;
-  }
-  #spec-hl-risk-input {
-    position: absolute;
-    left: 240px;
-    top: 405px;
-    width: 100px;
-  }
-
+  position: absolute;
+  left: 1%;
+  top: 410px;
+  width: 200px;
+}
+#spec-hl-risk-input {
+  position: absolute;
+  left: 240px;
+  top: 405px;
+  width: 100px;
+}
 
 #calc-btn {
   position: absolute;
@@ -113,4 +110,12 @@
   left: 1%;
   min-width: 100px;
   max-width: 19%;
+}
+
+.table-container {
+  position: absolute;
+  top: 35px;
+  left: 360px;
+  width: 450px;
+  max-height: 400px;
 }

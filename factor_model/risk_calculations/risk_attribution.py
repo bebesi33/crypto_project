@@ -6,24 +6,25 @@ import numpy as np
 def create_portfolio_exposures(
     exposures: pd.DataFrame,
     portfolio_details: Dict[str, float],
-    non_style_fields : List[str] = [] 
+    non_style_fields: List[str] = [],
+    is_total_space: bool = True,
 ) -> pd.DataFrame:
-    available_styles = sorted(
-        list(set(exposures.columns) - set(non_style_fields))
-    )
+    available_styles = sorted(list(set(exposures.columns) - set(non_style_fields)))
     expo_selected = exposures[exposures["ticker"].isin(portfolio_details.keys())][
         ["ticker"] + available_styles
-    ]
+    ].copy()
     expo_selected["portfolio_weight"] = expo_selected["ticker"].map(portfolio_details)
-    expo_selected["portfolio_weight"] = expo_selected["portfolio_weight"] / sum(
-        expo_selected["portfolio_weight"]
-    )
+    if is_total_space:
+        expo_selected["portfolio_weight"] = expo_selected["portfolio_weight"] / sum(
+            expo_selected["portfolio_weight"]
+        )
     weighted_port_exposure = dict()
     for col in available_styles:
         weighted_port_exposure[col] = sum(
             expo_selected["portfolio_weight"] * expo_selected[col]
         )
-    weighted_port_exposure["market"] = 1  # set market to 1
+    if is_total_space:
+        weighted_port_exposure["market"] = 1.0
 
     port_exposure = pd.Series(weighted_port_exposure).to_frame().reset_index()
     port_exposure.columns = ["factor", "exposure"]
@@ -106,7 +107,7 @@ def generate_active_space_portfolio(
     based on the difference between the portfolio weights and market portfolio weights.
 
     Args:
-        portfolio_details (Dict[str, float]): A dictionary containing ticker symbols as keys 
+        portfolio_details (Dict[str, float]): A dictionary containing ticker symbols as keys
         and corresponding portfolio weights.
         market_portfolio (Dict[str, float]): A dictionary containing ticker symbols as keys
         and corresponding market weights.
@@ -126,6 +127,7 @@ def generate_active_space_portfolio(
             market_w / total_market_w
         )
     return active_space_portfolio
+
 
 def get_specific_risk_beta(
     portfolio_details: Dict[str, float],

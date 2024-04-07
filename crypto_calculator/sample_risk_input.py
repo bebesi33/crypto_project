@@ -3,11 +3,13 @@
 portfolio_details = {
     "BCUBE-USD": 0.17,
     "LNC-USD": 0.05,
-    "PMG24050-USD": 0.2,
+    # "PMG24050-USD": 0.2,
     "ZNN-USD": 0.04,
     "EFI-USD": 0.03,
     "BTC-USD": 0.32,
     "ETH-USD": 0.19,
+    "USDT-USD": 0.1,
+    "BNB-USD": 0.1
 }
 
 market_portfolio = {

@@ -115,6 +115,7 @@ def risk_calc_request_full(
             exposures=exposures,
             portfolio_details=portolios[port],
             non_style_fields=EXPOSURE_NON_STYLE_FIELDS,
+            is_total_space=True if port != "active" else False,
         )
         port_exposures[port] = port_exposures[port].reindex(factor_covariance.index)
         # 2.2. factor risk related
@@ -135,7 +136,9 @@ def risk_calc_request_full(
             full_specific_returns, risk_calculation_parameters, portolios[port]
         )
         spec_risks[port] = generate_raw_portfolio_specific_risk(
-            raw_specific_risks[port], portolios[port]
+            raw_specific_risks[port],
+            portolios[port],
+            is_total_space=True if port != "active" else False,
         )
         total_risks[port] = np.sqrt(factor_risks[port] ** 2 + spec_risks[port] ** 2)
 
@@ -168,7 +171,7 @@ def risk_calc_request_full(
     # 5. assemble output
     risk_categories = [
         "Total Risk (portfolio)",
-        "Total Risk (market)",
+        "Total Risk (benchmark)",
         "Total Risk (active)",
         "Factor Risk (portfolio)",
         "Factor Risk (active)",
@@ -187,12 +190,20 @@ def risk_calc_request_full(
     risk_metrics = dict(zip(risk_categories, risk_values))
 
     risk_metrics_extended = risk_metrics.copy()
-    risk_metrics_extended["portfolio Beta"] = portfolio_beta * 100
-    risk_metrics_extended["portfolio VaR (1-day, 95%, total space)"] = var95 * 100
-    risk_metrics_extended["portfolio ES (1-day, 95%, total space)"] = es95 * 100
-    risk_metrics_extended["portfolio VaR (1-day, 99%, total space)"] = var99 * 100
-    risk_metrics_extended["portfolio ES (1-day, 99%, total space)"] = es99 * 100
+    risk_metrics_extended["Portfolio Beta with respect to benchmark"] = (
+        portfolio_beta * 100
+    )
+    risk_metrics_extended["Portfolio VaR (1-day, 95%, total space)"] = var95 * 100
+    risk_metrics_extended["Portfolio ES (1-day, 95%, total space)"] = es95 * 100
+    risk_metrics_extended["Portfolio VaR (1-day, 99%, total space)"] = var99 * 100
+    risk_metrics_extended["Portfolio ES (1-day, 99%, total space)"] = es99 * 100
     for key in risk_metrics_extended.keys():
         risk_metrics_extended[key] = np.round(risk_metrics_extended[key], decimals=3)
+
+    exposures = {}
+    for portfolio in portolios.keys():
+        exposures[portfolio] = port_exposures[portfolio].to_dict()
+
     print("Step 5: output assembly - READY")
-    return risk_metrics_extended
+
+    return {"risk_metrics": risk_metrics_extended, "exposures": exposures}

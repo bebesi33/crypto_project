@@ -183,21 +183,19 @@ function RiskCalcPage() {
           </button>
         </div>
       </form>
-      <div className="chart-container">
-        {jsonData !== null && (
-          <div>
-            {Object.keys(jsonData["risk_metrics"]).map((key) => (
-              <div key={key}>{jsonData["risk_metrics"][key]}</div>
-            ))}
-          </div>
-        )}
+      <div className="table-container">
         {jsonData !== null && "risk_metrics" in jsonData && (
           <SimpleTable
             primary_data={jsonData["risk_metrics"]}
             metric_column="Risk Measure"
             value_column="Value in pct"
-            table_title="High level Risk"
+            table_title="High level risk summary"
           />
+        )}
+      </div>
+      <div className="chart-container" id="top-right-chart-container">
+        {jsonData !== null && "exposures" in jsonData && (
+            <div/>
         )}
       </div>
     </div>

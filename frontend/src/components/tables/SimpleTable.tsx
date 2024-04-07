@@ -13,10 +13,10 @@ const SimpleTable: React.FC<TableProps> = ({
 }) => {
   console.log("This is fine!");
   return (
-    <div style={{ margin: "50px" }}>
-      <h1>{table_title}</h1>
-      <table>
-        <thead>
+    <div>
+      <h3>{table_title}</h3>
+      <table className="table table-striped">
+        <thead className="thead-dark">
           <tr>
             <th>{metric_column}</th>
             <th>{value_column}</th>
@@ -25,8 +25,8 @@ const SimpleTable: React.FC<TableProps> = ({
         <tbody>
           {Object.entries(primary_data).map(([key, value]) => (
             <tr key={key}>
-              <td>{key}</td>
-              <td>{value}</td>
+              <td style={{ textAlign: "left" }}>{key}</td>
+              <td style={{ textAlign: "right" }}>{value}</td>
             </tr>
           ))}
         </tbody>
