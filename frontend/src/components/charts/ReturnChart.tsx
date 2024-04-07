@@ -9,37 +9,45 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from "chart.js";
 import { DEFAULT_BLUE, LIGHT_BLUE } from "../Colors";
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 interface LineChartProps {
-  primary_data: Map<string, number>;
-  primary_data_label: string;
-  title_text: string;
-  x_axis_title: string;
-  y_axis_title: string;
-  secondary_data: Map<string, number>;
-  secondary_data_label: string;
+  primaryData: Map<string, number>;
+  primaryDataLabel: string;
+  titleText: string;
+  xAxisTitle: string;
+  yAxisTitle: string;
+  secondaryData: Map<string, number>;
+  secondaryDataLabel: string;
 } // end LineChartProps
 
 const ReturnChart: React.FC<LineChartProps> = ({
-  primary_data,
-  primary_data_label,
-  title_text,
-  x_axis_title,
-  y_axis_title,
-  secondary_data,
-  secondary_data_label
+  primaryData,
+  primaryDataLabel,
+  titleText,
+  xAxisTitle,
+  yAxisTitle,
+  secondaryData,
+  secondaryDataLabel,
 }) => {
-  console.log(typeof primary_data);
+  console.log(typeof primaryData);
   const chartData = {
-    labels: Array.from(Object.keys(secondary_data)),
+    labels: Array.from(Object.keys(secondaryData)),
     datasets: [
       {
-        label: primary_data_label,
-        data: Array.from(Object.values(primary_data)),
+        label: primaryDataLabel,
+        data: Array.from(Object.values(primaryData)),
         pointRadius: 2,
         lineThickness: 0,
         borderWidth: 0,
@@ -47,8 +55,8 @@ const ReturnChart: React.FC<LineChartProps> = ({
         fill: false,
       },
       {
-        label: secondary_data_label,
-        data: Array.from(Object.values(secondary_data)),
+        label: secondaryDataLabel,
+        data: Array.from(Object.values(secondaryData)),
         pointRadius: 0,
         borderColor: DEFAULT_BLUE,
         fill: false,
@@ -64,20 +72,20 @@ const ReturnChart: React.FC<LineChartProps> = ({
       },
       title: {
         display: true,
-        text: title_text,
+        text: titleText,
       },
     },
     scales: {
       x: {
         title: {
           display: true,
-          text: x_axis_title,
+          text: xAxisTitle,
         },
       },
       y: {
         title: {
           display: true,
-          text: y_axis_title,
+          text: yAxisTitle,
         },
       },
     },

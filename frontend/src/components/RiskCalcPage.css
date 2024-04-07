@@ -1,0 +1,116 @@
+.parent-container {
+  position: relative;
+}
+.form-group {
+  width: 400px;
+  min-width: 340px;
+  max-width: 29%;
+}
+.cob-input-label {
+  position: absolute;
+  left: 1%;
+  top: 0px;
+}
+#cob-input {
+  position: absolute;
+  top: 25px;
+  min-width: 340px;
+  max-width: 25%;
+}
+.portfolio-input-label {
+  position: absolute;
+  left: 1%;
+  top: 65px;
+  min-width: 340px;
+  max-width: 25%;
+}
+#portfolio-input {
+  position: absolute;
+  top: 90px;
+  min-width: 340px;
+  max-width: 25%;
+}
+
+.market-input-label {
+  position: absolute;
+  left: 1%;
+  top: 130px;
+  min-width: 340px;
+  max-width: 25%;
+}
+#market-input {
+  position: absolute;
+  top: 155px;
+  min-width: 340px;
+  max-width: 25%;
+}
+
+.parameters {
+    position: absolute;
+    left: 1%;
+    top: 210px;
+    width: 340px;
+  }
+
+.hl-risk-input-label {
+    position: absolute;
+    left: 1%;
+    top: 260px;
+    width: 200px;
+  }
+  #hl-risk-input {
+    position: absolute;
+    left: 240px;
+    top: 255px;
+    width: 100px;
+  }
+
+.hl-corr-input-label {
+  position: absolute;
+  left: 1%;
+  top: 310px;
+  width: 200px;
+}
+#hl-corr-input {
+  position: absolute;
+  left: 240px;
+  top: 305px;
+  width: 100px;
+}
+
+.min-ret-hist-input-label {
+    position: absolute;
+    left: 1%;
+    top: 360px;
+    width: 200px;
+  }
+  #min-ret-hist-input {
+    position: absolute;
+    left: 240px;
+    top: 355px;
+    width: 100px;
+  }
+  
+
+
+.spec-hl-risk-input-label {
+    position: absolute;
+    left: 1%;
+    top: 410px;
+    width: 200px;
+  }
+  #spec-hl-risk-input {
+    position: absolute;
+    left: 240px;
+    top: 405px;
+    width: 100px;
+  }
+
+
+#calc-btn {
+  position: absolute;
+  top: 460px;
+  left: 1%;
+  min-width: 100px;
+  max-width: 19%;
+}

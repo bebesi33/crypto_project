@@ -9,25 +9,33 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from "chart.js";
 import { DEFAULT_BLUE } from "../Colors";
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 interface LineChartProps {
-  primary_data: Map<string, number>;
-  title_text: string;
-  primary_data_label: string;
-  x_axis_title: string;
-  y_axis_title: string;
+  primaryData: Map<string, number>;
+  titleText: string;
+  primaryDataLabel: string;
+  xAxisTitle: string;
+  yAxisTitle: string;
 } // end LineChartProps
 
 const LineChart: React.FC<LineChartProps> = ({
-  primary_data,
-  title_text,
-  primary_data_label,
-  x_axis_title,
-  y_axis_title,
+  primaryData: primary_data,
+  titleText: title_text,
+  primaryDataLabel: primary_data_label,
+  xAxisTitle: x_axis_title,
+  yAxisTitle: y_axis_title,
 }) => {
   console.log(typeof primary_data);
   const chartData = {

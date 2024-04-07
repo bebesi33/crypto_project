@@ -3,7 +3,6 @@ import "./ExplorerPage.css";
 import { API } from "../Api";
 import LineChart from "./charts/LineChart";
 import ReturnChart from "./charts/ReturnChart";
-import { getTextAlign } from "./Utilities";
 // https://dev.to/deboragaleano/how-to-handle-multiple-inputs-in-react-55el
 
 function ExplorerPage() {
@@ -65,30 +64,30 @@ function ExplorerPage() {
         <div className="form-group">
           <label
             htmlFor="ticker_input"
-            className="ticker_input-label"
-            style={{ textAlign: getTextAlign("left") }}
+            className="ticker-input-label"
+            style={{ textAlign: "left" }}
           >
             Enter a crypto symbol
           </label>
           <input
             type="ticker_input"
             className="form-control"
-            id="ticker_input"
+            id="ticker-input"
             // placeholder="BTC-USD"
             value={values.symbol}
             onChange={handleInputChange("symbol")}
           ></input>
           <label
-            htmlFor="half-life"
+            htmlFor="half-life-label"
             className="half-life-label"
-            style={{ textAlign: getTextAlign("left") }}
+            style={{ textAlign: "left" }}
           >
             Specify half-life parameter (in days)
           </label>
           <input
             type="ticker_input"
-            className="half-life-input"
-            id="half_life_input"
+            className="form-control"
+            id="half-life-input"
             // placeholder="30"
             value={values.halflife}
             onChange={handleInputChange("halflife")}
@@ -96,14 +95,14 @@ function ExplorerPage() {
           <label
             htmlFor="obs-number"
             className="obs-number-label"
-            style={{ textAlign: getTextAlign("left") }}
+            style={{ textAlign: "left" }}
           >
             Minimum number of observations for risk calculation (in days)
           </label>
           <input
             type="ticker_input"
-            className="obs-number-input"
-            id="obs_number_input"
+            className="form-control"
+            id="obs-number-input"
             // placeholder="30"
             value={values.min_obs}
             onChange={handleInputChange("min_obs")}
@@ -111,6 +110,7 @@ function ExplorerPage() {
           <button
             type="submit"
             className="btn btn-primary"
+            id="explore-btn"
             onClick={handleSubmit}
           >
             Explore
@@ -120,28 +120,28 @@ function ExplorerPage() {
       <div className="chart-container">
         {jsonData !== null && "raw_price" in jsonData && jsonData["ERROR_CODE"]!= "404" && (
           <LineChart
-            primary_data={jsonData["raw_price"]["close"]}
-            title_text={"Price data for " + jsonData["symbol"]}
-            primary_data_label={jsonData["symbol"]}
-            x_axis_title="Date"
-            y_axis_title="Close Price (USD)"
+            primaryData={jsonData["raw_price"]["close"]}
+            titleText={"Price data for " + jsonData["symbol"]}
+            primaryDataLabel={jsonData["symbol"]}
+            xAxisTitle="Date"
+            yAxisTitle="Close Price (USD)"
           />
         )}
         {jsonData !== null && "return_data" in jsonData && "ewma" in jsonData && (
           <ReturnChart
-            primary_data={jsonData["return_data"]["total_return"]}
-            primary_data_label="Total returns"
-            title_text={
+            primaryData={jsonData["return_data"]["total_return"]}
+            primaryDataLabel="Total returns"
+            titleText={
               "Risk estimates and total returns for " + jsonData["symbol"]
             }
-            x_axis_title="Date"
-            y_axis_title="Return and Std. dev. (0.01 = 1 pct)"
-            secondary_data={jsonData["ewma"]["ewma_std"]}
-            secondary_data_label="EWMA Std. Dev. Estimates"
+            xAxisTitle="Date"
+            yAxisTitle="Return and Std. dev. (0.01 = 1 pct)"
+            secondaryData={jsonData["ewma"]["ewma_std"]}
+            secondaryDataLabel="EWMA Std. Dev. Estimates"
           />
         )}
         {jsonData !== null && (
-          <div className={errorStyles[jsonData["ERROR_CODE"]]} role="alert" style={{ textAlign: getTextAlign("left") }}>
+          <div className={errorStyles[jsonData["ERROR_CODE"]]} role="alert" style={{ textAlign: "left" }}>
             {jsonData["log"]}
           </div>
         )}
