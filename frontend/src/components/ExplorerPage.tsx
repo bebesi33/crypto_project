@@ -70,7 +70,7 @@ function ExplorerPage() {
             Enter a crypto symbol
           </label>
           <input
-            type="ticker_input"
+            type="text"
             className="form-control"
             id="ticker-input"
             // placeholder="BTC-USD"
@@ -78,14 +78,14 @@ function ExplorerPage() {
             onChange={handleInputChange("symbol")}
           ></input>
           <label
-            htmlFor="half-life-label"
+            htmlFor="half-life-input"
             className="half-life-label"
             style={{ textAlign: "left" }}
           >
             Specify half-life parameter (in days)
           </label>
           <input
-            type="ticker_input"
+            type="number"
             className="form-control"
             id="half-life-input"
             // placeholder="30"
@@ -93,14 +93,14 @@ function ExplorerPage() {
             onChange={handleInputChange("halflife")}
           ></input>
           <label
-            htmlFor="obs-number"
+            htmlFor="obs-number-input"
             className="obs-number-label"
             style={{ textAlign: "left" }}
           >
             Minimum number of observations for risk calculation (in days)
           </label>
           <input
-            type="ticker_input"
+            type="number"
             className="form-control"
             id="obs-number-input"
             // placeholder="30"

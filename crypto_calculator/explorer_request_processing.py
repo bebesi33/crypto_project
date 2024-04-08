@@ -16,7 +16,7 @@ def get_close_data(symbol: str) -> pd.DataFrame:
     return df
 
 
-def get_return_data(symbol: str) -> pd.DataFrame:
+def get_total_return(symbol: str) -> pd.DataFrame:
     return_data = (
         Returns.objects.using("returns")
         .filter(symbol=symbol)

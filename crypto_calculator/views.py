@@ -8,7 +8,7 @@ from crypto_calculator.sample_risk_input import market_portfolio, portfolio_deta
 from crypto_calculator.explorer_request_processing import (
     decode_explorer_input,
     get_close_data,
-    get_return_data,
+    get_total_return,
 )
 from crypto_calculator.risk_calc_request_processing import risk_calc_request_full
 from factor_model.risk_calculations.simple_risk_calculation import (
@@ -39,10 +39,10 @@ def get_raw_price_data(request):
 
         if len(close_price) > 0:
             # handle return data and calculate ewma risk
-            returns = get_return_data(symbol=symbol)
+            returns = get_total_return(symbol=symbol)
             halflife = all_input.get("halflife")
             min_periods = all_input.get("min_obs")
-            print(all_input)
+            # TODO 4th level if, this is not pep8 compatible, needs restructuring later...
             if halflife is not None and min_periods is not None:
                 ewma_std = create_ewma_std_estimates(
                     returns, halflife=halflife, min_periods=min_periods
