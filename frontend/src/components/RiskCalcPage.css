@@ -116,14 +116,14 @@
   position: absolute;
   top: 35px;
   left: 360px;
-  width: 450px;
+  width: 400px;
   height: 400px;
 }
 
 #top-right-chart-container {
   position: absolute;
   top: 35px;
-  left: 850px;
-  width: 500px;
+  left: 780px;
+  width: 450px;
   height: 400px;
 }

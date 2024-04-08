@@ -194,7 +194,7 @@ def risk_calc_request_full(
     risk_metrics = dict(zip(risk_categories, risk_values))
 
     risk_metrics_extended = risk_metrics.copy()
-    risk_metrics_extended["Portfolio Beta with respect to benchmark"] = (
+    risk_metrics_extended["Portfolio Beta (vs benchmark)"] = (
         portfolio_beta * 100
     )
     risk_metrics_extended["Portfolio VaR (1-day, 95%, total space)"] = var95 * 100

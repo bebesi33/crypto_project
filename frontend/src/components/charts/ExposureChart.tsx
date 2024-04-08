@@ -8,6 +8,7 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { DEFAULT_BLUE, DEFAULT_BLUE_BACKGROUND, LIGHT_BLUE, LIGHT_BLUE_BACKGROUND, MEDIUM_BLUE, MEDIUM_BLUE_BACKGROUND } from "../Colors";
 
 ChartJS.register(
   CategoryScale,
@@ -34,10 +35,11 @@ const ExposureChart: React.FC<ExposureChartProps> = ({
   titleText,
 }) => {
   const options = {
+    maintainAspectRatio: false,
     indexAxis: "y" as const,
     elements: {
       bar: {
-        borderWidth: 2
+        borderWidth: 2,
       },
     },
     responsive: true,
@@ -53,6 +55,14 @@ const ExposureChart: React.FC<ExposureChartProps> = ({
         },
       },
     },
+    // scales: {
+    //   x: {
+    //     type: "linear" as const,
+    //     barPercentage: 0.9,
+    //     barThickness: 15,
+    //     maxBarThickness: 30
+    //   },
+    // },
   };
 
   const labels = Object.keys(primaryData["portfolio"]["exposure"]);
@@ -63,8 +73,8 @@ const ExposureChart: React.FC<ExposureChartProps> = ({
       {
         label: "portfolio",
         data: Object.values(primaryData["portfolio"]["exposure"]),
-        borderColor: "rgb(255, 99, 132)",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        borderColor: DEFAULT_BLUE,
+        backgroundColor: DEFAULT_BLUE_BACKGROUND,
       },
     ],
   };
@@ -74,8 +84,8 @@ const ExposureChart: React.FC<ExposureChartProps> = ({
     data.datasets.push({
       label: "benchmark",
       data: Object.values(primaryData["market"]["exposure"]),
-      borderColor: "rgb(0, 128, 0)",
-      backgroundColor: "rgba(0, 128, 0, 0.5)",
+      borderColor: LIGHT_BLUE,
+      backgroundColor: LIGHT_BLUE_BACKGROUND,
     });
   }
 
@@ -83,8 +93,8 @@ const ExposureChart: React.FC<ExposureChartProps> = ({
     data.datasets.push({
       label: "active",
       data: Object.values(primaryData["active"]["exposure"]),
-      borderColor: "rgb(0, 0, 255)",
-      backgroundColor: "rgba(0, 0, 255, 0.5)",
+      borderColor: MEDIUM_BLUE,
+      backgroundColor: MEDIUM_BLUE_BACKGROUND,
     });
   }
 
