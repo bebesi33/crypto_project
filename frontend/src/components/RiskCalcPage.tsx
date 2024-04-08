@@ -68,7 +68,7 @@ function RiskCalcPage() {
             </label>
           </strong>
           <input
-            type="cob-input"
+            type="date"
             className="form-control"
             id="cob-input"
             value={values.cob_date}
@@ -118,7 +118,7 @@ function RiskCalcPage() {
             Factor correlation half-life
           </label>
           <input
-            type="hl-corr-input"
+            type="number"
             className="form-control"
             id="hl-corr-input"
             value={values.correlation_hl}
@@ -134,7 +134,7 @@ function RiskCalcPage() {
             Factor risk half-life
           </label>
           <input
-            type="hl-risk-input"
+            type="number"
             className="form-control"
             id="hl-risk-input"
             value={values.factor_risk_hl}
@@ -150,7 +150,7 @@ function RiskCalcPage() {
             Min. return history length
           </label>
           <input
-            type="min-ret-hist-input"
+            type="number"
             className="form-control"
             id="min-ret-hist-input"
             value={values.min_ret_hist}
@@ -166,7 +166,7 @@ function RiskCalcPage() {
             Specific risk half-life
           </label>
           <input
-            type="spec-hl-risk-input"
+            type="number"
             className="form-control"
             id="spec-hl-risk-input"
             value={values.specific_risk_hl}
