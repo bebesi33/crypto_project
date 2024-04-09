@@ -88,6 +88,7 @@ function RiskCalcPage() {
               Upload portfolio input
             </label>
           </strong>
+
           <input
             className="form-control"
             id="portfolio-input"
@@ -116,22 +117,6 @@ function RiskCalcPage() {
           </strong>
 
           <label
-            htmlFor="hl-corr-input"
-            className="hl-corr-input-label"
-            style={{ textAlign: "left" }}
-          >
-            Factor correlation half-life
-          </label>
-          <input
-            type="number"
-            className="form-control"
-            id="hl-corr-input"
-            value={values.correlation_hl}
-            onChange={handleInputChange("correlation_hl")}
-            style={{ direction: "rtl" }}
-          ></input>
-
-          <label
             htmlFor="hl-risk-input"
             className="hl-risk-input-label"
             style={{ textAlign: "left" }}
@@ -144,6 +129,22 @@ function RiskCalcPage() {
             id="hl-risk-input"
             value={values.factor_risk_hl}
             onChange={handleInputChange("factor_risk_hl")}
+            style={{ direction: "rtl" }}
+          ></input>
+
+          <label
+            htmlFor="hl-corr-input"
+            className="hl-corr-input-label"
+            style={{ textAlign: "left" }}
+          >
+            Factor correlation half-life
+          </label>
+          <input
+            type="number"
+            className="form-control"
+            id="hl-corr-input"
+            value={values.correlation_hl}
+            onChange={handleInputChange("correlation_hl")}
             style={{ direction: "rtl" }}
           ></input>
 
