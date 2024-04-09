@@ -8,6 +8,7 @@ from crypto_calculator.sample_risk_input import market_portfolio, portfolio_deta
 from crypto_calculator.explorer_request_processing import (
     decode_explorer_input,
     get_close_data,
+    get_ewma_estimates,
     get_total_return,
 )
 from crypto_calculator.risk_calc_request_processing import risk_calc_request_full
@@ -24,7 +25,9 @@ from crypto_calculator.sample_risk_input import (
 @csrf_exempt
 def get_raw_price_data(request):
     if request.method == "POST":
+
         all_input, log_elements, override_code = decode_explorer_input(request)
+
         # handle raw price data
         symbol = all_input.get("symbol")
         if symbol is not None:
@@ -32,38 +35,24 @@ def get_raw_price_data(request):
         else:
             close_price = pd.DataFrame()
             log_elements.append(
-                "The symbol is not recognized, no data is queries from the database!"
+                "The symbol is not recognized, no data is queried from the database!"
             )
-
         json_data = {"raw_price": close_price.to_dict(), "symbol": symbol}
 
         if len(close_price) > 0:
-            # handle return data and calculate ewma risk
+            # if close price exists create ewma estimates and returns
             returns = get_total_return(symbol=symbol)
             halflife = all_input.get("halflife")
             min_periods = all_input.get("min_obs")
-            # TODO 4th level if, this is not pep8 compatible, needs restructuring later...
-            if halflife is not None and min_periods is not None:
-                ewma_std = create_ewma_std_estimates(
-                    returns, halflife=halflife, min_periods=min_periods
-                )
-                ewma_std.rename(columns={"total_return": "ewma_std"}, inplace=True)
-                # align ouput length
-                returns = returns[returns.index.isin(ewma_std.index)].copy()
-                json_data["return_data"] = returns.to_dict()
-                json_data["ewma"] = ewma_std.to_dict()
-                json_data["ERROR_CODE"] = 1 if override_code > 0 else 0
-            else:
-                log_elements.append(
-                    "Either the halflife or the minimum number of observations is incorrect, no risk estimate calculated!"
-                )
-                json_data["ERROR_CODE"] = 1
-
-            json_data["log"] = " ".join(log_elements)
+            get_ewma_estimates(
+                halflife, min_periods, override_code, json_data, log_elements, returns
+            )
         else:
+            # if no close price, throw and error
             json_data["ERROR_CODE"] = 404
             log_elements.append(f"No price data for {symbol}!")
-            json_data["log"] = " ".join(log_elements)
+
+        json_data["log"] = " ".join(log_elements)
         return JsonResponse(json_data)
     # default return
     return {"ERROR_CODE": 404, "log": "404 Not Found"}
