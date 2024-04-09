@@ -7,6 +7,7 @@ import ReturnChart from "./charts/ReturnChart";
 
 function ExplorerPage() {
   const [jsonData, setJsonData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const errorStyles = {
     "0": "alert alert-info",
@@ -44,18 +45,22 @@ function ExplorerPage() {
           min_obs: values["min_obs"],
         }),
       });
+      setIsLoading(true);
       if (response.ok) {
         const jsonData = await response.json();
         console.log("Data received successfully!");
         console.log(jsonData);
         setJsonData(jsonData);
+        setIsLoading(false);
       } else {
         console.error("Error sending data to the backend.");
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("An error occurred:", error);
+      setIsLoading(false);
     }
-  };
+  }; // end handleSubmit
 
   return (
     <div className="parent-container">
@@ -63,7 +68,7 @@ function ExplorerPage() {
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label
-            htmlFor="ticker_input"
+            htmlFor="ticker-input"
             className="ticker-input-label"
             style={{ textAlign: "left" }}
           >
@@ -73,7 +78,6 @@ function ExplorerPage() {
             type="text"
             className="form-control"
             id="ticker-input"
-            // placeholder="BTC-USD"
             value={values.symbol}
             onChange={handleInputChange("symbol")}
           ></input>
@@ -88,7 +92,6 @@ function ExplorerPage() {
             type="number"
             className="form-control"
             id="half-life-input"
-            // placeholder="30"
             value={values.halflife}
             onChange={handleInputChange("halflife")}
           ></input>
@@ -103,7 +106,6 @@ function ExplorerPage() {
             type="number"
             className="form-control"
             id="obs-number-input"
-            // placeholder="30"
             value={values.min_obs}
             onChange={handleInputChange("min_obs")}
           ></input>
@@ -112,39 +114,55 @@ function ExplorerPage() {
             className="btn btn-primary"
             id="explore-btn"
             onClick={handleSubmit}
+            disabled={isLoading}
           >
+            {isLoading && (
+              <span
+                className="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            )}
             Explore
           </button>
         </div>
       </form>
       <div className="chart-container">
-        {jsonData !== null && "raw_price" in jsonData && jsonData["ERROR_CODE"]!= "404" && (
-          <LineChart
-            primaryData={jsonData["raw_price"]["close"]}
-            titleText={"Price data for " + jsonData["symbol"]}
-            primaryDataLabel={jsonData["symbol"]}
-            xAxisTitle="Date"
-            yAxisTitle="Close Price (USD)"
-          />
-        )}
-        {jsonData !== null && "return_data" in jsonData && "ewma" in jsonData && (
-          <ReturnChart
-            primaryData={jsonData["return_data"]["total_return"]}
-            primaryDataLabel="Total returns"
-            titleText={
-              "Risk estimates and total returns for " + jsonData["symbol"]
-            }
-            xAxisTitle="Date"
-            yAxisTitle="Return and Std. dev. (0.01 = 1 pct)"
-            secondaryData={jsonData["ewma"]["ewma_std"]}
-            secondaryDataLabel="EWMA Std. Dev. Estimates"
-          />
-        )}
         {jsonData !== null && (
-          <div className={errorStyles[jsonData["ERROR_CODE"]]} role="alert" style={{ textAlign: "left" }}>
+          <div
+            className={errorStyles[jsonData["ERROR_CODE"]]}
+            role="alert"
+            style={{ textAlign: "left" }}
+          >
             {jsonData["log"]}
           </div>
         )}
+        {jsonData !== null &&
+          "raw_price" in jsonData &&
+          jsonData["ERROR_CODE"] != "404" && (
+            <LineChart
+              primaryData={jsonData["raw_price"]["close"]}
+              titleText={"Price data for " + jsonData["symbol"]}
+              primaryDataLabel={jsonData["symbol"]}
+              xAxisTitle="Date"
+              yAxisTitle="Close Price (USD)"
+            />
+          )}
+        {jsonData !== null &&
+          "return_data" in jsonData &&
+          "ewma" in jsonData && (
+            <ReturnChart
+              primaryData={jsonData["return_data"]["total_return"]}
+              primaryDataLabel="Total returns"
+              titleText={
+                "Risk estimates and total returns for " + jsonData["symbol"]
+              }
+              xAxisTitle="Date"
+              yAxisTitle="Return and Std. dev. (0.01 = 1 pct)"
+              secondaryData={jsonData["ewma"]["ewma_std"]}
+              secondaryDataLabel="EWMA Std. Dev. Estimates"
+            />
+          )}
       </div>
     </div>
   );

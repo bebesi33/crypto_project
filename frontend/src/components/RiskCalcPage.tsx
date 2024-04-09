@@ -6,6 +6,7 @@ import ExposureChart from "./charts/ExposureChart";
 
 function RiskCalcPage() {
   const [jsonData, setJsonData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const initialValues = {
     cob_date: "2024-03-03",
@@ -40,16 +41,20 @@ function RiskCalcPage() {
           }),
         }
       );
+      setIsLoading(true);
       if (response.ok) {
         const jsonData = await response.json();
         console.log("Data received successfully!");
         console.log(jsonData);
         setJsonData(jsonData);
+        setIsLoading(false);
       } else {
         console.error("Error sending data to the backend.");
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("An error occurred:", error);
+      setIsLoading(false);
     }
   };
 
@@ -179,7 +184,15 @@ function RiskCalcPage() {
             className="btn btn-primary"
             id="calc-btn"
             onClick={handleSubmit}
+            disabled={isLoading}
           >
+            {isLoading && (
+              <span
+                className="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+            )}
             Calculate
           </button>
         </div>
