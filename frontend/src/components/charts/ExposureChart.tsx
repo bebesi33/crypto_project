@@ -8,7 +8,7 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { DEFAULT_BLUE, DEFAULT_BLUE_BACKGROUND, LIGHT_BLUE, LIGHT_BLUE_BACKGROUND, MEDIUM_BLUE, MEDIUM_BLUE_BACKGROUND } from "../Colors";
+import { CHART_BASE, CHART_BASE_BACKGROUND, CHART_LIGHT, CHART_LIGHT_BACKGROUND, CHART_DARK, CHART_DARK_BACKGROUND } from "../Colors";
 
 ChartJS.register(
   CategoryScale,
@@ -73,8 +73,8 @@ const ExposureChart: React.FC<ExposureChartProps> = ({
       {
         label: "portfolio",
         data: Object.values(primaryData["portfolio"]["exposure"]),
-        borderColor: DEFAULT_BLUE,
-        backgroundColor: DEFAULT_BLUE_BACKGROUND,
+        borderColor: CHART_BASE,
+        backgroundColor: CHART_BASE_BACKGROUND,
       },
     ],
   };
@@ -84,8 +84,8 @@ const ExposureChart: React.FC<ExposureChartProps> = ({
     data.datasets.push({
       label: "benchmark",
       data: Object.values(primaryData["market"]["exposure"]),
-      borderColor: LIGHT_BLUE,
-      backgroundColor: LIGHT_BLUE_BACKGROUND,
+      borderColor: CHART_LIGHT,
+      backgroundColor: CHART_LIGHT_BACKGROUND,
     });
   }
 
@@ -93,8 +93,8 @@ const ExposureChart: React.FC<ExposureChartProps> = ({
     data.datasets.push({
       label: "active",
       data: Object.values(primaryData["active"]["exposure"]),
-      borderColor: MEDIUM_BLUE,
-      backgroundColor: MEDIUM_BLUE_BACKGROUND,
+      borderColor: CHART_DARK,
+      backgroundColor: CHART_DARK_BACKGROUND,
     });
   }
 

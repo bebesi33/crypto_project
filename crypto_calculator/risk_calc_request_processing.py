@@ -63,7 +63,6 @@ def risk_calc_request_full(
     market_portfolio: Dict[str, float],
     risk_calculation_parameters: Dict,
 ):
-    # TODO: change the sample params to request input here
     # Step 1: cob_date and basic queries
     print("risk_calc_request_full - STARTED")
     cob_date = risk_calculation_parameters["date"]

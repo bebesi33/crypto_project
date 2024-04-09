@@ -11,7 +11,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { DEFAULT_BLUE, LIGHT_BLUE } from "../Colors";
+import { CHART_BASE, CHART_LIGHT } from "../Colors";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -51,14 +51,14 @@ const ReturnChart: React.FC<LineChartProps> = ({
         pointRadius: 2,
         lineThickness: 0,
         borderWidth: 0,
-        borderColor: LIGHT_BLUE,
+        borderColor: CHART_LIGHT,
         fill: false,
       },
       {
         label: secondaryDataLabel,
         data: Array.from(Object.values(secondaryData)),
         pointRadius: 0,
-        borderColor: DEFAULT_BLUE,
+        borderColor: CHART_BASE,
         fill: false,
       },
     ],
