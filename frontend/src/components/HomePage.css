@@ -1,0 +1,9 @@
+.parent-container {
+  position: relative;
+}
+.text-nowrap {
+  max-width: 90%;
+}
+#key-features{
+    width: 900px;
+}

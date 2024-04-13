@@ -108,13 +108,12 @@ function RiskCalcPage() {
           <input className="form-control" id="market-input" type="file"></input>
 
           <strong>
-            <label
-              htmlFor="parameters"
+            <h6
               className="parameters"
               style={{ textAlign: "left" }}
             >
               Risk calculation parameters (all in days)
-            </label>
+            </h6>
           </strong>
 
           <label
