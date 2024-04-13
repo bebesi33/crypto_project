@@ -87,6 +87,7 @@ def calculate_spec_risk_mctr(
         port_total = sum(portfolio_details.values())
     else:
         port_total = 1
+
     spec_risk_mctr = {}
     spec_risk_var_contrib = {}
     for ticker in portfolio_details.keys():
@@ -98,12 +99,14 @@ def calculate_spec_risk_mctr(
             weight_coverage += current_weight
 
     spec_risk_mctr = pd.Series(spec_risk_mctr)
-    spec_risk_mctr = spec_risk_mctr / weight_coverage
     spec_risk_var_contrib = pd.Series(spec_risk_var_contrib)
     if is_total_space:
+        spec_risk_mctr = spec_risk_mctr / weight_coverage
         spec_risk_var_contrib = spec_risk_var_contrib / (weight_coverage**2)
     else:
         spec_risk_var_contrib = spec_risk_var_contrib
+        spec_risk_mctr = spec_risk_mctr
+
     return spec_risk_mctr, spec_risk_var_contrib
 
 
@@ -175,3 +178,55 @@ def get_specific_risk_beta(
                 (port_w / port_total) * (spec_risk_temp**2) * (market_w / market_total)
             )
     return spec_risk_beta
+
+
+def generate_mctr_chart_input(
+    portolios: Dict[str, Dict[str, float]],
+    factor_mctrs: Dict[str, pd.Series],
+    spec_risk_mctrs: Dict[str, pd.Series],
+) -> Dict[str, Dict[str, float]]:
+    """
+    Assembles and orders risk metrics (MCTRs) for different portfolios.
+
+    Args:
+        portolios (Dict[str, Dict[str, float]]): A dictionary containing portfolio names as keys
+            and corresponding factor weights as inner dictionaries.
+        factor_mctrs (Dict[str, pd.Series]): A dictionary with portfolio names as keys
+            and factor MCTRs (risk metrics) as inner pandas Series.
+        spec_risk_mctrs (Dict[str, pd.Series]): A dictionary with portfolio names as keys
+            and specific risk MCTRs as inner pandas Series.
+
+    Returns:
+        Dict[str, Dict[str, float]]: A dictionary containing ordered MCTRs for each portfolio,
+        including relevant factors and zero values for missing factors.
+    """
+    # assemble mctr_data, first all keys
+    all_mctr = {}
+    for portfolio in portolios.keys():
+        all_mctr[portfolio] = factor_mctrs[portfolio].append(spec_risk_mctrs[portfolio])
+
+    # top 5 spec risk mctr (for portfolio) and if exists active risk are presented
+    port_largest_contrib = set(spec_risk_mctrs["portfolio"].abs().nlargest(5).index)
+    if "active" in portolios.keys():
+        active_largest_contrib = set(spec_risk_mctrs["active"].abs().nlargest(5).index)
+        port_largest_contrib = port_largest_contrib.union(active_largest_contrib)
+    relevant_mctr_keys = list(factor_mctrs["portfolio"].keys()) + list(
+        port_largest_contrib
+    )
+
+    all_mctr_ordered = {}
+    for portfolio in portolios.keys():
+        all_mctr[portfolio] = {
+            key: value
+            for key, value in all_mctr[portfolio].items()
+            if key in relevant_mctr_keys
+        }
+
+    main_port = "active" if "active" in portolios.keys() else "portfolio"
+    for portfolio in portolios.keys():
+        all_mctr_ordered[portfolio] = {}
+        for key in all_mctr[main_port].keys():
+            all_mctr_ordered[portfolio][key] = (
+                all_mctr[portfolio][key] if key in all_mctr[portfolio].keys() else 0
+            )
+    return all_mctr_ordered

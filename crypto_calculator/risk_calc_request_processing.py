@@ -10,6 +10,7 @@ from factor_model.risk_calculations.factor_covariance import (
 )
 from factor_model.risk_calculations.risk_attribution import (
     generate_active_space_portfolio,
+    generate_mctr_chart_input,
 )
 from factor_model.risk_calculations.risk_attribution import (
     calculate_spec_risk_mctr,
@@ -193,9 +194,7 @@ def risk_calc_request_full(
     risk_metrics = dict(zip(risk_categories, risk_values))
 
     risk_metrics_extended = risk_metrics.copy()
-    risk_metrics_extended["Portfolio Beta (vs benchmark)"] = (
-        portfolio_beta * 100
-    )
+    risk_metrics_extended["Portfolio Beta (vs benchmark)"] = portfolio_beta * 100
     risk_metrics_extended["Portfolio VaR (1-day, 95%, total space)"] = var95 * 100
     risk_metrics_extended["Portfolio ES (1-day, 95%, total space)"] = es95 * 100
     risk_metrics_extended["Portfolio VaR (1-day, 99%, total space)"] = var99 * 100
@@ -207,6 +206,12 @@ def risk_calc_request_full(
     for portfolio in portolios.keys():
         exposures[portfolio] = port_exposures[portfolio].to_dict()
 
+    mctr_output = generate_mctr_chart_input(portolios, factor_mctrs, spec_risk_mctrs)
+
     print("Step 5: output assembly - READY")
 
-    return {"risk_metrics": risk_metrics_extended, "exposures": exposures}
+    return {
+        "risk_metrics": risk_metrics_extended,
+        "exposures": exposures,
+        "mctr": mctr_output,
+    }
