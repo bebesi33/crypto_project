@@ -55,14 +55,6 @@ const ExposureChart: React.FC<ExposureChartProps> = ({
         },
       },
     },
-    // scales: {
-    //   x: {
-    //     type: "linear" as const,
-    //     barPercentage: 0.9,
-    //     barThickness: 15,
-    //     maxBarThickness: 30
-    //   },
-    // },
   };
 
   const labels = Object.keys(primaryData["portfolio"]["exposure"]);

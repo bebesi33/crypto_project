@@ -3,6 +3,7 @@ import { API } from "../Api";
 import "./RiskCalcPage.css";
 import SimpleTable from "./tables/SimpleTable";
 import ExposureChart from "./charts/ExposureChart";
+import MarginalContribChart from "./charts/MarginalContribChart";
 
 function RiskCalcPage() {
   const [jsonData, setJsonData] = useState(null);
@@ -213,6 +214,14 @@ function RiskCalcPage() {
           <ExposureChart
             primaryData={jsonData["exposures"]}
             titleText="Exposure breakdown"
+          />
+        )}
+      </div>
+      <div className="chart-container" id="bot-first-chart-container">
+      {jsonData !== null && "mctr" in jsonData && (
+          <MarginalContribChart
+            primaryData={jsonData["mctr"]}
+            titleText="Marginal contribution to risk breakdown"
           />
         )}
       </div>

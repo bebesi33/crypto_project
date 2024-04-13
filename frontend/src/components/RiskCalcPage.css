@@ -117,7 +117,7 @@
   top: 35px;
   left: 360px;
   width: 400px;
-  height: 400px;
+  max-height: 600px;
 }
 
 #top-right-chart-container {
@@ -127,3 +127,11 @@
   width: 450px;
   height: 400px;
 }
+#bot-first-chart-container {
+  position: absolute;
+  top: 635px;
+  left: 360px;
+  height: 400px;
+  max-width: 850px;
+}
+
