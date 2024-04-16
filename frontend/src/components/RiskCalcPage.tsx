@@ -29,6 +29,7 @@ function RiskCalcPage() {
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     try {
+      setIsLoading(true);
       const response = await fetch(
         API + "crypto/api/get_risk_calculation_output",
         {
@@ -42,7 +43,6 @@ function RiskCalcPage() {
           }),
         }
       );
-      setIsLoading(true);
       if (response.ok) {
         const jsonData = await response.json();
         console.log("Data received successfully!");

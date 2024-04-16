@@ -13,5 +13,12 @@
 .row {
   position: absolute;
   width: 100%;
-  top: 450px;
+  top: 500px;
+}
+.card-body{
+  width:300px;
+  height: 250px;
+}
+.card-text{
+  height: 120px;
 }

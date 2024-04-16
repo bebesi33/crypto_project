@@ -25,7 +25,7 @@ function MainNavbar() {
               Home
             </Nav.Link>
             <Nav.Link href="#risk_calc" as={Link} to="/risk_calc">
-              Risk Calculation
+              Risk Calculator
             </Nav.Link>
             <Nav.Link href="#explorer" as={Link} to="/explorer">
               Explorer

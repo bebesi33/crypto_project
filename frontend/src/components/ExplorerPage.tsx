@@ -33,6 +33,7 @@ function ExplorerPage() {
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     try {
+      setIsLoading(true);
       const response = await fetch(API + "crypto/api/get_raw_price_data", {
         method: "POST",
         headers: {
@@ -45,7 +46,6 @@ function ExplorerPage() {
           min_obs: values["min_obs"],
         }),
       });
-      setIsLoading(true);
       if (response.ok) {
         const jsonData = await response.json();
         console.log("Data received successfully!");
