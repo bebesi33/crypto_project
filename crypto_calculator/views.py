@@ -11,7 +11,10 @@ from crypto_calculator.explorer_request_processing import (
     get_ewma_estimates,
     get_total_return,
 )
-from crypto_calculator.risk_calc_request_processing import risk_calc_request_full
+from crypto_calculator.risk_calc_request_processing import (
+    decode_risk_calc_input,
+    risk_calc_request_full,
+)
 from factor_model.risk_calculations.simple_risk_calculation import (
     create_ewma_std_estimates,
 )
@@ -60,7 +63,8 @@ def get_raw_price_data(request):
 
 @csrf_exempt
 def get_risk_calculation_output(request):
-    print(request.method)
+    processed_input, log_elements, override_code = decode_risk_calc_input(request)
+    print(log_elements)
     json_data = {}
     if request.method == "POST":
         print("start risk_calc_request_full")

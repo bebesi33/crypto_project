@@ -40,6 +40,10 @@ function RiskCalcPage() {
           credentials: "include",
           body: JSON.stringify({
             cob_date: values["cob_date"],
+            correlation_hl: values["correlation_hl"],
+            factor_risk_hl: values["factor_risk_hl"],
+            specific_risk_hl: values["specific_risk_hl"],
+            min_ret_hist: values["min_ret_hist"],
           }),
         }
       );

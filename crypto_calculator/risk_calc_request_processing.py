@@ -1,12 +1,17 @@
-from typing import List, Dict
+import json
+from typing import List, Dict, Tuple
 from crypto_calculator.models import Exposures, FactorReturns, SpecificReturns
 import pandas as pd
 import numpy as np
+from factor_model.risk_calculations import HALF_LIFE_DEFAULT, MIN_OBS_DEFAULT
 from factor_model.risk_calculations.core_universe_portfolio import (
     generate_market_portfolio,
 )
 from factor_model.risk_calculations.factor_covariance import (
     generate_factor_covariance_matrix,
+)
+from factor_model.risk_calculations.parameter_processing import (
+    check_input_param_correctness,
 )
 from factor_model.risk_calculations.risk_attribution import (
     generate_active_space_portfolio,
@@ -215,3 +220,35 @@ def risk_calc_request_full(
         "exposures": exposures,
         "mctr": mctr_output,
     }
+
+
+def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
+    all_input = json.loads(request.body.decode("utf-8"))
+    print(all_input)
+    log_elements = list()
+    processed_input = {}
+
+    override_code = 0  # we set it to one if any override occurs
+    for parameter_name, parameter_nickname in zip(
+        ["correlation_hl", "factor_risk_hl", "specific_risk_hl"],
+        ["correlation half-life", "factor risk half-life", "specific risk half-life"],
+    ):
+        override_code += check_input_param_correctness(
+            parameter_name=parameter_name,
+            parameter_default=HALF_LIFE_DEFAULT,
+            parameter_nickname=parameter_nickname,
+            all_input=all_input,
+            log_elements=log_elements,
+            processed_input=processed_input,
+        )
+
+    override_code += check_input_param_correctness(
+        parameter_name="min_ret_hist",
+        parameter_default=MIN_OBS_DEFAULT,
+        parameter_nickname="minimum number of observations for risk calculation",
+        all_input=all_input,
+        log_elements=log_elements,
+        processed_input=processed_input,
+    )
+
+    return processed_input, log_elements, override_code
