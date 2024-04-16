@@ -10,41 +10,41 @@ function HomePage() {
         <h3>Welcome to László's Risk Calculation Tool!</h3>
         <p style={{ textAlign: "left" }}>
           This project serves as a fundamental component of my Bachelor of
-          Science thesis in Computer Science. As a culmination of my academic
+          Science thesis in Computer Science. <br/>As a culmination of my academic
           journey, this tool represents my dedication to exploring the
           intricacies of risk assessment and financial modeling within the realm
           of computer science.
         </p>
-        <h4 style={{ textAlign: "left" }}>Key Features:</h4>
+        <h5 style={{ textAlign: "left" }}>Key Features:</h5>
         <ul style={{ textAlign: "left" }} id="key-features">
           <li>
             <strong>Accessibility:</strong> All the data utilized within this
-            tool is sourced from publicly available information. Transparency
+            tool is sourced from publicly available information. <br/> Transparency
             and accountability are central tenets of this project.
           </li>
           <li>
             <strong>Individual Endeavor:</strong> I developed this tool
             independently, leveraging my skills and knowledge gained throughout
-            my academic studies to create a robust and user-friendly platform
+            my academic studies <br/> to create a robust and user-friendly platform
             for risk calculation.
           </li>
           <li>
             <strong>Versatility:</strong> The tool comprises two primary
-            functions: a risk calculator and an explorer. These features are
+            functions: a risk calculator and an explorer. <br/>These features are
             designed to cater to diverse needs within the realm of risk
             assessment and financial analysis.
           </li>
           <li>
             <strong>Support and Feedback:</strong> Your input is invaluable to
             me. Should you encounter any errors or have suggestions for
-            improvement, please do not hesitate to reach out to me via the
+            improvement, please do not hesitate to <br/> reach out to me via the
             "Credits & Contacts" page.
           </li>
         </ul>
         <p style={{ textAlign: "left" }}>
           Thank you for utilizing this tool. I hope it proves to be a valuable
           asset in your endeavors within the field of risk management and
-          financial analysis. Feel free to explore, analyze, and innovate with
+          financial analysis. <br/>Feel free to explore, analyze, and innovate with
           confidence.
         </p>
         <p style={{ textAlign: "left" }}>Best regards,</p>
