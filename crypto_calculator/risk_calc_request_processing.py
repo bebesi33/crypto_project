@@ -249,6 +249,7 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
         all_input=all_input,
         log_elements=log_elements,
         processed_input=processed_input,
+        integer_conversion=True,
     )
 
     return processed_input, log_elements, override_code
