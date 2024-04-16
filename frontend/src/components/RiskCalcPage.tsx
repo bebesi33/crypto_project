@@ -15,6 +15,8 @@ function RiskCalcPage() {
     factor_risk_hl: "30",
     specific_risk_hl: "30",
     min_ret_hist: "20",
+    portfolio: null,
+    benchmark: null,
   };
   const [values, setValues] = useState(initialValues);
 
@@ -44,6 +46,7 @@ function RiskCalcPage() {
             factor_risk_hl: values["factor_risk_hl"],
             specific_risk_hl: values["specific_risk_hl"],
             min_ret_hist: values["min_ret_hist"],
+            file_input: "fileReader.result",
           }),
         }
       );
@@ -98,6 +101,8 @@ function RiskCalcPage() {
             className="form-control"
             id="portfolio-input"
             type="file"
+            accept=".csv"
+            onChange={handleInputChange("portfolio")}
           ></input>
 
           <strong>
@@ -109,13 +114,16 @@ function RiskCalcPage() {
               Upload benchmark (portfolio) input
             </label>
           </strong>
-          <input className="form-control" id="market-input" type="file"></input>
+          <input
+            className="form-control"
+            id="market-input"
+            type="file"
+            accept=".csv"
+            onChange={handleInputChange("benchmark")}
+          ></input>
 
           <strong>
-            <h6
-              className="parameters"
-              style={{ textAlign: "left" }}
-            >
+            <h6 className="parameters" style={{ textAlign: "left" }}>
               Risk calculation parameters (all in days)
             </h6>
           </strong>
@@ -221,7 +229,7 @@ function RiskCalcPage() {
         )}
       </div>
       <div className="chart-container" id="bot-first-chart-container">
-      {jsonData !== null && "mctr" in jsonData && (
+        {jsonData !== null && "mctr" in jsonData && (
           <MarginalContribChart
             primaryData={jsonData["mctr"]}
             titleText="Marginal contribution to risk breakdown"

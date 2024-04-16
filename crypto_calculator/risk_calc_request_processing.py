@@ -224,6 +224,7 @@ def risk_calc_request_full(
 
 def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
     all_input = json.loads(request.body.decode("utf-8"))
+    print(len(all_input["file_input"]))
     print(all_input)
     log_elements = list()
     processed_input = {}
