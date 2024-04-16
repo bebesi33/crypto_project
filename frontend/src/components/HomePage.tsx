@@ -9,7 +9,7 @@ function HomePage() {
     <div className="parent-container">
       <link href="/HomePage.css"></link>
       <div className="text-nowrap">
-        <h3>Welcome to László's Cryptocurrency Risk Calculation Tool!</h3>
+        <h4>Welcome to László's Cryptocurrency Risk Calculation Tool!</h4>
         <p style={{ textAlign: "left" }}>
           This project serves as a fundamental component of my Bachelor of
           Science thesis in Computer Science. <br />
@@ -44,9 +44,8 @@ function HomePage() {
           </li>
         </ul>
         <p style={{ textAlign: "left" }}>
-          Thank you for utilizing this tool. I hope it proves to be a valuable
-          asset in your endeavors within the field of risk management and
-          financial analysis. <br />
+          Thank you for utilizing this tool. I hope it can deliver valuable
+          results to you, when analysing cryptocurrency portfolios. <br />
           Feel free to explore, analyze, and innovate with confidence.
         </p>
         <p style={{ textAlign: "left" }}>Best regards,</p>
@@ -66,8 +65,7 @@ function HomePage() {
               <Card.Title>Risk Calculator</Card.Title>
               <Card.Text className="card-text">
                 Conduct a comprehensive assessment of the risk inherent in your
-                portfolio and subsequently compare its risk profile against that
-                of a benchmark.
+                portfolio and compare its risk profile against a benchmark.
               </Card.Text>
               <Link to="/risk_calc" className="btn btn-primary">
                 Go to Risk Calculator

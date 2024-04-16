@@ -16,9 +16,17 @@
   top: 500px;
 }
 .card-body{
-  width:300px;
-  height: 250px;
+  width: 300px;
+  height: 210px;
 }
 .card-text{
-  height: 120px;
+  height: 90px;
+}
+#card-img-explorer {
+  position: absolute;
+  left: 330px;
+}
+#card-img-risk-calc {
+  position: absolute;
+  left: 0px;
 }
