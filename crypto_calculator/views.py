@@ -10,6 +10,7 @@ from crypto_calculator.explorer_request_processing import (
     get_close_data,
     get_ewma_estimates,
     get_total_return,
+    query_explorer_factor_return_data,
 )
 from crypto_calculator.risk_calc_request_processing import (
     decode_risk_calc_input,
@@ -29,22 +30,33 @@ from crypto_calculator.sample_risk_input import (
 def get_raw_price_data(request):
     if request.method == "POST":
 
-        all_input, log_elements, override_code = decode_explorer_input(request)
+        all_input, log_elements, override_code, is_factor = decode_explorer_input(
+            request
+        )
 
-        # handle raw price data
+        # handle raw price data and identify styles
         symbol = all_input.get("symbol")
-        if symbol is not None:
+        if symbol is not None and not is_factor:
             close_price = get_close_data(symbol=symbol)
+            log_elements.append(
+                "Please note that for symbols (coins) the total return is presented."
+            )
+        elif symbol is not None and is_factor:
+            close_price = query_explorer_factor_return_data(style_name=symbol.lower())
+            log_elements.append(
+                "Please note that for style factors a cumulative return time series is presented as price data. "
+                "This time series starts from 1 USD at the start of the estimation horizon."
+            )
         else:
             close_price = pd.DataFrame()
             log_elements.append(
                 "The symbol is not recognized, no data is queried from the database!"
             )
-        json_data = {"raw_price": close_price.to_dict(), "symbol": symbol}
+        json_data = {"raw_price": close_price.to_dict(), "symbol": symbol.upper()}
 
         if len(close_price) > 0:
             # if close price exists create ewma estimates and returns
-            returns = get_total_return(symbol=symbol)
+            returns = get_total_return(symbol, close_price, is_factor)
             halflife = all_input.get("halflife")
             min_periods = all_input.get("min_obs")
             get_ewma_estimates(

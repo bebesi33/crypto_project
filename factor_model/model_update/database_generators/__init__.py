@@ -11,3 +11,11 @@ EXPOSURE_NON_STYLE_FIELDS = [
     "transformed_market_cap",
     "date"
 ]
+RECOGNIZED_STYLES = [
+    "market",
+    "momentum",
+    "new_coin",
+    "reversal",
+    "size",
+    "volume"
+]

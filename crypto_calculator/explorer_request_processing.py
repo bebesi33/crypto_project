@@ -1,8 +1,9 @@
 import json
 from typing import Dict, List, Tuple
-from crypto_calculator.models import RawPriceData, Returns
+from crypto_calculator.models import FactorReturns, RawPriceData, Returns
 import pandas as pd
 
+from factor_model.model_update.database_generators import RECOGNIZED_STYLES
 from factor_model.risk_calculations import HALF_LIFE_DEFAULT, MIN_OBS_DEFAULT
 from factor_model.risk_calculations.parameter_processing import (
     check_input_param_correctness,
@@ -21,26 +22,52 @@ def get_close_data(symbol: str) -> pd.DataFrame:
     return df
 
 
-def get_total_return(symbol: str) -> pd.DataFrame:
-    return_data = (
-        Returns.objects.using("returns")
-        .filter(symbol=symbol)
-        .values("total_return", "date")
+def get_total_return(symbol: str, close_price: pd.DataFrame=None, is_factor: bool=False) -> pd.DataFrame:
+    if is_factor:
+        return close_price[["total_return"]]
+    else:
+        # total returns on symbols were subject to cleaning,
+        # hence an additional query is needed
+        return_data = (
+            Returns.objects.using("returns")
+            .filter(symbol=symbol)
+            .values("total_return", "date")
+        )
+        df = pd.DataFrame(list(return_data))
+        df["date"] = df["date"].apply(lambda x: x.strftime("%Y-%m-%d"))
+        df.set_index("date", inplace=True, drop=True)
+        return df
+
+
+def query_explorer_factor_return_data(style_name: str) -> pd.DataFrame:
+    factor_return_data = FactorReturns.objects.using("factor_model_estimates").values(
+        style_name, "date"
     )
-    df = pd.DataFrame(list(return_data))
+    df = pd.DataFrame(list(factor_return_data))
     df["date"] = df["date"].apply(lambda x: x.strftime("%Y-%m-%d"))
+    df["close"] = (df[style_name] + 1).cumprod()
+    df.rename(columns={style_name: "total_return"}, inplace=True)
     df.set_index("date", inplace=True, drop=True)
-    return df
+    return df[["total_return", "close"]]
 
 
-def decode_explorer_input(request) -> Tuple[Dict, str, int]:
+def decode_explorer_input(request) -> Tuple[Dict, str, int, bool]:
     all_input = json.loads(request.body.decode("utf-8"))
     log_elements = list()
     processed_input = {}
 
     # symbol checks
+    is_factor = False
     symbol = all_input.get("symbol")
-    if symbol is not None and len(symbol) > 0:
+    if symbol is not None and len(symbol) > 0 and symbol.lower() in RECOGNIZED_STYLES:
+        processed_input["symbol"] = symbol
+        log_elements.append(f"The input '{symbol}' is parsed as a style factor.")
+        is_factor = True
+    elif (
+        symbol is not None
+        and len(symbol) > 0
+        and symbol.lower() not in RECOGNIZED_STYLES
+    ):
         processed_input["symbol"] = symbol
         log_elements.append(f"The input '{symbol}' is parsed as a symbol.")
     else:
@@ -67,7 +94,7 @@ def decode_explorer_input(request) -> Tuple[Dict, str, int]:
         processed_input=processed_input,
         integer_conversion=True,
     )
-    return processed_input, log_elements, override_code
+    return processed_input, log_elements, override_code, is_factor
 
 
 def get_ewma_estimates(
@@ -76,7 +103,7 @@ def get_ewma_estimates(
     override_code: float,
     json_data: Dict,
     log_elements: Dict,
-    returns: pd.DataFrame
+    returns: pd.DataFrame,
 ):
     if halflife is not None and min_periods is not None:
         ewma_std = create_ewma_std_estimates(
