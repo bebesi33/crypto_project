@@ -9,7 +9,7 @@ function Contacts() {
           <br />
           Dear User,
           <br /><br />
-          please note that software is subject to MIT Licence, the tool was developed for educational purposes <br />and not any kind of commercial use.
+          Please note that software is subject to MIT Licence, the tool was developed for educational purposes <br />and not for any kind of commercial use.
           <br/ > MIT License Copyright (c) 2024 bebesi33
           
           <br /><br />
@@ -40,6 +40,7 @@ function Contacts() {
           <br />
           email: bebesi33{"{at}"}gmail.com
         </p>
+        <a href="https://github.com/bebesi33/crypto_project">Visit the Crypto Project Repository in GitHub</a>
       </div>
     </div>
   );
