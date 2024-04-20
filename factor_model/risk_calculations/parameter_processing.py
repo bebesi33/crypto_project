@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 
 def check_input_param_correctness(
@@ -49,3 +49,44 @@ def check_input_param_correctness(
     else:
         log_elements.append(f"No {parameter_nickname} input!")
     return override_code
+
+
+def parse_file_input_into_portfolio(
+    input_stream: str,
+) -> Tuple[Dict[str, float], List[str], int]:
+    lines = input_stream.split("\r\n")
+
+    # Only two separators are accepted: "," and ";"
+    separator = ","
+    if separator not in input_stream and ";" in input_stream:
+        separator = ";"
+
+    # Initialize empty lists for index and values
+    port_weights = {}
+    log_messages = list()
+    error_code = 0
+    # Parse each line
+    for line in lines:
+        if line:
+            symbol, value = line.split(separator)
+            try:
+                port_weights[symbol] = float(value)
+            except ValueError:
+                log_message = f"Symbol: {symbol} cannot be parsed with value: {value}."
+                log_messages.append(log_message)
+                error_code = 1
+    # Normalize portfolio
+    total_weight = abs(sum(port_weights.values()))
+    if abs(total_weight) > 0.000000001:
+        for key in port_weights.keys():
+            port_weights[key] = port_weights[key] / total_weight
+    if sum(port_weights.values()) < 0:
+        log_messages.append(
+            "The total portfolio weights are less then 0! Are you sure, that this can be shorted?"
+        )
+        error_code = 1
+    if len(port_weights.keys()) < 1:
+        log_messages.append("The portfolio input is empty!")
+        error_code = 404
+
+    return port_weights, log_messages, error_code
