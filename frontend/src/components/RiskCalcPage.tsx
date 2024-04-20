@@ -9,8 +9,8 @@ function RiskCalcPage() {
   const [jsonData, setJsonData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const initialValues = {
-    cob_date: "2024-03-03",
+  const initialInputValues = {
+    cob_date: "2023-12-31",
     correlation_hl: "60",
     factor_risk_hl: "30",
     specific_risk_hl: "30",
@@ -18,20 +18,43 @@ function RiskCalcPage() {
     portfolio: null,
     benchmark: null,
   };
-  const [values, setValues] = useState(initialValues);
+  const [inputValues, setInputValues] = useState(initialInputValues);
 
   const handleInputChange =
     (property: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      setValues({
-        ...values,
+      setInputValues({
+        ...inputValues,
         [property]: event.target.value,
       });
+    };
+
+  const handleFileInputChange =
+    (property: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.files) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.addEventListener(
+          "load",
+          () => {
+            const file_content = reader.result;
+            console.log("file content:", file_content);
+            setInputValues({
+              ...inputValues,
+              [property]: file_content,
+            });
+          },
+          false
+        );
+        reader.readAsText(file);
+      }
     };
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     try {
       setIsLoading(true);
+      console.log(inputValues);
       const response = await fetch(
         API + "crypto/api/get_risk_calculation_output",
         {
@@ -41,12 +64,13 @@ function RiskCalcPage() {
           },
           credentials: "include",
           body: JSON.stringify({
-            cob_date: values["cob_date"],
-            correlation_hl: values["correlation_hl"],
-            factor_risk_hl: values["factor_risk_hl"],
-            specific_risk_hl: values["specific_risk_hl"],
-            min_ret_hist: values["min_ret_hist"],
-            file_input: "fileReader.result",
+            cob_date: inputValues["cob_date"],
+            correlation_hl: inputValues["correlation_hl"],
+            factor_risk_hl: inputValues["factor_risk_hl"],
+            specific_risk_hl: inputValues["specific_risk_hl"],
+            min_ret_hist: inputValues["min_ret_hist"],
+            portfolio: inputValues["portfolio"],
+            benchmark: inputValues["benchmark"],
           }),
         }
       );
@@ -84,7 +108,7 @@ function RiskCalcPage() {
             type="date"
             className="form-control"
             id="cob-input"
-            value={values.cob_date}
+            value={inputValues.cob_date}
             onChange={handleInputChange("cob_date")}
           ></input>
           <strong>
@@ -102,7 +126,7 @@ function RiskCalcPage() {
             id="portfolio-input"
             type="file"
             accept=".csv"
-            onChange={handleInputChange("portfolio")}
+            onChange={handleFileInputChange("portfolio")}
           ></input>
 
           <strong>
@@ -119,7 +143,7 @@ function RiskCalcPage() {
             id="market-input"
             type="file"
             accept=".csv"
-            onChange={handleInputChange("benchmark")}
+            onChange={handleFileInputChange("benchmark")}
           ></input>
 
           <strong>
@@ -139,7 +163,7 @@ function RiskCalcPage() {
             type="number"
             className="form-control"
             id="hl-risk-input"
-            value={values.factor_risk_hl}
+            value={inputValues.factor_risk_hl}
             onChange={handleInputChange("factor_risk_hl")}
             style={{ direction: "rtl" }}
           ></input>
@@ -155,7 +179,7 @@ function RiskCalcPage() {
             type="number"
             className="form-control"
             id="hl-corr-input"
-            value={values.correlation_hl}
+            value={inputValues.correlation_hl}
             onChange={handleInputChange("correlation_hl")}
             style={{ direction: "rtl" }}
           ></input>
@@ -171,7 +195,7 @@ function RiskCalcPage() {
             type="number"
             className="form-control"
             id="min-ret-hist-input"
-            value={values.min_ret_hist}
+            value={inputValues.min_ret_hist}
             onChange={handleInputChange("min_ret_hist")}
             style={{ direction: "rtl" }}
           ></input>
@@ -187,7 +211,7 @@ function RiskCalcPage() {
             type="number"
             className="form-control"
             id="spec-hl-risk-input"
-            value={values.specific_risk_hl}
+            value={inputValues.specific_risk_hl}
             onChange={handleInputChange("specific_risk_hl")}
             style={{ direction: "rtl" }}
           ></input>
