@@ -63,16 +63,22 @@ def get_raw_price_data(request):
 
 @csrf_exempt
 def get_risk_calculation_output(request):
-    processed_input, log_elements, override_code = decode_risk_calc_input(request)
-    print(log_elements)
-    json_data = {}
     if request.method == "POST":
+        processed_input, log_elements, override_code = decode_risk_calc_input(request)
         print("start risk_calc_request_full")
         json_data = risk_calc_request_full(
-            portfolio_details=portfolio_details,
-            market_portfolio=market_portfolio,
-            risk_calculation_parameters=risk_calculation_parameters,
+            portfolio_details=processed_input["portfolio"],
+            market_portfolio=processed_input["market"],
+            risk_calculation_parameters=processed_input,
         )
+        # json_data = risk_calc_request_full(
+        #     portfolio_details=portfolio_details,
+        #     market_portfolio=market_portfolio,
+        #     risk_calculation_parameters=risk_calculation_parameters,
+        # )
+        json_data["log"] = log_elements
+        json_data["ERROR_CODE"] = override_code
+        print(json_data)
         return JsonResponse(json_data)
     # default return
     return {"ERROR_CODE": 404, "log": "404 Not Found"}

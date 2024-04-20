@@ -12,6 +12,7 @@ from factor_model.risk_calculations.factor_covariance import (
 )
 from factor_model.risk_calculations.parameter_processing import (
     check_input_param_correctness,
+    parse_file_input_into_portfolio,
 )
 from factor_model.risk_calculations.risk_attribution import (
     generate_active_space_portfolio,
@@ -33,6 +34,14 @@ from factor_model.model_update.database_generators import EXPOSURE_NON_STYLE_FIE
 import logging
 
 logger = logging.getLogger("risk calc")
+
+FRONTEND_TO_BACKEND = {
+    "correlation_hl": "correlation_half_life",
+    "factor_risk_hl": "variance_half_life",
+    "specific_risk_hl": "specific_risk_half_life",
+    "min_ret_hist": "minimum_history_spec_ret",
+    "cob_date": "date",
+}
 
 
 def query_factor_return_data(cob_date: str) -> pd.DataFrame:
@@ -224,13 +233,15 @@ def risk_calc_request_full(
 
 def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
     all_input = json.loads(request.body.decode("utf-8"))
-    print(all_input["portfolio"])
-    print(all_input["benchmark"])
     print(all_input)
+
     log_elements = list()
     processed_input = {}
-
     override_code = 0  # we set it to one if any override occurs
+
+    processed_input["cob_date"] = all_input["cob_date"]
+
+    # process parameter imput
     for parameter_name, parameter_nickname in zip(
         ["correlation_hl", "factor_risk_hl", "specific_risk_hl"],
         ["correlation half-life", "factor risk half-life", "specific risk half-life"],
@@ -254,4 +265,35 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
         integer_conversion=True,
     )
 
+    # process file input
+    processed_input["portfolio"], port_log_messages, port_error_code = (
+        parse_file_input_into_portfolio(all_input["portfolio"])
+    )
+    log_elements = log_elements + port_log_messages
+
+    if all_input["benchmark"]:
+        processed_input["market"], bmrk_log_messages, bmrk_error_code = (
+            parse_file_input_into_portfolio(all_input["benchmark"])
+        )
+        log_elements = log_elements + bmrk_log_messages
+    else:
+        log_elements.append(
+            "No benchmark provided, hence the model universe based benchmark is loaded!"
+        )
+        override_code += 1
+        bmrk_error_code = 1
+        # TODO : implement market portfolio loading... with top 20 or so elements
+        pass
+
+    if bmrk_error_code == 404 or port_error_code == 404:
+        override_code = 404
+    else:
+        override_code = 1 if override_code > 0 else 0
+
+    # finally renameing the risk param elements is needed
+    # frontend has shorter names for these, hence we do the translation here
+    for key in FRONTEND_TO_BACKEND.keys():
+        processed_input[FRONTEND_TO_BACKEND[key]] = processed_input[key]
+
+    print(processed_input)
     return processed_input, log_elements, override_code

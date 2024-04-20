@@ -25,10 +25,12 @@ def create_portfolio_exposures(
         )
     if is_total_space:
         weighted_port_exposure["market"] = 1.0
+    else:
+        weighted_port_exposure["market"] = 0.0
 
     port_exposure = pd.Series(weighted_port_exposure).to_frame().reset_index()
     port_exposure.columns = ["factor", "exposure"]
-    return port_exposure.set_index("factor")
+    return port_exposure.set_index("factor").fillna(0)
 
 
 def generate_factor_covariance_attribution(
@@ -229,4 +231,11 @@ def generate_mctr_chart_input(
             all_mctr_ordered[portfolio][key] = (
                 all_mctr[portfolio][key] if key in all_mctr[portfolio].keys() else 0
             )
+            all_mctr_ordered[portfolio][key] = (
+                all_mctr_ordered[portfolio][key]
+                if pd.notna(all_mctr_ordered[portfolio][key])
+                else 0
+            )
+    if "active" in portolios.keys() and "market" in all_mctr_ordered["active"].keys():
+        all_mctr_ordered["active"]["market"] = 0
     return all_mctr_ordered
