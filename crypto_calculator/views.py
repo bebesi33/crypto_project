@@ -63,7 +63,6 @@ def get_raw_price_data(request):
 def get_risk_calculation_output(request):
     if request.method == "POST":
         processed_input, log_elements, override_code = decode_risk_calc_input(request)
-        print("start risk_calc_request_full")
         json_data = risk_calc_request_full(
             portfolio_details=processed_input["portfolio"],
             market_portfolio=processed_input["market"],
