@@ -5,6 +5,7 @@ import SimpleTable from "./tables/SimpleTable";
 import ExposureChart from "./charts/ExposureChart";
 import MarginalContribChart from "./charts/MarginalContribChart";
 
+
 function RiskCalcPage() {
   const [jsonData, setJsonData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -77,7 +78,6 @@ function RiskCalcPage() {
       if (response.ok) {
         const jsonData = await response.json();
         console.log("Data received successfully!");
-        console.log(jsonData);
         setJsonData(jsonData);
         setIsLoading(false);
       } else {
@@ -127,6 +127,7 @@ function RiskCalcPage() {
             type="file"
             accept=".csv"
             onChange={handleFileInputChange("portfolio")}
+            title="Only .csv input , with ',' and ';' separation is allowed. Each row should contain one symbol and its weight."
           ></input>
 
           <strong>
@@ -138,12 +139,14 @@ function RiskCalcPage() {
               Upload benchmark (portfolio) input
             </label>
           </strong>
+          
           <input
             className="form-control"
             id="market-input"
             type="file"
             accept=".csv"
             onChange={handleFileInputChange("benchmark")}
+            title="Only .csv input , with ',' and ';' separation is allowed. Each row should contain one symbol and its weight."
           ></input>
 
           <strong>
@@ -156,6 +159,7 @@ function RiskCalcPage() {
             htmlFor="hl-risk-input"
             className="hl-risk-input-label"
             style={{ textAlign: "left" }}
+            title="This should be a number greater than 0"
           >
             Factor risk half-life
           </label>
@@ -166,6 +170,7 @@ function RiskCalcPage() {
             value={inputValues.factor_risk_hl}
             onChange={handleInputChange("factor_risk_hl")}
             style={{ direction: "rtl" }}
+            title="This should be a number greater than 0"
           ></input>
 
           <label
@@ -182,6 +187,7 @@ function RiskCalcPage() {
             value={inputValues.correlation_hl}
             onChange={handleInputChange("correlation_hl")}
             style={{ direction: "rtl" }}
+            title="This should be a number greater than 0"
           ></input>
 
           <label
@@ -198,6 +204,7 @@ function RiskCalcPage() {
             value={inputValues.min_ret_hist}
             onChange={handleInputChange("min_ret_hist")}
             style={{ direction: "rtl" }}
+            title="This should be a number greater than 1"
           ></input>
 
           <label
@@ -214,14 +221,19 @@ function RiskCalcPage() {
             value={inputValues.specific_risk_hl}
             onChange={handleInputChange("specific_risk_hl")}
             style={{ direction: "rtl" }}
+            title="This should be a number greater than 0"
           ></input>
 
+          <span className="tool-tip"
+          data-toggle="tooltip"
+          data-placement="top"
+          title="Please provide portfolio input to start the calculation">
           <button
             type="submit"
             className="btn btn-primary"
             id="calc-btn"
             onClick={handleSubmit}
-            disabled={isLoading}
+            disabled={isLoading || inputValues["portfolio"] == null}
           >
             {isLoading && (
               <span
@@ -232,6 +244,7 @@ function RiskCalcPage() {
             )}
             Calculate
           </button>
+          </span>
         </div>
       </form>
       <div className="table-container">

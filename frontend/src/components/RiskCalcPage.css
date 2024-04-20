@@ -106,6 +106,7 @@
 
 #calc-btn {
   position: absolute;
+  pointer-events: auto;
   top: 460px;
   left: 1%;
   min-width: 100px;

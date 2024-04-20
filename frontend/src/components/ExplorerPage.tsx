@@ -94,6 +94,7 @@ function ExplorerPage() {
             id="half-life-input"
             value={values.halflife}
             onChange={handleInputChange("halflife")}
+            title="This should be a number greater than 0"
           ></input>
           <label
             htmlFor="obs-number-input"
@@ -108,6 +109,7 @@ function ExplorerPage() {
             id="obs-number-input"
             value={values.min_obs}
             onChange={handleInputChange("min_obs")}
+            title="This should be a number greater than 1"
           ></input>
           <button
             type="submit"

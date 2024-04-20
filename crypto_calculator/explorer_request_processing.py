@@ -42,7 +42,7 @@ def decode_explorer_input(request) -> Tuple[Dict, str, int]:
     symbol = all_input.get("symbol")
     if symbol is not None and len(symbol) > 0:
         processed_input["symbol"] = symbol
-        log_elements.append(f"The input '{symbol}' is parsed as a smybol.")
+        log_elements.append(f"The input '{symbol}' is parsed as a symbol.")
     else:
         log_elements.append(f"No Symbol input!")
 
