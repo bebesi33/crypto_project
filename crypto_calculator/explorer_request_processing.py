@@ -22,7 +22,9 @@ def get_close_data(symbol: str) -> pd.DataFrame:
     return df
 
 
-def get_total_return(symbol: str, close_price: pd.DataFrame=None, is_factor: bool=False) -> pd.DataFrame:
+def get_total_return(
+    symbol: str, close_price: pd.DataFrame = None, is_factor: bool = False
+) -> pd.DataFrame:
     if is_factor:
         return close_price[["total_return"]]
     else:
@@ -37,6 +39,29 @@ def get_total_return(symbol: str, close_price: pd.DataFrame=None, is_factor: boo
         df["date"] = df["date"].apply(lambda x: x.strftime("%Y-%m-%d"))
         df.set_index("date", inplace=True, drop=True)
         return df
+
+
+def assemble_price_data(
+    symbol: str, is_factor: bool, log_elements: List[str]
+) -> Tuple[pd.DataFrame, str]:
+    if symbol is not None and not is_factor:
+        close_price = get_close_data(symbol=symbol)
+        log_elements.append(
+            "Please note that for symbols (coins) the total return is presented."
+        )
+    elif symbol is not None and is_factor:
+        close_price = query_explorer_factor_return_data(style_name=symbol.lower())
+        log_elements.append(
+            "Please note that for style factors a cumulative return time series is presented as price data. "
+            "This time series starts from 1 USD at the start of the estimation horizon."
+        )
+    else:
+        close_price = pd.DataFrame()
+        symbol = "EMPTY INPUT"
+        log_elements.append(
+            "The symbol is not recognized, no data is queried from the database!"
+        )
+    return close_price, symbol
 
 
 def query_explorer_factor_return_data(style_name: str) -> pd.DataFrame:
