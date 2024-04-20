@@ -155,9 +155,9 @@ function ExplorerPage() {
           "ewma" in jsonData && (
             <ReturnChart
               primaryData={jsonData["return_data"]["total_return"]}
-              primaryDataLabel="Total returns"
+              primaryDataLabel="Returns"
               titleText={
-                "Risk estimates and total returns for " + jsonData["symbol"]
+                "Risk estimates and returns for " + jsonData["symbol"]
               }
               xAxisTitle="Date"
               yAxisTitle="Return and Std. dev. (0.01 = 1 pct)"
