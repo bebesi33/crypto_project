@@ -45,6 +45,15 @@ FRONTEND_TO_BACKEND = {
 
 
 def query_factor_return_data(cob_date: str) -> pd.DataFrame:
+    """
+    Queries factor return data from a database for the specified close of business date.
+
+    Args:
+        cob_date (str): The close of business date in the format "YYYY-MM-DD".
+
+    Returns:
+        pd.DataFrame: A DataFrame with factor return data.
+    """
     factor_return_data = (
         FactorReturns.objects.using("factor_model_estimates")
         .filter(date__lte=cob_date)  # date less than equal to cob_date input...
@@ -56,13 +65,49 @@ def query_factor_return_data(cob_date: str) -> pd.DataFrame:
 
 
 def query_exposures(cob_date: str) -> pd.DataFrame:
+    """
+    Queries exposures data from a database for the specified close of business date.
+
+    Args:
+        cob_date (str): The close of business date in the format "YYYY-MM-DD".
+
+    Returns:
+        pd.DataFrame: A DataFrame with exposures data.
+    """
     exposures = (
         Exposures.objects.using("factor_model_estimates").filter(date=cob_date).values()
     )
     return pd.DataFrame(list(exposures))
 
 
+def query_exposures_for_market_portfolio_data(cob_date: str) -> pd.DataFrame:
+    """
+    Queries exposures data for market portfolio data from a database for the specified close of business date.
+
+    Args:
+        cob_date (str): The close of business date in the format "YYYY-MM-DD".
+
+    Returns:
+        pd.DataFrame: A DataFrame with ticker and transformed market cap data.
+    """
+    exposures = (
+        Exposures.objects.using("factor_model_estimates")
+        .filter(date=cob_date)
+        .values("ticker", "transformed_market_cap")
+    )
+    return pd.DataFrame(list(exposures))
+
+
 def query_specific_returns(cob_date: str, symbols: List[str]) -> pd.DataFrame:
+    """Executes a query to get specific returns for a set of symbols
+
+    Args:
+        cob_date (str): date in yyyy-mm-dd format
+        symbols (List[str]): symbols to be queried
+
+    Returns:
+        pd.DataFrame: df containing the specific returns
+    """
     specific_returns = (
         SpecificReturns.objects.using("factor_model_estimates")
         .filter(date__lte=cob_date)
@@ -231,10 +276,18 @@ def risk_calc_request_full(
     }
 
 
+def generate_market_portfolio(cob_date: str):
+    df = query_exposures_for_market_portfolio_data(cob_date)
+    df = df.head(20).copy()
+    df["weight"] = df["transformed_market_cap"] / sum(df["transformed_market_cap"])
+    return {
+        list(df["ticker"])[idx]: list(df["weight"])[idx]
+        for idx in range(len(list(df["ticker"])))
+    }
+
+
 def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
     all_input = json.loads(request.body.decode("utf-8"))
-    print(all_input)
-
     log_elements = list()
     processed_input = {}
     override_code = 0  # we set it to one if any override occurs
@@ -282,8 +335,9 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
         )
         override_code += 1
         bmrk_error_code = 1
-        # TODO : implement market portfolio loading... with top 20 or so elements
-        pass
+        processed_input["market"] = generate_market_portfolio(
+            processed_input["cob_date"]
+        )
 
     if bmrk_error_code == 404 or port_error_code == 404:
         override_code = 404

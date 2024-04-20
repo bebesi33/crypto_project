@@ -13,7 +13,7 @@ function Contacts() {
           <br/ > MIT License Copyright (c) 2024 bebesi33
           
           <br /><br />
-          THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+          "THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
           EXPRESS OR
           <br />
           IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
@@ -30,7 +30,7 @@ function Contacts() {
           OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
           IN THE
           <br />
-          SOFTWARE.
+          SOFTWARE."
           <br />
           <br />
 
