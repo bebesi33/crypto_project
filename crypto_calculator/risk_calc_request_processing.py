@@ -349,5 +349,11 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
     for key in FRONTEND_TO_BACKEND.keys():
         processed_input[FRONTEND_TO_BACKEND[key]] = processed_input[key]
 
-    print(processed_input)
+    processed_input["mean_to_zero"] = all_input["mean_to_zero"]
+    if processed_input["mean_to_zero"]:
+        log_elements.append("The demeaned returns are used for the calculation of risk.")
+    processed_input["use_factors"] = all_input["use_factors"]
+    if not processed_input["use_factors"]:
+        log_elements.append("All cryptocurrency is treated as a single factor.")
+
     return processed_input, log_elements, override_code
