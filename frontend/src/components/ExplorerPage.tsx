@@ -25,7 +25,7 @@ function ExplorerPage() {
 
   const handleInputChange =
     (property: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (property == "mean_to_zero"){
+      if (property == "mean_to_zero") {
         setValues({
           ...values,
           ["mean_to_zero"]: !values.mean_to_zero,
@@ -121,16 +121,19 @@ function ExplorerPage() {
             title="This should be a number greater than 1"
           ></input>
 
-          <label htmlFor="mean-to-zero-box" className="mean-to-zero-box-label">
-          <span>Set mean to zero</span>
+          <label
+            htmlFor="exp-mean-to-zero-box"
+            className="exp-mean-to-zero-box-label"
+            title="No demeaning in risk calculation"
+          >
+            <span>Set mean to zero</span>
           </label>
-            <input
-              type="checkbox"
-              id="mean-to-zero-box"
-              checked={values.mean_to_zero}
-              onChange={handleInputChange("mean_to_zero")}
-            />
-
+          <input
+            type="checkbox"
+            id="exp-mean-to-zero-box"
+            checked={values.mean_to_zero}
+            onChange={handleInputChange("mean_to_zero")}
+          />
 
           <button
             type="submit"

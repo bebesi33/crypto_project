@@ -53,14 +53,14 @@
   width: 80%;
   max-height: 400px;
 }
-.mean-to-zero-box-label{
+.exp-mean-to-zero-box-label{
   position: absolute;
   top: 310px;
   left: 1%
 }
-#mean-to-zero-box {
+#exp-mean-to-zero-box {
   position: absolute;
-  top: 318px;
+  top: 317px;
   left: 150px
 }
 #explore-btn {

@@ -104,10 +104,32 @@
   width: 100px;
 }
 
+.mean-to-zero-box-label{
+  position: absolute;
+  top: 450px;
+  left: 130px
+}
+#mean-to-zero-box {
+  position: absolute;
+  top: 457px;
+  left: 260px
+}
+
+.use-factors-box-label{
+  position: absolute;
+  top: 450px;
+  left: 1%
+}
+#use-factors-box {
+  position: absolute;
+  top: 457px;
+  left: 100px
+}
+
 #calc-btn {
   position: absolute;
   pointer-events: auto;
-  top: 460px;
+  top: 490px;
   left: 1%;
   min-width: 100px;
   max-width: 19%;

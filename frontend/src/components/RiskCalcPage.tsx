@@ -5,7 +5,6 @@ import SimpleTable from "./tables/SimpleTable";
 import ExposureChart from "./charts/ExposureChart";
 import MarginalContribChart from "./charts/MarginalContribChart";
 
-
 function RiskCalcPage() {
   const [jsonData, setJsonData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,15 +17,24 @@ function RiskCalcPage() {
     min_ret_hist: "20",
     portfolio: null,
     benchmark: null,
+    mean_to_zero: false,
+    use_factors: true,
   };
   const [inputValues, setInputValues] = useState(initialInputValues);
 
   const handleInputChange =
     (property: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      setInputValues({
-        ...inputValues,
-        [property]: event.target.value,
-      });
+      if (property == "mean_to_zero" || property == "use_factors") {
+        setInputValues({
+          ...inputValues,
+          [property]: !inputValues[property],
+        });
+      } else {
+        setInputValues({
+          ...inputValues,
+          [property]: event.target.value,
+        });
+      }
     };
 
   const handleFileInputChange =
@@ -72,6 +80,8 @@ function RiskCalcPage() {
             min_ret_hist: inputValues["min_ret_hist"],
             portfolio: inputValues["portfolio"],
             benchmark: inputValues["benchmark"],
+            mean_to_zero: inputValues["mean_to_zero"],
+            use_factors: inputValues["use_factors"],
           }),
         }
       );
@@ -139,7 +149,7 @@ function RiskCalcPage() {
               Upload benchmark (portfolio) input
             </label>
           </strong>
-          
+
           <input
             className="form-control"
             id="market-input"
@@ -224,26 +234,56 @@ function RiskCalcPage() {
             title="This should be a number greater than 0"
           ></input>
 
-          <span className="tool-tip"
-          data-toggle="tooltip"
-          data-placement="top"
-          title="Please provide portfolio input to start the calculation">
-          <button
-            type="submit"
-            className="btn btn-primary"
-            id="calc-btn"
-            onClick={handleSubmit}
-            disabled={isLoading || inputValues["portfolio"] == null}
+          <label
+            htmlFor="mean-to-zero-box"
+            className="mean-to-zero-box-label"
+            title="No demeaning in risk calculation"
           >
-            {isLoading && (
-              <span
-                className="spinner-border spinner-border-sm"
-                role="status"
-                aria-hidden="true"
-              ></span>
-            )}
-            Calculate
-          </button>
+            <span>Set mean to zero</span>
+          </label>
+          <input
+            type="checkbox"
+            id="mean-to-zero-box"
+            checked={inputValues.mean_to_zero}
+            onChange={handleInputChange("mean_to_zero")}
+          />
+
+          <label
+            htmlFor="use-factors-box"
+            className="use-factors-box-label"
+            title="Abandon the usage of style factors and treat all symbols as a single factor"
+          >
+            <span>Use factors</span>
+          </label>
+          <input
+            type="checkbox"
+            id="use-factors-box"
+            checked={inputValues.use_factors}
+            onChange={handleInputChange("use_factors")}
+          />
+
+          <span
+            className="tool-tip"
+            data-toggle="tooltip"
+            data-placement="top"
+            title="Please provide portfolio input to start the calculation"
+          >
+            <button
+              type="submit"
+              className="btn btn-primary"
+              id="calc-btn"
+              onClick={handleSubmit}
+              disabled={isLoading || inputValues["portfolio"] == null}
+            >
+              {isLoading && (
+                <span
+                  className="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+              )}
+              Calculate
+            </button>
           </span>
         </div>
       </form>
