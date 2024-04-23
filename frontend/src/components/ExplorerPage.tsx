@@ -19,15 +19,23 @@ function ExplorerPage() {
     symbol: "BTC-USD",
     halflife: "30",
     min_obs: "30",
+    mean_to_zero: false,
   };
   const [values, setValues] = useState(initialValues);
 
   const handleInputChange =
     (property: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      setValues({
-        ...values,
-        [property]: event.target.value,
-      });
+      if (property == "mean_to_zero"){
+        setValues({
+          ...values,
+          ["mean_to_zero"]: !values.mean_to_zero,
+        });
+      } else {
+        setValues({
+          ...values,
+          [property]: event.target.value,
+        });
+      }
     };
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
@@ -44,6 +52,7 @@ function ExplorerPage() {
           symbol: values["symbol"],
           halflife: values["halflife"],
           min_obs: values["min_obs"],
+          mean_to_zero: values["mean_to_zero"],
         }),
       });
       if (response.ok) {
@@ -111,6 +120,18 @@ function ExplorerPage() {
             onChange={handleInputChange("min_obs")}
             title="This should be a number greater than 1"
           ></input>
+
+          <label htmlFor="mean-to-zero-box" className="mean-to-zero-box-label">
+          <span>Set mean to zero</span>
+          </label>
+            <input
+              type="checkbox"
+              id="mean-to-zero-box"
+              checked={values.mean_to_zero}
+              onChange={handleInputChange("mean_to_zero")}
+            />
+
+
           <button
             type="submit"
             className="btn btn-primary"
@@ -156,9 +177,7 @@ function ExplorerPage() {
             <ReturnChart
               primaryData={jsonData["return_data"]["total_return"]}
               primaryDataLabel="Returns"
-              titleText={
-                "Risk estimates and returns for " + jsonData["symbol"]
-              }
+              titleText={"Risk estimates and returns for " + jsonData["symbol"]}
               xAxisTitle="Date"
               yAxisTitle="Return and Std. dev. (0.01 = 1 pct)"
               secondaryData={jsonData["ewma"]["ewma_std"]}
