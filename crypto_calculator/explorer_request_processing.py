@@ -119,6 +119,10 @@ def decode_explorer_input(request) -> Tuple[Dict, str, int, bool]:
         processed_input=processed_input,
         integer_conversion=True,
     )
+    processed_input["mean_to_zero"] = all_input["mean_to_zero"]
+    if processed_input["mean_to_zero"]:
+        log_elements.append("The demeaned returns are used for the calculation of risk.")
+
     return processed_input, log_elements, override_code, is_factor
 
 
@@ -129,10 +133,11 @@ def get_ewma_estimates(
     json_data: Dict,
     log_elements: Dict,
     returns: pd.DataFrame,
+    mean_to_zero: bool = False,
 ):
     if halflife is not None and min_periods is not None:
         ewma_std = create_ewma_std_estimates(
-            returns, halflife=halflife, min_periods=min_periods
+            returns, halflife=halflife, min_periods=min_periods, mean_to_zero=mean_to_zero
         )
         ewma_std.rename(columns={"total_return": "ewma_std"}, inplace=True)
         # align ouput length

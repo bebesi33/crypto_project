@@ -43,10 +43,14 @@ def get_raw_price_data(request):
         if len(close_price) > 0:
             # if close price exists create ewma estimates and returns
             returns = get_total_return(symbol, close_price, is_factor)
-            halflife = all_input.get("halflife")
-            min_periods = all_input.get("min_obs")
             get_ewma_estimates(
-                halflife, min_periods, override_code, json_data, log_elements, returns
+                all_input.get("halflife"),
+                all_input.get("min_obs"),
+                override_code,
+                json_data,
+                log_elements,
+                returns,
+                mean_to_zero=all_input.get("mean_to_zero")
             )
         else:
             # if no close price, throw and error
