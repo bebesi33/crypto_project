@@ -16,6 +16,7 @@ from crypto_calculator.explorer_request_processing import (
 from crypto_calculator.risk_calc_request_processing import (
     decode_risk_calc_input,
     risk_calc_request_full,
+    risk_calc_request_reduced,
 )
 from factor_model.risk_calculations.simple_risk_calculation import (
     create_ewma_std_estimates,
@@ -76,7 +77,7 @@ def get_risk_calculation_output(request):
             )
         else:
             # TODO, this will be a separate call
-            json_data = risk_calc_request_full(
+            json_data = risk_calc_request_reduced(
                 portfolio_details=processed_input["portfolio"],
                 market_portfolio=processed_input["market"],
                 risk_calculation_parameters=processed_input,
