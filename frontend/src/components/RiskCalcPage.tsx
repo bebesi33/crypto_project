@@ -287,6 +287,14 @@ function RiskCalcPage() {
           </span>
         </div>
       </form>
+      <div className="chart-container" id="top-right-chart-container">
+        {jsonData !== null && "exposures" in jsonData && (
+          <ExposureChart
+            primaryData={jsonData["exposures"]}
+            titleText="Exposure breakdown"
+          />
+        )}
+      </div>
       <div className="table-container">
         {jsonData !== null && "risk_metrics" in jsonData && (
           <SimpleTable
@@ -297,22 +305,20 @@ function RiskCalcPage() {
           />
         )}
       </div>
-      <div className="chart-container" id="top-right-chart-container">
-        {jsonData !== null && "exposures" in jsonData && (
-          <ExposureChart
-            primaryData={jsonData["exposures"]}
-            titleText="Exposure breakdown"
-          />
-        )}
-      </div>
-      <div className="chart-container" id="bot-first-chart-container">
-        {jsonData !== null && "mctr" in jsonData && (
-          <MarginalContribChart
-            primaryData={jsonData["mctr"]}
-            titleText="Marginal contribution to risk breakdown"
-          />
-        )}
-      </div>
+      {jsonData !== null && (
+        <div
+          className="chart-container"
+          id="bot-first-chart-container"
+          style={{ top: jsonData["model"] === "factor" ? 635 : 465 }}
+        >
+          {"mctr" in jsonData && (
+            <MarginalContribChart
+              primaryData={jsonData["mctr"]}
+              titleText="Marginal contribution to risk breakdown"
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }
