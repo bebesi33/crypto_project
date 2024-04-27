@@ -29,6 +29,19 @@ class TestPortfolioParser(unittest.TestCase):
             "Symbol: BTC-USD cannot be parsed with value: herh0.50.", log_messages
         )
 
+    def test_duplicate_input(self):
+        input_stream = "BTC-USD;0.50\r\nBTC-USD;0.50"
+        port_weights, log_messages, error_code = parse_file_input_into_portfolio(
+            input_stream
+        )
+        print(log_messages)
+        expected_result = {"BTC-USD": 1.00}
+        self.assertEqual(port_weights, expected_result)
+        self.assertEqual(error_code, 1)
+        self.assertIn(
+            'There are multiple instances for BTC-USD in the input data. (BTC-USD, 0.50) ', log_messages
+        )
+
     def test_empty_input(self):
         input_stream = ""
         _, _, error_code = parse_file_input_into_portfolio(input_stream)

@@ -70,7 +70,13 @@ def parse_file_input_into_portfolio(
         if line:
             symbol, value = line.split(separator)
             try:
-                port_weights[symbol] = float(value)
+                if symbol in port_weights.keys():
+                    log_messages.append(
+                        f"There are multiple instances for {symbol} in the input data. ({symbol}, {value}) "
+                    )
+                    error_code = 1
+                else:
+                    port_weights[symbol] = float(value)
             except ValueError:
                 log_message = f"Symbol: {symbol} cannot be parsed with value: {value}."
                 log_messages.append(log_message)
