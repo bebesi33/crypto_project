@@ -82,11 +82,6 @@ def get_risk_calculation_output(request):
                 market_portfolio=processed_input["market"],
                 risk_calculation_parameters=processed_input,
             )
-        # json_data = risk_calc_request_full(
-        #     portfolio_details=portfolio_details,
-        #     market_portfolio=market_portfolio,
-        #     risk_calculation_parameters=risk_calculation_parameters,
-        # )
         json_data["log"] = log_elements
         json_data["ERROR_CODE"] = override_code
         print(json_data)

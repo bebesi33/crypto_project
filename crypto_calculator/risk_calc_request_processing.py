@@ -1,13 +1,21 @@
 import json
-from typing import List, Dict, Tuple
-from crypto_calculator.models import Exposures, FactorReturns, Returns, SpecificReturns
+from typing import List, Dict, Set, Tuple
+from crypto_calculator.models import (
+    Exposures,
+    FactorReturns,
+    RawPriceData,
+    Returns,
+    SpecificReturns,
+)
 import pandas as pd
 import numpy as np
 from factor_model.risk_calculations import HALF_LIFE_DEFAULT, MIN_OBS_DEFAULT
 from factor_model.risk_calculations.core_universe_portfolio import (
     generate_market_portfolio,
 )
-from factor_model.risk_calculations.excess_return_manipulation import generate_processed_excess_returns
+from factor_model.risk_calculations.excess_return_manipulation import (
+    generate_processed_excess_returns,
+)
 from factor_model.risk_calculations.factor_covariance import (
     generate_factor_covariance_matrix,
 )
@@ -45,6 +53,40 @@ FRONTEND_TO_BACKEND = {
 }
 
 
+def get_coverage_for_date(cob_date: str) -> pd.DataFrame:
+    symbols = (
+        RawPriceData.objects.using("default").filter(date=cob_date).values("symbol")
+    )
+    df = pd.DataFrame(list(symbols))
+    return set(df["symbol"])
+
+
+def check_missing_coverage(
+    symbols: Set[str],
+    processed_input: Dict[str, Dict[str, float]],
+    portfolio_name: str,
+    log_elements: List[str],
+) -> int:
+    """Enriches log elements with the name of missing coins
+
+    Args:
+        symbols (Set[str]): set of available symbols
+        processed_input (Dict[str, Dict[str, float]]): processed input containing input portfolios
+        portfolio_name (str): name of the portfolio (the portfolio or the market)
+        log_elements (List[str]): log elements
+
+    Returns:
+        int: 0 if coverage is not missing, 1 if there is a caveat in coverage
+    """
+    missing_coverage = sorted(list(set(processed_input[portfolio_name]) - symbols))
+    if len(missing_coverage) > 0:
+        log_elements.append(
+            f"No coverage for {portfolio_name} input: {str(missing_coverage)}."
+        )
+        return 1
+    return 0
+
+
 def query_factor_return_data(cob_date: str) -> pd.DataFrame:
     """
     Queries factor return data from a database for the specified close of business date.
@@ -79,10 +121,12 @@ def query_fillmiss_returns(cob_date: str) -> pd.DataFrame:
     factor_return_data = (
         FactorReturns.objects.using("factor_model_estimates")
         .filter(date__lte=cob_date)  # date less than equal to cob_date input...
-        .values('date', 'market')
+        .values("date", "market")
     )
     fill_miss_returns = pd.DataFrame(list(factor_return_data))
-    fill_miss_returns["date"] = fill_miss_returns["date"].apply(lambda x: x.strftime("%Y-%m-%d"))
+    fill_miss_returns["date"] = fill_miss_returns["date"].apply(
+        lambda x: x.strftime("%Y-%m-%d")
+    )
     fill_miss_returns.drop_duplicates(inplace=True)
     return fill_miss_returns.rename(columns={"market": "proxy_return"})
 
@@ -303,11 +347,13 @@ def risk_calc_request_full(
 
     mctr_output = generate_mctr_chart_input(portolios, factor_mctrs, spec_risk_mctrs)
 
-    print({
-        "risk_metrics": risk_metrics_extended,
-        "exposures": exposures,
-        "mctr": mctr_output,
-    })
+    print(
+        {
+            "risk_metrics": risk_metrics_extended,
+            "exposures": exposures,
+            "mctr": mctr_output,
+        }
+    )
 
     return {
         "risk_metrics": risk_metrics_extended,
@@ -379,6 +425,16 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
             processed_input["cob_date"]
         )
 
+    # we need to check the covarege...
+    symbol_coverage = get_coverage_for_date(processed_input["cob_date"])
+    for portfolio in ["market", "portfolio"]:
+        override_code += check_missing_coverage(
+            symbols=symbol_coverage,
+            processed_input=processed_input,
+            portfolio_name=portfolio,
+            log_elements=log_elements,
+        )
+
     if bmrk_error_code == 404 or port_error_code == 404:
         override_code = 404
     else:
@@ -391,12 +447,15 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
 
     processed_input["mean_to_zero"] = all_input["mean_to_zero"]
     if processed_input["mean_to_zero"]:
-        log_elements.append("The demeaned returns are used for the calculation of risk.")
+        log_elements.append(
+            "The demeaned returns are used for the calculation of risk."
+        )
     processed_input["use_factors"] = all_input["use_factors"]
     if not processed_input["use_factors"]:
         log_elements.append("All cryptocurrency is treated as a single factor.")
 
     return processed_input, log_elements, override_code
+
 
 def risk_calc_request_reduced(
     portfolio_details: Dict[str, float],
@@ -405,25 +464,28 @@ def risk_calc_request_reduced(
 ):
     # Step 1: cob_date and portfolio related
     cob_date = risk_calculation_parameters["date"]
-    print("Step 1: exposure query - READY")
     if market_portfolio is None:
         exposures = query_exposures(cob_date=cob_date)
         market_portfolio = generate_market_portfolio(exposures)
     all_tickers = list(
         set(market_portfolio.keys()).union(set(portfolio_details.keys()))
     )
-    active_space_port = generate_active_space_portfolio(portfolio_details, market_portfolio)
+    active_space_port = generate_active_space_portfolio(
+        portfolio_details, market_portfolio
+    )
 
     # Step 2: query and manipulate returns
     return_df = query_excess_returns(cob_date=cob_date, symbols=all_tickers)
     fill_miss_returns = query_fillmiss_returns(cob_date=cob_date)
-    factor_return_formatted_df = generate_processed_excess_returns(return_df, fill_miss_returns)
+    factor_return_formatted_df = generate_processed_excess_returns(
+        return_df, fill_miss_returns
+    )
 
     # Step 3: risk calculation
     portfolios = {
-    "portfolio": portfolio_details,
-    "market": market_portfolio,
-    "active": active_space_port,
+        "portfolio": portfolio_details,
+        "market": market_portfolio,
+        "active": active_space_port,
     }
     covariance_matrixes = {}
     relevant_keys = {}
@@ -448,33 +510,36 @@ def risk_calc_request_reduced(
             total_risks[portfolio],
             total_attributions[portfolio],
         ) = generate_factor_covariance_attribution(
-            port_exposures[portfolio].to_frame("exposure"), covariance_matrixes[portfolio]
+            port_exposures[portfolio].to_frame("exposure"),
+            covariance_matrixes[portfolio],
         )
         mctrs[portfolio] = total_attributions[portfolio] / total_risks[portfolio]
 
         factor_covars[portfolio] = generate_factor_covariance_table(
-            port_exposures[portfolio].to_frame("exposure"), covariance_matrixes[portfolio]
+            port_exposures[portfolio].to_frame("exposure"),
+            covariance_matrixes[portfolio],
         )
 
     # Step 4: beta and ES calculation
-    all_exposure = pd.concat([port_exposures["portfolio"], port_exposures["market"]], axis=1).fillna(0)
+    all_exposure = pd.concat(
+        [port_exposures["portfolio"], port_exposures["market"]], axis=1
+    ).fillna(0)
     cov_for_beta = generate_factor_covariance_matrix(
-            factor_return_formatted_df[["date"] + list(all_exposure.index)],
-            risk_calculation_parameters,
-        )
-
+        factor_return_formatted_df[["date"] + list(all_exposure.index)],
+        risk_calculation_parameters,
+    )
 
     factor_beta_covar, _ = generate_factor_covariance_attribution(
-        all_exposure[[0]].rename(columns= {0: "exposure"}),
+        all_exposure[[0]].rename(columns={0: "exposure"}),
         cov_for_beta,
-        all_exposure[[1]].rename(columns= {1: "exposure"})
+        all_exposure[[1]].rename(columns={1: "exposure"}),
     )
 
     portfolio_beta = (factor_beta_covar**2) / (total_risks["market"] ** 2)
 
     es95, var95 = calculate_lognormal_es_var(total_risks["portfolio"], 0.95)
     es99, var99 = calculate_lognormal_es_var(total_risks["portfolio"], 0.99)
-        # 5. assemble output
+    # 5. assemble output
     risk_categories = [
         "Total Risk (portfolio)",
         "Total Risk (benchmark)",
@@ -483,7 +548,7 @@ def risk_calc_request_reduced(
     risk_values = [
         total_risks["portfolio"] * 100,
         total_risks["market"] * 100,
-        total_risks["active"] * 100
+        total_risks["active"] * 100,
     ]
     risk_metrics = dict(zip(risk_categories, risk_values))
 
@@ -502,11 +567,13 @@ def risk_calc_request_reduced(
 
     transformed_mctr = {key: value.to_dict() for (key, value) in mctrs.items()}
 
-    print({
-        "risk_metrics": risk_metrics_extended,
-        "exposures": exposures,
-        "mctr": transformed_mctr,
-    })
+    print(
+        {
+            "risk_metrics": risk_metrics_extended,
+            "exposures": exposures,
+            "mctr": transformed_mctr,
+        }
+    )
 
     return {
         "risk_metrics": risk_metrics_extended,
