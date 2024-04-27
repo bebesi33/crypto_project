@@ -68,6 +68,7 @@ def check_missing_coverage(
     log_elements: List[str],
 ) -> int:
     """Enriches log elements with the name of missing coins
+    and redefines input portfolios with respect to coverage
 
     Args:
         symbols (Set[str]): set of available symbols
@@ -83,6 +84,14 @@ def check_missing_coverage(
         log_elements.append(
             f"No coverage for {portfolio_name} input: {str(missing_coverage)}."
         )
+        # redefine portfolio with respect to missing symbols
+        for symbol in missing_coverage:
+            del processed_input[portfolio_name][symbol]
+        total_weight = sum(processed_input[portfolio_name].values())
+        processed_input[portfolio_name] = {
+            key: value / total_weight
+            for (key, value) in processed_input[portfolio_name].items()
+        }
         return 1
     return 0
 
@@ -379,7 +388,7 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
     override_code = 0  # we set it to one if any override occurs
 
     processed_input["cob_date"] = all_input["cob_date"]
-
+    date = processed_input["cob_date"]
     # process parameter imput
     for parameter_name, parameter_nickname in zip(
         ["correlation_hl", "factor_risk_hl", "specific_risk_hl"],
@@ -422,11 +431,11 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
         override_code += 1
         bmrk_error_code = 1
         processed_input["market"] = generate_market_portfolio(
-            processed_input["cob_date"]
+            date
         )
 
     # we need to check the covarege...
-    symbol_coverage = get_coverage_for_date(processed_input["cob_date"])
+    symbol_coverage = get_coverage_for_date(date)
     for portfolio in ["market", "portfolio"]:
         override_code += check_missing_coverage(
             symbols=symbol_coverage,
@@ -435,7 +444,18 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
             log_elements=log_elements,
         )
 
-    if bmrk_error_code == 404 or port_error_code == 404:
+
+    if len(processed_input["market"].keys()) < 1:
+        log_elements.append(f"No benchmark coverage for date : {date}!")
+    if len(processed_input["portfolio"].keys()) < 1:
+        log_elements.append(f"No portfolio coverage for date : {date}!")
+
+    if (
+        bmrk_error_code == 404
+        or port_error_code == 404
+        or len(processed_input["market"].keys()) < 1
+        or len(processed_input["portfolio"].keys()) < 1
+    ):
         override_code = 404
     else:
         override_code = 1 if override_code > 0 else 0

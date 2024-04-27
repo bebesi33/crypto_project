@@ -8,23 +8,13 @@ from crypto_calculator.sample_risk_input import market_portfolio, portfolio_deta
 from crypto_calculator.explorer_request_processing import (
     assemble_price_data,
     decode_explorer_input,
-    get_close_data,
     get_ewma_estimates,
-    get_total_return,
-    query_explorer_factor_return_data,
+    get_total_return
 )
 from crypto_calculator.risk_calc_request_processing import (
     decode_risk_calc_input,
     risk_calc_request_full,
     risk_calc_request_reduced,
-)
-from factor_model.risk_calculations.simple_risk_calculation import (
-    create_ewma_std_estimates,
-)
-from crypto_calculator.sample_risk_input import (
-    portfolio_details,
-    market_portfolio,
-    risk_calculation_parameters,
 )
 
 
@@ -69,19 +59,20 @@ def get_risk_calculation_output(request):
     if request.method == "POST":
         processed_input, log_elements, override_code = decode_risk_calc_input(request)
 
-        if processed_input["use_factors"]:
+        if override_code != 404 and processed_input["use_factors"]:
             json_data = risk_calc_request_full(
                 portfolio_details=processed_input["portfolio"],
                 market_portfolio=processed_input["market"],
                 risk_calculation_parameters=processed_input,
             )
-        else:
-            # TODO, this will be a separate call
+        elif override_code != 404 and not processed_input["use_factors"]:
             json_data = risk_calc_request_reduced(
                 portfolio_details=processed_input["portfolio"],
                 market_portfolio=processed_input["market"],
                 risk_calculation_parameters=processed_input,
             )
+        else:
+            json_data = {}
         json_data["log"] = log_elements
         json_data["ERROR_CODE"] = override_code
         print(json_data)
