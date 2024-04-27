@@ -134,6 +134,15 @@
   min-width: 100px;
   max-width: 19%;
 }
+.log-container {
+  position: absolute;
+  top: 550px;
+  left: 1%;
+  min-width: 100px;
+  max-width: 325px;
+}
+
+
 
 .table-container {
   position: absolute;

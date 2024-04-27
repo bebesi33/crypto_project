@@ -3,17 +3,12 @@ import "./ExplorerPage.css";
 import { API } from "../Api";
 import LineChart from "./charts/LineChart";
 import ReturnChart from "./charts/ReturnChart";
+import { errorStyles } from "./Colors";
 // https://dev.to/deboragaleano/how-to-handle-multiple-inputs-in-react-55el
 
 function ExplorerPage() {
   const [jsonData, setJsonData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  const errorStyles = {
-    "0": "alert alert-info",
-    "1": "alert alert-warning",
-    "404": "alert alert-danger",
-  };
 
   const initialValues = {
     symbol: "BTC-USD",

@@ -4,6 +4,7 @@ import "./RiskCalcPage.css";
 import SimpleTable from "./tables/SimpleTable";
 import ExposureChart from "./charts/ExposureChart";
 import MarginalContribChart from "./charts/MarginalContribChart";
+import { errorStyles } from "./Colors";
 
 function RiskCalcPage() {
   const [jsonData, setJsonData] = useState(null);
@@ -287,6 +288,17 @@ function RiskCalcPage() {
           </span>
         </div>
       </form>
+      <div className="log-container">
+        {jsonData !== null && (
+          <div
+            className={errorStyles[jsonData["ERROR_CODE"]]}
+            role="alert"
+            style={{ textAlign: "left" }}
+          >
+            {jsonData["log"]}
+          </div>
+        )}
+      </div>
       <div className="chart-container" id="top-right-chart-container">
         {jsonData !== null && "exposures" in jsonData && (
           <ExposureChart

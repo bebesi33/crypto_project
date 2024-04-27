@@ -7,6 +7,11 @@ export const CHART_DARK_BACKGROUND='rgb(48,84,150)'
 export const DARK_COLOR='rgb(0,0,139)'
 export const NAVBAR_BACKGROUND='rgb(227,242,253)'
 
+export const errorStyles = {
+    "0": "alert alert-info",
+    "1": "alert alert-warning",
+    "404": "alert alert-danger",
+  };
 
 
 
