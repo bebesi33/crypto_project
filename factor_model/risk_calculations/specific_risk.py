@@ -30,11 +30,21 @@ def generate_raw_specific_risk(
             & (specific_returns["date"] <= parameters["date"])
         ].copy()
         available_spec_return_history[symbol] = len(specific_returns_temp)
-        if len(specific_returns_temp) > 1:
+        if len(specific_returns_temp) > 1 and not parameters["mean_to_zero"]:
             standard_deviations[symbol] = (
                 specific_returns_temp["specific_return"]
                 .ewm(halflife=parameters["specific_risk_half_life"])
                 .std()
+                .tail(1)
+                .values[0]
+            )
+        elif len(specific_returns_temp) > 1 and parameters["mean_to_zero"]:
+            standard_deviations[symbol] = (
+                specific_returns_temp["specific_return"]
+                .pow(2)
+                .ewm(halflife=parameters["specific_risk_half_life"])
+                .mean()
+                .pow(0.5)
                 .tail(1)
                 .values[0]
             )

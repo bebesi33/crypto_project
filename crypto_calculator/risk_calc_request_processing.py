@@ -368,6 +368,7 @@ def risk_calc_request_full(
         "risk_metrics": risk_metrics_extended,
         "exposures": exposures,
         "mctr": mctr_output,
+        "model": "factor"
     }
 
 
@@ -388,6 +389,7 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
     override_code = 0  # we set it to one if any override occurs
 
     processed_input["cob_date"] = all_input["cob_date"]
+    processed_input["mean_to_zero"] = all_input["mean_to_zero"]
     date = processed_input["cob_date"]
     # process parameter imput
     for parameter_name, parameter_nickname in zip(
@@ -599,4 +601,5 @@ def risk_calc_request_reduced(
         "risk_metrics": risk_metrics_extended,
         "exposures": exposures,
         "mctr": transformed_mctr,
+        "model": "no-factor"
     }

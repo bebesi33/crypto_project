@@ -28,7 +28,7 @@ class TestGenerateRawSpecificRisk(unittest.TestCase):
                 0.053,
                 -0.452,
                 -0.015,
-                0.14
+                0.14,
             ],
         }
         self.specific_returns = pd.DataFrame(self.specific_returns_data)
@@ -36,6 +36,7 @@ class TestGenerateRawSpecificRisk(unittest.TestCase):
         self.parameters = {
             "date": "2024-03-03",
             "specific_risk_half_life": 10,
+            "mean_to_zero": False,
         }
 
         self.portfolio_details = {
@@ -43,7 +44,7 @@ class TestGenerateRawSpecificRisk(unittest.TestCase):
             "T2": 0.25,
             "T3": 0.40,
             "T4": 0.09,
-            "T5": 0.01
+            "T5": 0.01,
         }
 
     def test_standard_deviations(self):
@@ -57,6 +58,17 @@ class TestGenerateRawSpecificRisk(unittest.TestCase):
         self.assertIsNone(standard_deviations["T4"])
         self.assertIsNone(standard_deviations["T5"])
 
+    def test_standard_deviations_mean_to_zero(self):
+        self.parameters["mean_to_zero"] = True
+        standard_deviations, _ = generate_raw_specific_risk(
+            self.specific_returns, self.parameters, self.portfolio_details
+        )
+
+        self.assertAlmostEqual(standard_deviations["T1"], 0.058213264, places=5)
+        self.assertAlmostEqual(standard_deviations["T2"], 0.044222615, places=5)
+        self.assertAlmostEqual(standard_deviations["T3"], 0.314212500, places=5)
+        self.assertIsNone(standard_deviations["T4"])
+        self.assertIsNone(standard_deviations["T5"])
 
     def test_available_spec_return_history(self):
         _, available_spec_return_history = generate_raw_specific_risk(
@@ -69,6 +81,7 @@ class TestGenerateRawSpecificRisk(unittest.TestCase):
         self.assertEqual(available_spec_return_history["T3"], 2)
         self.assertEqual(available_spec_return_history["T4"], 0)
         self.assertEqual(available_spec_return_history["T5"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

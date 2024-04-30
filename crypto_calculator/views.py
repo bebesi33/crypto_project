@@ -65,14 +65,12 @@ def get_risk_calculation_output(request):
                 market_portfolio=processed_input["market"],
                 risk_calculation_parameters=processed_input,
             )
-            json_data["model"] = "factor"
         elif override_code != 404 and not processed_input["use_factors"]:
             json_data = risk_calc_request_reduced(
                 portfolio_details=processed_input["portfolio"],
                 market_portfolio=processed_input["market"],
                 risk_calculation_parameters=processed_input,
             )
-            json_data["model"] = "no-factor"
         else:
             json_data = {}
         json_data["log"] = log_elements

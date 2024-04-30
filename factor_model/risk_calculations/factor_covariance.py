@@ -65,13 +65,24 @@ def get_factor_return_standard_deviation(
     )
     standard_deviations = dict()
     for style_col in style_columns:
-        standard_deviations[style_col] = (
-            factor_return_estim[style_col]
-            .ewm(halflife=parameters["variance_half_life"])
-            .std()
-            .tail(1)
-            .values[0]
-        )
+        if parameters["mean_to_zero"]:
+            standard_deviations[style_col] = (
+                factor_return_estim[style_col]
+                .pow(2)
+                .ewm(halflife=parameters["variance_half_life"])
+                .mean()
+                .pow(0.5)
+                .tail(1)
+                .values[0]
+            )
+        else:
+            standard_deviations[style_col] = (
+                factor_return_estim[style_col]
+                .ewm(halflife=parameters["variance_half_life"])
+                .std()
+                .tail(1)
+                .values[0]
+            )
     return pd.Series(standard_deviations)
 
 
