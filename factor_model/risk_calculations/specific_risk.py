@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List
 import pandas as pd
 import numpy as np
 
@@ -86,3 +86,51 @@ def generate_raw_portfolio_specific_risk(
     else:
         spec_risk_total = np.sqrt(spec_risk_total)
     return spec_risk_total
+
+
+def closest_halflife_element(lst: List[float], user_halflife: float) -> List[float]:
+    """Grabs the closes halflife values
+
+    Args:
+        lst (List[float]): List of available halflife in database
+        user_halflife (float): user provided halflife
+
+    Returns:
+        List[float]: List of closest halflifes
+    """
+    if user_halflife <= min(lst) or user_halflife >= max(lst):
+        idx = (np.abs(np.asarray(lst) - user_halflife)).argmin()
+        return [lst[idx]]
+    else:
+        lst_check = lst.copy()
+        element_1 = lst_check[(np.abs(np.asarray(lst_check) - user_halflife)).argmin()]
+        lst_check.remove(element_1)
+        element_2 = lst_check[(np.abs(np.asarray(lst_check) - user_halflife)).argmin()]
+        return sorted([element_1, element_2])
+
+
+def generate_combined_spec_risk(
+    core_spec_risk_df: pd.DataFrame,
+    parameters: Dict,
+    raw_spec_risk: Dict[str, float],
+    spec_risk_hist: Dict[str, int],
+) -> Dict[str, float]:
+    # Step 1: calculate combined core spec risk
+    if len(core_spec_risk_df) < 2:
+        core_half_life = core_spec_risk_df["specific_risk"].values[0]
+    else:
+        core_half_life = np.interp(
+            parameters["specific_risk_half_life"],
+            core_spec_risk_df["half_life"],
+            core_spec_risk_df["specific_risk"],
+        )
+    # Step 2: add the core avg spec risk info if needed
+    combined_spec_risk = {}
+    for key in raw_spec_risk.keys():
+        hist_ratio = min(
+            0.0, max(spec_risk_hist[key] / parameters["minimum_history_spec_ret"], 1.0)
+        )
+        combined_spec_risk[key] = (
+            hist_ratio * raw_spec_risk[key] + (1 - hist_ratio) * core_half_life
+        )
+    return combined_spec_risk

@@ -1,6 +1,7 @@
 import json
 from typing import List, Dict, Set, Tuple
 from crypto_calculator.models import (
+    CoreSpecificRisk,
     Exposures,
     FactorReturns,
     RawPriceData,
@@ -37,10 +38,15 @@ from factor_model.risk_calculations.risk_attribution import (
 )
 from factor_model.risk_calculations.risk_metrics import calculate_lognormal_es_var
 from factor_model.risk_calculations.specific_risk import (
+    closest_halflife_element,
+    generate_combined_spec_risk,
     generate_raw_portfolio_specific_risk,
     generate_raw_specific_risk,
 )
-from factor_model.model_update.database_generators import EXPOSURE_NON_STYLE_FIELDS
+from factor_model.model_update.database_generators import (
+    EXPOSURE_NON_STYLE_FIELDS,
+    FIX_SET_OF_HALF_LIFES,
+)
 import logging
 
 logger = logging.getLogger("risk calc")
@@ -54,12 +60,24 @@ FRONTEND_TO_BACKEND = {
 }
 
 
-def get_coverage_for_date(cob_date: str) -> pd.DataFrame:
+def get_coverage_for_date(cob_date: str) -> Set[str]:
     symbols = (
         RawPriceData.objects.using("default").filter(date=cob_date).values("symbol")
     )
     df = pd.DataFrame(list(symbols))
     return set(df["symbol"])
+
+
+def get_core_avg_spec_risk(cob_date: str, halflife: int) -> pd.DataFrame:
+    closest_hls = closest_halflife_element(FIX_SET_OF_HALF_LIFES, halflife)
+    spec_risks = (
+        CoreSpecificRisk.objects.using("specific_risk_estimates")
+        .filter(date=cob_date)
+        .filter(half_life__in=closest_hls)
+        .values("date", "half_life", "specific_risk")
+    )
+    df = pd.DataFrame(list(spec_risks))
+    return df
 
 
 def check_missing_coverage(
@@ -261,6 +279,7 @@ def risk_calc_request_full(
     spec_risk_attributions = {}
     spec_risk_var_decomps = {}
     spec_risk_mctrs = {}
+    combined_spec_risk = {}
     for port in portolios.keys():
         # 2.1. exposure calc
         port_exposures[port] = create_portfolio_exposures(
@@ -287,17 +306,28 @@ def risk_calc_request_full(
         ) = generate_raw_specific_risk(
             full_specific_returns, risk_calculation_parameters, portolios[port]
         )
-        spec_risks[port] = generate_raw_portfolio_specific_risk(
+
+        core_spec_risk_df = get_core_avg_spec_risk(
+            cob_date, risk_calculation_parameters["specific_risk_half_life"]
+        )
+        combined_spec_risk[port] = generate_combined_spec_risk(
+            core_spec_risk_df,
+            risk_calculation_parameters,
             raw_specific_risks[port],
+            spec_risk_availabilities[port],
+        )
+        spec_risks[port] = generate_raw_portfolio_specific_risk(
+            combined_spec_risk[port],
             portolios[port],
             is_total_space=True if port != "active" else False,
         )
-        total_risks[port] = np.sqrt(factor_risks[port] ** 2 + spec_risks[port] ** 2)
 
+        # 2.4 other risk calcs
+        total_risks[port] = np.sqrt(factor_risks[port] ** 2 + spec_risks[port] ** 2)
         factor_mctrs[port] = factor_attributions[port] / total_risks[port]
         spec_risk_attributions[port], spec_risk_var_decomps[port] = (
             calculate_spec_risk_mctr(
-                raw_specific_risks[port],
+                combined_spec_risk[port],
                 portolios[port],
                 True if port != "active" else False,
             )
@@ -311,7 +341,7 @@ def risk_calc_request_full(
     spec_risk_covar = get_specific_risk_beta(
         portolios["portfolio"],
         market_portfolio=portolios["market"],
-        spec_risk=raw_specific_risks["active"],
+        spec_risk=combined_spec_risk["active"],
     )
     portfolio_beta = (factor_beta_covar**2 + spec_risk_covar) / (
         total_risks["market"] ** 2
@@ -369,7 +399,7 @@ def risk_calc_request_full(
         "risk_metrics": risk_metrics_extended,
         "exposures": exposures,
         "mctr": mctr_output,
-        "model": "factor"
+        "model": "factor",
     }
 
 
@@ -433,9 +463,7 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
         )
         override_code += 1
         bmrk_error_code = 1
-        processed_input["market"] = generate_market_portfolio(
-            date
-        )
+        processed_input["market"] = generate_market_portfolio(date)
 
     # we need to check the covarege...
     symbol_coverage = get_coverage_for_date(date)
@@ -446,7 +474,6 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
             portfolio_name=portfolio,
             log_elements=log_elements,
         )
-
 
     if len(processed_input["market"].keys()) < 1:
         log_elements.append(f"No benchmark coverage for date : {date}!")
@@ -588,7 +615,6 @@ def risk_calc_request_reduced(
     for portfolio in portfolios.keys():
         exposures[portfolio] = {"exposure": port_exposures[portfolio].to_dict()}
 
-    transformed_mctr = {key: value.to_dict() for (key, value) in mctrs.items()}
     mctr_output = generate_mctr_chart_input_reduced(portfolios, mctrs)
 
     print(
@@ -603,5 +629,5 @@ def risk_calc_request_reduced(
         "risk_metrics": risk_metrics_extended,
         "exposures": exposures,
         "mctr": mctr_output,
-        "model": "no-factor"
+        "model": "no-factor",
     }

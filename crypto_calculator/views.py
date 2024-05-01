@@ -73,7 +73,6 @@ def get_risk_calculation_output(request):
             json_data = {}
         json_data["log"] = log_elements
         json_data["ERROR_CODE"] = override_code
-        print(json_data)
         return JsonResponse(json_data)
     # default return
     return {"ERROR_CODE": 404, "log": "404 Not Found"}
