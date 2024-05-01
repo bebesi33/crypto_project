@@ -47,19 +47,19 @@ def assemble_price_data(
     if symbol is not None and not is_factor:
         close_price = get_close_data(symbol=symbol)
         log_elements.append(
-            "Please note that for symbols (coins) the total return is presented."
+            "Please note that for symbols (coins) the total return is presented. "
         )
     elif symbol is not None and is_factor:
         close_price = query_explorer_factor_return_data(style_name=symbol.lower())
         log_elements.append(
             "Please note that for style factors a cumulative return time series is presented as price data. "
-            "This time series starts from 1 USD at the start of the estimation horizon."
+            "This time series starts from 1 USD at the start of the estimation horizon. "
         )
     else:
         close_price = pd.DataFrame()
         symbol = "EMPTY INPUT"
         log_elements.append(
-            "The symbol is not recognized, no data is queried from the database!"
+            "The symbol is not recognized, no data is queried from the database! "
         )
     return close_price, symbol
 
@@ -86,7 +86,7 @@ def decode_explorer_input(request) -> Tuple[Dict, str, int, bool]:
     symbol = all_input.get("symbol")
     if symbol is not None and len(symbol) > 0 and symbol.lower() in RECOGNIZED_STYLES:
         processed_input["symbol"] = symbol
-        log_elements.append(f"The input '{symbol}' is parsed as a style factor.")
+        log_elements.append(f"The input '{symbol}' is parsed as a style factor. ")
         is_factor = True
     elif (
         symbol is not None
@@ -94,9 +94,9 @@ def decode_explorer_input(request) -> Tuple[Dict, str, int, bool]:
         and symbol.lower() not in RECOGNIZED_STYLES
     ):
         processed_input["symbol"] = symbol
-        log_elements.append(f"The input '{symbol}' is parsed as a symbol.")
+        log_elements.append(f"The input '{symbol}' is parsed as a symbol. ")
     else:
-        log_elements.append(f"No Symbol input!")
+        log_elements.append(f"No Symbol input! ")
 
     override_code = 0  # we set it to one if any override occurs
 
@@ -121,7 +121,7 @@ def decode_explorer_input(request) -> Tuple[Dict, str, int, bool]:
     )
     processed_input["mean_to_zero"] = all_input["mean_to_zero"]
     if processed_input["mean_to_zero"]:
-        log_elements.append("The demeaned returns are used for the calculation of risk.")
+        log_elements.append("The demeaned returns are used for the calculation of risk. ")
 
     return processed_input, log_elements, override_code, is_factor
 
@@ -147,6 +147,6 @@ def get_ewma_estimates(
         json_data["ERROR_CODE"] = 1 if override_code > 0 else 0
     else:
         log_elements.append(
-            "Either the halflife or the minimum number of observations is incorrect, no risk estimate calculated!"
+            "Either the halflife or the minimum number of observations is incorrect, no risk estimate calculated! "
         )
         json_data["ERROR_CODE"] = 1

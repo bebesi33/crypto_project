@@ -60,6 +60,12 @@ FRONTEND_TO_BACKEND = {
 }
 
 
+def get_available_estimation_dates() -> List[str]:
+    dates = FactorReturns.objects.using("factor_model_estimates").values("date")
+    df = pd.DataFrame(list(dates))
+    return [str(date_value) for date_value in set(df["date"])]
+
+
 def get_coverage_for_date(cob_date: str) -> Set[str]:
     symbols = (
         RawPriceData.objects.using("default").filter(date=cob_date).values("symbol")
@@ -101,7 +107,7 @@ def check_missing_coverage(
     missing_coverage = sorted(list(set(processed_input[portfolio_name]) - symbols))
     if len(missing_coverage) > 0:
         log_elements.append(
-            f"No coverage for {portfolio_name} input: {str(missing_coverage)}."
+            f"No coverage for {portfolio_name} input: {str(missing_coverage)}. "
         )
         # redefine portfolio with respect to missing symbols
         for symbol in missing_coverage:
@@ -414,12 +420,21 @@ def generate_market_portfolio(cob_date: str):
 
 
 def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
+    # parse request body and check whether correct date input is provided
     all_input = json.loads(request.body.decode("utf-8"))
     log_elements = list()
     processed_input = {}
     override_code = 0  # we set it to one if any override occurs
 
     processed_input["cob_date"] = all_input["cob_date"]
+    available_dates = get_available_estimation_dates()
+    if processed_input["cob_date"] not in available_dates:
+        log_elements.append(
+            "The calculation date ({date}) is not covered by the model! ".format(
+                date=processed_input["cob_date"]
+            )
+        )
+
     processed_input["mean_to_zero"] = all_input["mean_to_zero"]
     date = processed_input["cob_date"]
     # process parameter imput
@@ -446,43 +461,57 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
         integer_conversion=True,
     )
 
-    # process file input
+    # process portfolio file input
     processed_input["portfolio"], port_log_messages, port_error_code = (
         parse_file_input_into_portfolio(all_input["portfolio"])
     )
     log_elements = log_elements + port_log_messages
 
+    # process benchmark data
     if all_input["benchmark"]:
         processed_input["market"], bmrk_log_messages, bmrk_error_code = (
             parse_file_input_into_portfolio(all_input["benchmark"])
         )
         log_elements = log_elements + bmrk_log_messages
-    else:
+        bmrk_error_code = 0
+    elif (
+        all_input["benchmark"] is None
+        and processed_input["cob_date"] in available_dates
+    ):
         log_elements.append(
-            "No benchmark provided, hence the model universe based benchmark is loaded!"
+            "No benchmark provided, hence the model universe based benchmark is loaded! "
         )
         override_code += 1
         bmrk_error_code = 1
         processed_input["market"] = generate_market_portfolio(date)
+    else:
+        bmrk_error_code = 404
 
-    # we need to check the covarege...
-    symbol_coverage = get_coverage_for_date(date)
-    for portfolio in ["market", "portfolio"]:
-        override_code += check_missing_coverage(
-            symbols=symbol_coverage,
-            processed_input=processed_input,
-            portfolio_name=portfolio,
-            log_elements=log_elements,
+    # check coverage
+    if processed_input["cob_date"] in available_dates:
+        symbol_coverage = get_coverage_for_date(date)
+        for portfolio in ["market", "portfolio"]:
+            override_code += check_missing_coverage(
+                symbols=symbol_coverage,
+                processed_input=processed_input,
+                portfolio_name=portfolio,
+                log_elements=log_elements,
+            )
+        if len(processed_input["market"].keys()) < 1:
+            log_elements.append(f"No benchmark coverage for date : {date}! ")
+        if len(processed_input["portfolio"].keys()) < 1:
+            log_elements.append(f"No portfolio coverage for date : {date}! ")
+    else:
+        processed_input["market"] = {}
+        processed_input["portfolio"] = {}
+        log_elements.append(
+            "The symbol coverage was not evaluated as the provided calculation date is outside model estimation range! "
         )
-
-    if len(processed_input["market"].keys()) < 1:
-        log_elements.append(f"No benchmark coverage for date : {date}!")
-    if len(processed_input["portfolio"].keys()) < 1:
-        log_elements.append(f"No portfolio coverage for date : {date}!")
 
     if (
         bmrk_error_code == 404
         or port_error_code == 404
+        or processed_input["cob_date"] not in available_dates
         or len(processed_input["market"].keys()) < 1
         or len(processed_input["portfolio"].keys()) < 1
     ):
@@ -498,11 +527,11 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
     processed_input["mean_to_zero"] = all_input["mean_to_zero"]
     if processed_input["mean_to_zero"]:
         log_elements.append(
-            "The demeaned returns are used for the calculation of risk."
+            "The demeaned returns are used for the calculation of risk. "
         )
     processed_input["use_factors"] = all_input["use_factors"]
     if not processed_input["use_factors"]:
-        log_elements.append("All cryptocurrency is treated as a single factor.")
+        log_elements.append("All cryptocurrency is treated as a single factor. ")
 
     return processed_input, log_elements, override_code
 
