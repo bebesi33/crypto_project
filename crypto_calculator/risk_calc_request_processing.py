@@ -479,7 +479,7 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
         and processed_input["cob_date"] in available_dates
     ):
         log_elements.append(
-            "No benchmark provided, hence the model universe based benchmark is loaded! "
+            "No benchmark was provided, hence the model universe based benchmark is loaded! "
         )
         override_code += 1
         bmrk_error_code = 1
