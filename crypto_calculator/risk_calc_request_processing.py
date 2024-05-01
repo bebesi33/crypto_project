@@ -26,6 +26,7 @@ from factor_model.risk_calculations.parameter_processing import (
 from factor_model.risk_calculations.risk_attribution import (
     generate_active_space_portfolio,
     generate_mctr_chart_input,
+    generate_mctr_chart_input_reduced,
 )
 from factor_model.risk_calculations.risk_attribution import (
     calculate_spec_risk_mctr,
@@ -588,18 +589,19 @@ def risk_calc_request_reduced(
         exposures[portfolio] = {"exposure": port_exposures[portfolio].to_dict()}
 
     transformed_mctr = {key: value.to_dict() for (key, value) in mctrs.items()}
+    mctr_output = generate_mctr_chart_input_reduced(portfolios, mctrs)
 
     print(
         {
             "risk_metrics": risk_metrics_extended,
             "exposures": exposures,
-            "mctr": transformed_mctr,
+            "mctr": mctr_output,
         }
     )
 
     return {
         "risk_metrics": risk_metrics_extended,
         "exposures": exposures,
-        "mctr": transformed_mctr,
+        "mctr": mctr_output,
         "model": "no-factor"
     }

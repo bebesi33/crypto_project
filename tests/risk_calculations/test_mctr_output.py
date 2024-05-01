@@ -1,6 +1,9 @@
 import unittest
 import pandas as pd
-from factor_model.risk_calculations.risk_attribution import generate_mctr_chart_input
+from factor_model.risk_calculations.risk_attribution import (
+    generate_mctr_chart_input,
+    generate_mctr_chart_input_reduced,
+)
 
 
 class TestGenerateMctrChartInput(unittest.TestCase):
@@ -23,15 +26,32 @@ class TestGenerateMctrChartInput(unittest.TestCase):
             "active": {"factor1": 0.15, "factor3": 0.3, "factor5": 0.5},
         }
 
+        reduced_expected_result = {
+            "portfolio": {"factor1": 0.1, "factor3": 0.3},
+            "active": {"factor1": 0.15, "factor3": 0.3},
+        }
+
         result_mctr = generate_mctr_chart_input(
             portfolios, factor_mctrs, spec_risk_mctrs
         )
 
+        reduced_result_mctr = generate_mctr_chart_input_reduced(
+            portfolios, factor_mctrs
+        )
         self.assertEqual(str(result_mctr.keys()), str(expected_result.keys()))
         for port in result_mctr.keys():
             for factor in result_mctr[port]:
                 self.assertEqual(
                     result_mctr[port][factor], expected_result[port][factor]
+                )
+        self.assertEqual(
+            str(reduced_result_mctr.keys()), str(reduced_expected_result.keys())
+        )
+        for port in reduced_result_mctr.keys():
+            for factor in reduced_result_mctr[port]:
+                self.assertEqual(
+                    reduced_result_mctr[port][factor],
+                    reduced_expected_result[port][factor],
                 )
 
 

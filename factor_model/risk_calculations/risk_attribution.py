@@ -239,3 +239,56 @@ def generate_mctr_chart_input(
     if "active" in portolios.keys() and "market" in all_mctr_ordered["active"].keys():
         all_mctr_ordered["active"]["market"] = 0
     return all_mctr_ordered
+
+
+def generate_mctr_chart_input_reduced(
+    portolios: Dict[str, Dict[str, float]],
+    all_mctr: Dict[str, pd.Series]
+) -> Dict[str, Dict[str, float]]:
+    """
+    Assembles and orders risk metrics (MCTRs) for different portfolios.
+
+    Args:
+        portolios (Dict[str, Dict[str, float]]): A dictionary containing portfolio names as keys
+            and corresponding symbols weights as inner dictionaries.
+        all_mctr (Dict[str, pd.Series]): A dictionary with portfolio names as keys
+            and symbols level MCTRs (risk metrics) as inner pandas Series.
+        spec_risk_mctrs (Dict[str, pd.Series]): A dictionary with portfolio names as keys
+            and specific risk MCTRs as inner pandas Series.
+
+    Returns:
+        Dict[str, Dict[str, float]]: A dictionary containing ordered MCTRs for each portfolio,
+        including relevant factors and zero values for missing factors.
+    """
+    # assemble mctr_data, first all keys
+    # top 5 spec risk mctr (for portfolio) and if exists active risk are presented
+    port_largest_contrib = set(all_mctr["portfolio"].abs().nlargest(10).index)
+    if "active" in portolios.keys():
+        active_largest_contrib = set(all_mctr["active"].abs().nlargest(10).index)
+        port_largest_contrib = port_largest_contrib.union(active_largest_contrib)
+    relevant_mctr_keys = list(port_largest_contrib)
+
+    all_mctr_ordered = {}
+    for portfolio in portolios.keys():
+        all_mctr[portfolio] = {
+            key: value
+            for key, value in all_mctr[portfolio].items()
+            if key in relevant_mctr_keys
+        }
+
+    main_port = "active" if "active" in portolios.keys() else "portfolio"
+    for portfolio in portolios.keys():
+        all_mctr_ordered[portfolio] = {}
+        for key in all_mctr[main_port].keys():
+            all_mctr_ordered[portfolio][key] = (
+                all_mctr[portfolio][key] if key in all_mctr[portfolio].keys() else 0
+            )
+            all_mctr_ordered[portfolio][key] = (
+                all_mctr_ordered[portfolio][key]
+                if pd.notna(all_mctr_ordered[portfolio][key])
+                else 0
+            )
+    if "active" in portolios.keys() and "market" in all_mctr_ordered["active"].keys():
+        all_mctr_ordered["active"]["market"] = 0
+    print(all_mctr_ordered["active"].keys())
+    return all_mctr_ordered

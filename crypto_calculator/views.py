@@ -3,8 +3,6 @@ from crypto_calculator.models import RawPriceData
 from asgiref.sync import sync_to_async
 import pandas as pd
 from django.views.decorators.csrf import csrf_exempt
-import json
-from crypto_calculator.sample_risk_input import market_portfolio, portfolio_details
 from crypto_calculator.explorer_request_processing import (
     assemble_price_data,
     decode_explorer_input,
