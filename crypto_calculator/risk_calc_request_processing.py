@@ -397,15 +397,6 @@ def risk_calc_request_full(
     portfolio_df = assemble_portfolios_into_df(portfolios)
     parsed_port_data = parse_portfolio_input(portfolio_df)
 
-    print(
-        {
-            "risk_metrics": risk_metrics_extended,
-            "exposures": exposures,
-            "mctr": mctr_output,
-            "all_portfolios": parsed_port_data,
-        }
-    )
-
     return {
         "risk_metrics": risk_metrics_extended,
         "exposures": exposures,
@@ -646,27 +637,21 @@ def risk_calc_request_reduced(
     for key in risk_metrics_extended.keys():
         risk_metrics_extended[key] = np.round(risk_metrics_extended[key], decimals=3)
 
-    exposures = {}
-    for portfolio in portfolios.keys():
-        exposures[portfolio] = {"exposure": port_exposures[portfolio].to_dict()}
-
     mctr_output = generate_mctr_chart_input_reduced(portfolios, mctrs)
 
     portfolio_df = assemble_portfolios_into_df(portfolios)
     parsed_port_data = parse_portfolio_input(portfolio_df)
 
-    print(
-        {
-            "risk_metrics": risk_metrics_extended,
-            "exposures": exposures,
-            "mctr": mctr_output,
-            "all_portfolios": parsed_port_data
-        }
-    )
+    port_weights = {}
+    for portfolio in portfolios.keys():
+        if portfolio == "market":
+            port_weights["market"] = {"exposure": portfolio_df["benchmark"].to_dict()}
+        else:
+            port_weights[portfolio] = {"exposure": portfolio_df[portfolio].to_dict()}
 
     return {
         "risk_metrics": risk_metrics_extended,
-        "exposures": exposures,
+        "exposures": port_weights,
         "mctr": mctr_output,
         "all_portfolios": parsed_port_data,
         "model": "no-factor",
