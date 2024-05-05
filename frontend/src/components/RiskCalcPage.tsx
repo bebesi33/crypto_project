@@ -5,6 +5,7 @@ import SimpleTable from "./tables/SimpleTable";
 import ExposureChart from "./charts/ExposureChart";
 import MarginalContribChart from "./charts/MarginalContribChart";
 import { errorStyles } from "./Colors";
+import PortfolioTable from "./tables/PortfolioTable";
 
 function RiskCalcPage() {
   const [jsonData, setJsonData] = useState(null);
@@ -327,6 +328,21 @@ function RiskCalcPage() {
             <MarginalContribChart
               primaryData={jsonData["mctr"]}
               titleText="Marginal contribution to risk breakdown"
+            />
+          )}
+        </div>
+      )}
+
+      {jsonData !== null && (
+        <div
+          className="portfolio-table-container"
+          id="portfolio-table-container"
+          style={{ top: jsonData["model"] === "factor" ? 1050 : 880 }}
+        >
+          {"all_portfolios" in jsonData && (
+            <PortfolioTable
+              primaryData={jsonData["all_portfolios"]}
+              tableTitle="Portfolio compositon by symbols"
             />
           )}
         </div>

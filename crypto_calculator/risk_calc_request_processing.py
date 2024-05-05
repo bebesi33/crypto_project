@@ -24,6 +24,7 @@ from factor_model.risk_calculations.parameter_processing import (
     check_input_param_correctness,
     parse_file_input_into_portfolio,
 )
+from factor_model.risk_calculations.portfolio_output import assemble_portfolios_into_df, parse_portfolio_input
 from factor_model.risk_calculations.risk_attribution import (
     generate_active_space_portfolio,
     generate_mctr_chart_input,
@@ -267,7 +268,7 @@ def risk_calc_request_full(
         portfolio_details, market_portfolio
     )
 
-    portolios = {
+    portfolios = {
         "portfolio": portfolio_details,
         "market": market_portfolio,
         "active": active_space_port,
@@ -286,11 +287,11 @@ def risk_calc_request_full(
     spec_risk_var_decomps = {}
     spec_risk_mctrs = {}
     combined_spec_risk = {}
-    for port in portolios.keys():
+    for port in portfolios.keys():
         # 2.1. exposure calc
         port_exposures[port] = create_portfolio_exposures(
             exposures=exposures,
-            portfolio_details=portolios[port],
+            portfolio_details=portfolios[port],
             non_style_fields=EXPOSURE_NON_STYLE_FIELDS,
             is_total_space=True if port != "active" else False,
         )
@@ -310,7 +311,7 @@ def risk_calc_request_full(
             raw_specific_risks[port],
             spec_risk_availabilities[port],
         ) = generate_raw_specific_risk(
-            full_specific_returns, risk_calculation_parameters, portolios[port]
+            full_specific_returns, risk_calculation_parameters, portfolios[port]
         )
 
         core_spec_risk_df = get_core_avg_spec_risk(
@@ -324,7 +325,7 @@ def risk_calc_request_full(
         )
         spec_risks[port] = generate_raw_portfolio_specific_risk(
             combined_spec_risk[port],
-            portolios[port],
+            portfolios[port],
             is_total_space=True if port != "active" else False,
         )
 
@@ -334,7 +335,7 @@ def risk_calc_request_full(
         spec_risk_attributions[port], spec_risk_var_decomps[port] = (
             calculate_spec_risk_mctr(
                 combined_spec_risk[port],
-                portolios[port],
+                portfolios[port],
                 True if port != "active" else False,
             )
         )
@@ -345,8 +346,8 @@ def risk_calc_request_full(
         port_exposures["portfolio"], factor_covariance, port_exposures["market"]
     )
     spec_risk_covar = get_specific_risk_beta(
-        portolios["portfolio"],
-        market_portfolio=portolios["market"],
+        portfolios["portfolio"],
+        market_portfolio=portfolios["market"],
         spec_risk=combined_spec_risk["active"],
     )
     portfolio_beta = (factor_beta_covar**2 + spec_risk_covar) / (
@@ -388,16 +389,20 @@ def risk_calc_request_full(
         risk_metrics_extended[key] = np.round(risk_metrics_extended[key], decimals=3)
 
     exposures = {}
-    for portfolio in portolios.keys():
+    for portfolio in portfolios.keys():
         exposures[portfolio] = port_exposures[portfolio].to_dict()
 
-    mctr_output = generate_mctr_chart_input(portolios, factor_mctrs, spec_risk_mctrs)
+    mctr_output = generate_mctr_chart_input(portfolios, factor_mctrs, spec_risk_mctrs)
+
+    portfolio_df = assemble_portfolios_into_df(portfolios)
+    parsed_port_data = parse_portfolio_input(portfolio_df)
 
     print(
         {
             "risk_metrics": risk_metrics_extended,
             "exposures": exposures,
             "mctr": mctr_output,
+            "all_portfolios": parsed_port_data,
         }
     )
 
@@ -405,6 +410,7 @@ def risk_calc_request_full(
         "risk_metrics": risk_metrics_extended,
         "exposures": exposures,
         "mctr": mctr_output,
+        "all_portfolios": parsed_port_data,
         "model": "factor",
     }
 
@@ -646,11 +652,15 @@ def risk_calc_request_reduced(
 
     mctr_output = generate_mctr_chart_input_reduced(portfolios, mctrs)
 
+    portfolio_df = assemble_portfolios_into_df(portfolios)
+    parsed_port_data = parse_portfolio_input(portfolio_df)
+
     print(
         {
             "risk_metrics": risk_metrics_extended,
             "exposures": exposures,
             "mctr": mctr_output,
+            "all_portfolios": parsed_port_data
         }
     )
 
@@ -658,5 +668,6 @@ def risk_calc_request_reduced(
         "risk_metrics": risk_metrics_extended,
         "exposures": exposures,
         "mctr": mctr_output,
+        "all_portfolios": parsed_port_data,
         "model": "no-factor",
     }

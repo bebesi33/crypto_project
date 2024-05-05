@@ -163,4 +163,9 @@
   height: 400px;
   max-width: 850px;
 }
-
+.portfolio-table-container {
+  position: absolute;
+  bottom: 0;
+  left: 360px;
+  max-width: 850px;
+}
