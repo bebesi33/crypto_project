@@ -407,7 +407,7 @@ def risk_calc_request_full(
 
     portfolio_df = assemble_portfolios_into_df(portfolios)
     parsed_port_data = parse_portfolio_input(portfolio_df)
-
+    print(flip_risk_decomposition(risk_decomposition))
     return {
         "risk_metrics": risk_metrics_extended,
         "exposures": exposures,
@@ -664,7 +664,7 @@ def risk_calc_request_reduced(
             port_weights["market"] = {"exposure": portfolio_df["benchmark"].to_dict()}
         else:
             port_weights[portfolio] = {"exposure": portfolio_df[portfolio].to_dict()}
-
+    print(flip_risk_decomposition(risk_decomposition))
     return {
         "risk_metrics": risk_metrics_extended,
         "exposures": port_weights,

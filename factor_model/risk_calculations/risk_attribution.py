@@ -351,5 +351,12 @@ def flip_risk_decomposition(
                 port_ = "benchmark"
             else:
                 port_ = port
-            risk_decomposition_mod[key][port_] = risk_decomposition[port][key] * 100
+            risk_decomposition_mod[key][port_] = risk_decomposition[port].get(key, 0.0) * 100
+            risk_decomposition_mod[key][port_] = 0.0 if pd.isna(
+                risk_decomposition_mod[key][port_]) else risk_decomposition_mod[key][port_]
+    for key in risk_decomposition_mod.keys():
+        for col in ["portfolio", "benchmark", "active"]:
+            if col not in risk_decomposition_mod[key]:
+                risk_decomposition_mod[key][col] = 0.0
+        risk_decomposition_mod[key] = dict(sorted(risk_decomposition_mod[key].items(), reverse=True))
     return risk_decomposition_mod
