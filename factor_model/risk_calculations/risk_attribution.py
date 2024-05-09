@@ -292,3 +292,49 @@ def generate_mctr_chart_input_reduced(
         all_mctr_ordered["active"]["market"] = 0
     print(all_mctr_ordered["active"].keys())
     return all_mctr_ordered
+
+
+def decompose_risk(
+    total_risk: float, factor_covar: pd.DataFrame, spec_risk: float = None
+) -> Dict[str, float]:
+    """Generates portfolio risk decomposition
+    If more than 10 factors are provided the top 10 contributors are provided
+
+    Args:
+        total_risk (float): total risk values
+        factor_covar (pd.DataFrame): factor covariance decomposition (n*n)
+        spec_risk (float, optional): specific risk value. Defaults to None.
+
+    Returns:
+        Dict[str, float]: _description_
+    """
+    total_variance = total_risk**2
+    all_ratios = {}
+    if spec_risk is not None:
+        spec_risk_ratio = (spec_risk**2) / total_variance
+        all_ratios["specific_risk"] = spec_risk_ratio
+
+    trace_sum = factor_covar.to_numpy().trace()
+    diversification_ratio = (factor_covar.sum().sum() - trace_sum) / total_variance
+    factor_ratios = (
+        pd.Series(factor_covar.to_numpy().diagonal(), index=factor_covar.index)
+        / total_variance
+    )
+    n_largest_elems = list(abs(factor_ratios.copy()).nlargest(10).index)
+    if len(factor_ratios) > len(n_largest_elems):
+        other_elems_ratio = factor_ratios[
+            ~factor_ratios.index.isin(n_largest_elems)
+        ].sum()
+        factor_ratios = (
+            factor_ratios[factor_ratios.index.isin(n_largest_elems)].copy().to_dict()
+        )
+        all_ratios = {**all_ratios, "other": other_elems_ratio}
+    else:
+        factor_ratios = factor_ratios.to_dict()
+
+    all_ratios = {
+        **all_ratios,
+        **factor_ratios,
+        **{"diversification": diversification_ratio},
+    }
+    return (pd.Series(all_ratios) * total_risk).sort_values(ascending=False).to_dict()
