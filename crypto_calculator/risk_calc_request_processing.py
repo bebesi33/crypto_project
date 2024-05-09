@@ -24,8 +24,13 @@ from factor_model.risk_calculations.parameter_processing import (
     check_input_param_correctness,
     parse_file_input_into_portfolio,
 )
-from factor_model.risk_calculations.portfolio_output import assemble_portfolios_into_df, parse_portfolio_input
+from factor_model.risk_calculations.portfolio_output import (
+    assemble_portfolios_into_df,
+    parse_portfolio_input,
+)
 from factor_model.risk_calculations.risk_attribution import (
+    decompose_risk,
+    flip_risk_decomposition,
     generate_active_space_portfolio,
     generate_mctr_chart_input,
     generate_mctr_chart_input_reduced,
@@ -287,59 +292,65 @@ def risk_calc_request_full(
     spec_risk_var_decomps = {}
     spec_risk_mctrs = {}
     combined_spec_risk = {}
-    for port in portfolios.keys():
+    risk_decomposition = {}
+    for portfolio in portfolios.keys():
         # 2.1. exposure calc
-        port_exposures[port] = create_portfolio_exposures(
+        port_exposures[portfolio] = create_portfolio_exposures(
             exposures=exposures,
-            portfolio_details=portfolios[port],
+            portfolio_details=portfolios[portfolio],
             non_style_fields=EXPOSURE_NON_STYLE_FIELDS,
-            is_total_space=True if port != "active" else False,
+            is_total_space=True if portfolio != "active" else False,
         )
-        port_exposures[port] = port_exposures[port].reindex(factor_covariance.index)
+        port_exposures[portfolio] = port_exposures[portfolio].reindex(factor_covariance.index)
         # 2.2. factor risk related
         (
-            factor_risks[port],
-            factor_attributions[port],
+            factor_risks[portfolio],
+            factor_attributions[portfolio],
         ) = generate_factor_covariance_attribution(
-            port_exposures[port], factor_covariance
+            port_exposures[portfolio], factor_covariance
         )
-        factor_covars[port] = generate_factor_covariance_table(
-            port_exposures[port], factor_covariance
+        factor_covars[portfolio] = generate_factor_covariance_table(
+            port_exposures[portfolio], factor_covariance
         )
         # 2.3. spec risk related
         (
-            raw_specific_risks[port],
-            spec_risk_availabilities[port],
+            raw_specific_risks[portfolio],
+            spec_risk_availabilities[portfolio],
         ) = generate_raw_specific_risk(
-            full_specific_returns, risk_calculation_parameters, portfolios[port]
+            full_specific_returns, risk_calculation_parameters, portfolios[portfolio]
         )
 
         core_spec_risk_df = get_core_avg_spec_risk(
             cob_date, risk_calculation_parameters["specific_risk_half_life"]
         )
-        combined_spec_risk[port] = generate_combined_spec_risk(
+        combined_spec_risk[portfolio] = generate_combined_spec_risk(
             core_spec_risk_df,
             risk_calculation_parameters,
-            raw_specific_risks[port],
-            spec_risk_availabilities[port],
+            raw_specific_risks[portfolio],
+            spec_risk_availabilities[portfolio],
         )
-        spec_risks[port] = generate_raw_portfolio_specific_risk(
-            combined_spec_risk[port],
-            portfolios[port],
-            is_total_space=True if port != "active" else False,
+        spec_risks[portfolio] = generate_raw_portfolio_specific_risk(
+            combined_spec_risk[portfolio],
+            portfolios[portfolio],
+            is_total_space=True if portfolio != "active" else False,
         )
 
         # 2.4 other risk calcs
-        total_risks[port] = np.sqrt(factor_risks[port] ** 2 + spec_risks[port] ** 2)
-        factor_mctrs[port] = factor_attributions[port] / total_risks[port]
-        spec_risk_attributions[port], spec_risk_var_decomps[port] = (
+        total_risks[portfolio] = np.sqrt(factor_risks[portfolio] ** 2 + spec_risks[portfolio] ** 2)
+        factor_mctrs[portfolio] = factor_attributions[portfolio] / total_risks[portfolio]
+        spec_risk_attributions[portfolio], spec_risk_var_decomps[portfolio] = (
             calculate_spec_risk_mctr(
-                combined_spec_risk[port],
-                portfolios[port],
-                True if port != "active" else False,
+                combined_spec_risk[portfolio],
+                portfolios[portfolio],
+                True if portfolio != "active" else False,
             )
         )
-        spec_risk_mctrs[port] = spec_risk_attributions[port] / total_risks[port]
+        spec_risk_mctrs[portfolio] = spec_risk_attributions[portfolio] / total_risks[portfolio]
+        risk_decomposition[portfolio] = decompose_risk(
+            total_risk=total_risks[portfolio],
+            factor_covar=factor_covars[portfolio],
+            spec_risk=spec_risks[portfolio],
+        )
 
     # 3. beta calculation...
     factor_beta_covar, _ = generate_factor_covariance_attribution(
@@ -402,6 +413,7 @@ def risk_calc_request_full(
         "exposures": exposures,
         "mctr": mctr_output,
         "all_portfolios": parsed_port_data,
+        "decomposition": flip_risk_decomposition(risk_decomposition),
         "model": "factor",
     }
 
@@ -570,6 +582,7 @@ def risk_calc_request_reduced(
     total_attributions = {}
     mctrs = {}
     factor_covars = {}
+    risk_decomposition = {}
     for portfolio in portfolios.keys():
         # 3.1. exposure calc
         port_exposures[portfolio] = pd.Series(portfolios[portfolio]).sort_values(
@@ -594,6 +607,9 @@ def risk_calc_request_reduced(
         factor_covars[portfolio] = generate_factor_covariance_table(
             port_exposures[portfolio].to_frame("exposure"),
             covariance_matrixes[portfolio],
+        )
+        risk_decomposition[portfolio] = decompose_risk(
+            total_risk=total_risks[portfolio], factor_covar=factor_covars[portfolio]
         )
 
     # Step 4: beta and ES calculation
@@ -654,5 +670,6 @@ def risk_calc_request_reduced(
         "exposures": port_weights,
         "mctr": mctr_output,
         "all_portfolios": parsed_port_data,
+        "decomposition": flip_risk_decomposition(risk_decomposition),
         "model": "no-factor",
     }

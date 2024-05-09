@@ -57,7 +57,7 @@ const ExposureChart: React.FC<ExposureChartProps> = ({
     },
   };
 
-  const labels = Object.keys(primaryData["portfolio"]["exposure"]);
+  const labels = Object.keys(primaryData["active"]["exposure"]);
 
   const data = {
     labels,

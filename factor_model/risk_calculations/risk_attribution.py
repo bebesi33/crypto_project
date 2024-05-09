@@ -242,8 +242,7 @@ def generate_mctr_chart_input(
 
 
 def generate_mctr_chart_input_reduced(
-    portolios: Dict[str, Dict[str, float]],
-    all_mctr: Dict[str, pd.Series]
+    portolios: Dict[str, Dict[str, float]], all_mctr: Dict[str, pd.Series]
 ) -> Dict[str, Dict[str, float]]:
     """
     Assembles and orders risk metrics (MCTRs) for different portfolios.
@@ -338,3 +337,19 @@ def decompose_risk(
         **{"diversification": diversification_ratio},
     }
     return (pd.Series(all_ratios) * total_risk).sort_values(ascending=False).to_dict()
+
+
+def flip_risk_decomposition(
+    risk_decomposition: Dict[str, Dict[str, float]]
+) -> Dict[str, Dict[str, float]]:
+    risk_decomposition_mod = {}
+    for port in risk_decomposition.keys():
+        for key in risk_decomposition[port].keys():
+            if not key in risk_decomposition_mod.keys():
+                risk_decomposition_mod[key] = {}
+            if port == "market":
+                port_ = "benchmark"
+            else:
+                port_ = port
+            risk_decomposition_mod[key][port_] = risk_decomposition[port][key] * 100
+    return risk_decomposition_mod

@@ -6,6 +6,7 @@ import ExposureChart from "./charts/ExposureChart";
 import MarginalContribChart from "./charts/MarginalContribChart";
 import { errorStyles } from "./Colors";
 import PortfolioTable from "./tables/PortfolioTable";
+import RiskDecompositionChart from "./charts/RiskDecomposition";
 
 function RiskCalcPage() {
   const [jsonData, setJsonData] = useState(null);
@@ -91,6 +92,7 @@ function RiskCalcPage() {
         const jsonData = await response.json();
         console.log("Data received successfully!");
         setJsonData(jsonData);
+        console.log(jsonData);
         setIsLoading(false);
       } else {
         console.error("Error sending data to the backend.");
@@ -343,6 +345,20 @@ function RiskCalcPage() {
             <PortfolioTable
               primaryData={jsonData["all_portfolios"]}
               tableTitle="Portfolio compositon by symbols"
+            />
+          )}
+        </div>
+      )}
+      {jsonData !== null && (
+        <div
+          className="chart-container"
+          id="bottom-right-chart-container"
+          style={{ top: jsonData["model"] === "factor" ? 1050 : 880 }}
+        >
+          {"decomposition" in jsonData && (
+            <RiskDecompositionChart
+              primaryData={jsonData["decomposition"]}
+              titleText="Risk decomposition"
             />
           )}
         </div>

@@ -42,6 +42,12 @@ import {
           borderWidth: 2,
         },
       },
+      y: {
+        title: {
+            display: true,
+            text: "Value in pct",
+        },
+      },
       responsive: true,
       plugins: {
         legend: {
