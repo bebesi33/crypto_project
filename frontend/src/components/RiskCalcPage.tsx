@@ -303,10 +303,10 @@ function RiskCalcPage() {
         )}
       </div>
       <div className="chart-container" id="top-right-chart-container">
-        {jsonData !== null && "exposures" in jsonData && (
-          <ExposureChart
-            primaryData={jsonData["exposures"]}
-            titleText="Exposure breakdown"
+        {jsonData !== null && "decomposition" in jsonData && (
+          <RiskDecompositionChart
+            primaryData={jsonData["decomposition"]}
+            titleText="Risk decomposition"
           />
         )}
       </div>
@@ -355,10 +355,14 @@ function RiskCalcPage() {
           id="bottom-right-chart-container"
           style={{ top: jsonData["model"] === "factor" ? 1050 : 880 }}
         >
-          {"decomposition" in jsonData && (
-            <RiskDecompositionChart
-              primaryData={jsonData["decomposition"]}
-              titleText="Risk decomposition"
+          {"exposures" in jsonData && (
+            <ExposureChart
+              primaryData={jsonData["exposures"]}
+              titleText={
+                jsonData["model"] === "factor"
+                  ? "Factor exposure breakdown"
+                  : "Exposure breakdown (top 10 only)"
+              }
             />
           )}
         </div>

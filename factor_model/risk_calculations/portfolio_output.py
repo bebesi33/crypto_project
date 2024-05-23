@@ -56,3 +56,8 @@ def parse_portfolio_input(portfolio_df: pd.DataFrame) -> Dict:
         axis=1,
     )
     return frontend_port_input.to_dict()
+
+
+def round_float_to_n_decimals_str(val: float, decimals: int = 3) -> str:
+    val = np.round(val, decimals)
+    return str(val) + "".rjust(max(decimals - str(val)[::-1].find("."), 0), "0")

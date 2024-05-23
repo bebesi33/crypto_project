@@ -27,6 +27,7 @@ from factor_model.risk_calculations.parameter_processing import (
 from factor_model.risk_calculations.portfolio_output import (
     assemble_portfolios_into_df,
     parse_portfolio_input,
+    round_float_to_n_decimals_str,
 )
 from factor_model.risk_calculations.risk_attribution import (
     decompose_risk,
@@ -397,7 +398,7 @@ def risk_calc_request_full(
     risk_metrics_extended["Portfolio VaR (1-day, 99%, total space)"] = var99 * 100
     risk_metrics_extended["Portfolio ES (1-day, 99%, total space)"] = es99 * 100
     for key in risk_metrics_extended.keys():
-        risk_metrics_extended[key] = np.round(risk_metrics_extended[key], decimals=3)
+        risk_metrics_extended[key] = round_float_to_n_decimals_str(risk_metrics_extended[key])
 
     exposures = {}
     for portfolio in portfolios.keys():
@@ -407,7 +408,7 @@ def risk_calc_request_full(
 
     portfolio_df = assemble_portfolios_into_df(portfolios)
     parsed_port_data = parse_portfolio_input(portfolio_df)
-    print(flip_risk_decomposition(risk_decomposition))
+
     return {
         "risk_metrics": risk_metrics_extended,
         "exposures": exposures,
@@ -651,7 +652,7 @@ def risk_calc_request_reduced(
     risk_metrics_extended["Portfolio VaR (1-day, 99%, total space)"] = var99 * 100
     risk_metrics_extended["Portfolio ES (1-day, 99%, total space)"] = es99 * 100
     for key in risk_metrics_extended.keys():
-        risk_metrics_extended[key] = np.round(risk_metrics_extended[key], decimals=3)
+        risk_metrics_extended[key] = round_float_to_n_decimals_str(risk_metrics_extended[key])
 
     mctr_output = generate_mctr_chart_input_reduced(portfolios, mctrs)
 
@@ -661,10 +662,10 @@ def risk_calc_request_reduced(
     port_weights = {}
     for portfolio in portfolios.keys():
         if portfolio == "market":
-            port_weights["market"] = {"exposure": portfolio_df["benchmark"].to_dict()}
+            port_weights["market"] = {"exposure": portfolio_df["benchmark"].head(10).to_dict()}
         else:
-            port_weights[portfolio] = {"exposure": portfolio_df[portfolio].to_dict()}
-    print(flip_risk_decomposition(risk_decomposition))
+            port_weights[portfolio] = {"exposure": portfolio_df[portfolio].head(10).to_dict()}
+
     return {
         "risk_metrics": risk_metrics_extended,
         "exposures": port_weights,
