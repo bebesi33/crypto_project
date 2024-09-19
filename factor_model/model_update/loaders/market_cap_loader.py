@@ -2,11 +2,10 @@ from factor_model.utilities.common_utility import convert_str_numbs_to_float
 import logging
 import pandas as pd
 import yfinance as yf
-from typing import Dict
 logger = logging.getLogger(__name__)
 
 
-def generate_market_cap_only(ticker_map: Dict):
+def generate_market_cap_only(ticker_map: dict):
     market_caps = list()
     for ticker in ticker_map.keys():
         try:
@@ -20,7 +19,7 @@ def generate_market_cap_only(ticker_map: Dict):
     return pd.concat(market_caps)
 
 
-def generate_market_cap_data(ticker_map: Dict):
+def generate_market_cap_data(ticker_map: dict):
     col_name_map = {
         "Market Cap": "market_cap",
         "Circulating Supply": "in_circulation",

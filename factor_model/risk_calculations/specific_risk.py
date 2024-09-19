@@ -5,9 +5,9 @@ import numpy as np
 
 def generate_raw_specific_risk(
     specific_returns: pd.DataFrame,
-    parameters: Dict,
-    portfolio_details: Dict[str, float],
-) -> Tuple[Dict[str, float], Dict[str, float]]:
+    parameters: dict,
+    portfolio_details: dict[str, float],
+) -> Tuple[dict[str, float], dict[str, float]]:
     """
     Calculates raw specific risk for each symbol in a portfolio.
 
@@ -54,8 +54,8 @@ def generate_raw_specific_risk(
 
 
 def generate_raw_portfolio_specific_risk(
-    spec_std: Dict[str, float],
-    portfolio_details: Dict[str, float],
+    spec_std: dict[str, float],
+    portfolio_details: dict[str, float],
     is_total_space: bool = True,
 ) -> float:
     """
@@ -68,24 +68,21 @@ def generate_raw_portfolio_specific_risk(
     Returns:
         float: The raw specific risk of the portfolio.
     """
-    spec_risk_total = 0
-    weight_coverage = 0
-    if is_total_space:
-        port_total = sum(portfolio_details.values())
-    else:
-        port_total = 1
-    for ticker in portfolio_details.keys():
+    port_total = sum(portfolio_details.values()) if is_total_space else 1
+    spec_risk_total = 0.0
+    weight_coverage = 0.0
+
+    for ticker, weight in portfolio_details.items():
         spec_risk = spec_std.get(ticker)
-        if spec_risk:
-            current_weight = portfolio_details.get(ticker) / port_total
-            spec_risk_total += spec_risk**2 * current_weight**2
+        if spec_risk is not None:
+            current_weight = weight / port_total
+            spec_risk_total += (spec_risk * current_weight) ** 2
             weight_coverage += current_weight
 
     if is_total_space:
-        spec_risk_total = np.sqrt(spec_risk_total / (weight_coverage**2))
+        return np.sqrt(spec_risk_total) / weight_coverage if weight_coverage else 0.0
     else:
-        spec_risk_total = np.sqrt(spec_risk_total)
-    return spec_risk_total
+        return np.sqrt(spec_risk_total)
 
 
 def closest_halflife_element(lst: List[float], user_halflife: float) -> List[float]:
@@ -111,10 +108,10 @@ def closest_halflife_element(lst: List[float], user_halflife: float) -> List[flo
 
 def generate_combined_spec_risk(
     core_spec_risk_df: pd.DataFrame,
-    parameters: Dict,
-    raw_spec_risk: Dict[str, float],
-    spec_risk_hist: Dict[str, int],
-) -> Dict[str, float]:
+    parameters: dict,
+    raw_spec_risk: dict[str, float],
+    spec_risk_hist: dict[str, int],
+) -> dict[str, float]:
     # Step 1: calculate combined core spec risk
     if len(core_spec_risk_df) < 2:
         core_half_life = core_spec_risk_df["specific_risk"].values[0]

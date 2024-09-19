@@ -1,5 +1,4 @@
 import json
-from typing import Dict, List, Tuple
 from crypto_calculator.models import FactorReturns, RawPriceData, Returns
 import pandas as pd
 
@@ -42,8 +41,8 @@ def get_total_return(
 
 
 def assemble_price_data(
-    symbol: str, is_factor: bool, log_elements: List[str]
-) -> Tuple[pd.DataFrame, str]:
+    symbol: str, is_factor: bool, log_elements: list[str]
+) -> tuple[pd.DataFrame, str]:
     if symbol is not None and not is_factor:
         close_price = get_close_data(symbol=symbol)
         log_elements.append(
@@ -76,7 +75,7 @@ def query_explorer_factor_return_data(style_name: str) -> pd.DataFrame:
     return df[["total_return", "close"]]
 
 
-def decode_explorer_input(request) -> Tuple[Dict, str, int, bool]:
+def decode_explorer_input(request) -> tuple[dict, str, int, bool]:
     all_input = json.loads(request.body.decode("utf-8"))
     log_elements = list()
     processed_input = {}
@@ -130,8 +129,8 @@ def get_ewma_estimates(
     halflife: float,
     min_periods: float,
     override_code: float,
-    json_data: Dict,
-    log_elements: Dict,
+    json_data: dict,
+    log_elements: dict,
     returns: pd.DataFrame,
     mean_to_zero: bool = False,
 ):

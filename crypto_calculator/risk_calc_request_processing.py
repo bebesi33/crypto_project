@@ -1,5 +1,4 @@
 import json
-from typing import List, Dict, Set, Tuple
 from crypto_calculator.models import (
     CoreSpecificRisk,
     Exposures,
@@ -67,13 +66,13 @@ FRONTEND_TO_BACKEND = {
 }
 
 
-def get_available_estimation_dates() -> List[str]:
+def get_available_estimation_dates() -> list[str]:
     dates = FactorReturns.objects.using("factor_model_estimates").values("date")
     df = pd.DataFrame(list(dates))
     return [str(date_value) for date_value in set(df["date"])]
 
 
-def get_coverage_for_date(cob_date: str) -> Set[str]:
+def get_coverage_for_date(cob_date: str) -> set[str]:
     symbols = (
         RawPriceData.objects.using("default").filter(date=cob_date).values("symbol")
     )
@@ -94,10 +93,10 @@ def get_core_avg_spec_risk(cob_date: str, halflife: int) -> pd.DataFrame:
 
 
 def check_missing_coverage(
-    symbols: Set[str],
-    processed_input: Dict[str, Dict[str, float]],
+    symbols: set[str],
+    processed_input: dict[str, dict[str, float]],
     portfolio_name: str,
-    log_elements: List[str],
+    log_elements: list[str],
 ) -> int:
     """Enriches log elements with the name of missing coins
     and redefines input portfolios with respect to coverage
@@ -206,7 +205,7 @@ def query_exposures_for_market_portfolio_data(cob_date: str) -> pd.DataFrame:
     return pd.DataFrame(list(exposures))
 
 
-def query_specific_returns(cob_date: str, symbols: List[str]) -> pd.DataFrame:
+def query_specific_returns(cob_date: str, symbols: list[str]) -> pd.DataFrame:
     """Executes a query to get specific returns for a set of symbols
 
     Args:
@@ -226,7 +225,7 @@ def query_specific_returns(cob_date: str, symbols: List[str]) -> pd.DataFrame:
     return df
 
 
-def query_excess_returns(cob_date: str, symbols: List[str]) -> pd.DataFrame:
+def query_excess_returns(cob_date: str, symbols: list[str]) -> pd.DataFrame:
     """Executes a query to get excess returns for a set of symbols
 
     Args:
@@ -248,9 +247,9 @@ def query_excess_returns(cob_date: str, symbols: List[str]) -> pd.DataFrame:
 
 
 def risk_calc_request_full(
-    portfolio_details: Dict[str, float],
-    market_portfolio: Dict[str, float],
-    risk_calculation_parameters: Dict,
+    portfolio_details: dict[str, float],
+    market_portfolio: dict[str, float],
+    risk_calculation_parameters: dict,
 ):
     # Step 1: cob_date and basic queries
     cob_date = risk_calculation_parameters["date"]
@@ -429,7 +428,7 @@ def generate_market_portfolio(cob_date: str):
     }
 
 
-def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
+def decode_risk_calc_input(request) -> tuple[dict, str, int]:
     # parse request body and check whether correct date input is provided
     all_input = json.loads(request.body.decode("utf-8"))
     log_elements = list()
@@ -547,9 +546,9 @@ def decode_risk_calc_input(request) -> Tuple[Dict, str, int]:
 
 
 def risk_calc_request_reduced(
-    portfolio_details: Dict[str, float],
-    market_portfolio: Dict[str, float],
-    risk_calculation_parameters: Dict,
+    portfolio_details: dict[str, float],
+    market_portfolio: dict[str, float],
+    risk_calculation_parameters: dict,
 ):
     # Step 1: cob_date and portfolio related
     cob_date = risk_calculation_parameters["date"]

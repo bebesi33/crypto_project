@@ -1,12 +1,11 @@
 import sqlite3
 import os
-from typing import Dict
 import pandas as pd
 from factor_model.model_update.database_generators import RAW_DATA_DB
 
 
 def refresh_database(
-    symbol_level_data: Dict[str, pd.DataFrame],
+    symbol_level_data: dict[str, pd.DataFrame],
     database_location: str,
     database_name: str = RAW_DATA_DB,
     database_table_name: str = "raw_price_data",

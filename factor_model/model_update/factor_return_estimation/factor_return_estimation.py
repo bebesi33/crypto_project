@@ -1,11 +1,11 @@
 import numpy as np
 import datetime
-from typing import Dict, Union
+from typing import Union
 
 
 def create_expo_from_daily_data(
-    date: str, daily_expo_map: Dict[str, np.ndarray], variable_name: str = "exposure"
-) -> Dict[str, Union[float, None]]:
+    date: str, daily_expo_map: dict[str, np.ndarray], variable_name: str = "exposure"
+) -> dict[str, Union[float, None]]:
     """
     Creates a dictionary mapping keys to exposure values for a specific date.
 
@@ -29,7 +29,7 @@ def create_expo_from_daily_data(
 
 
 def create_factor_return_data(
-    estimation_basis, parameters: Dict, date: datetime.date, daily_data_maps: Dict
+    estimation_basis, parameters: dict, date: datetime.date, daily_data_maps: dict
 ):
     estimation_basis_current = estimation_basis.copy()
 
