@@ -5,7 +5,7 @@ import numpy as np
 
 def create_portfolio_exposures(
     exposures: pd.DataFrame,
-    portfolio_details: Dict[str, float],
+    portfolio_details: dict[str, float],
     non_style_fields: List[str] = [],
     is_total_space: bool = True,
 ) -> pd.DataFrame:
@@ -69,8 +69,8 @@ def generate_factor_covariance_table(
 
 
 def calculate_spec_risk_mctr(
-    spec_std: Dict[str, float],
-    portfolio_details: Dict[str, float],
+    spec_std: dict[str, float],
+    portfolio_details: dict[str, float],
     is_total_space: bool = True,
 ) -> Tuple[pd.Series, pd.Series]:
     """
@@ -113,8 +113,8 @@ def calculate_spec_risk_mctr(
 
 
 def generate_active_space_portfolio(
-    portfolio_details: Dict[str, float], market_portfolio: Dict[str, float]
-) -> Dict[str, float]:
+    portfolio_details: dict[str, float], market_portfolio: dict[str, float]
+) -> dict[str, float]:
     """
     Calculates the portfolio  weights in active space
     based on the difference between the portfolio weights and market portfolio weights.
@@ -143,9 +143,9 @@ def generate_active_space_portfolio(
 
 
 def get_specific_risk_beta(
-    portfolio_details: Dict[str, float],
-    market_portfolio: Dict[str, float],
-    spec_risk: Dict[str, float],
+    portfolio_details: dict[str, float],
+    market_portfolio: dict[str, float],
+    spec_risk: dict[str, float],
 ) -> float:
     """
     Calculates the specific risk beta for a given portfolio.
@@ -183,10 +183,10 @@ def get_specific_risk_beta(
 
 
 def generate_mctr_chart_input(
-    portolios: Dict[str, Dict[str, float]],
-    factor_mctrs: Dict[str, pd.Series],
-    spec_risk_mctrs: Dict[str, pd.Series],
-) -> Dict[str, Dict[str, float]]:
+    portolios: dict[str, dict[str, float]],
+    factor_mctrs: dict[str, pd.Series],
+    spec_risk_mctrs: dict[str, pd.Series],
+) -> dict[str, dict[str, float]]:
     """
     Assembles and orders risk metrics (MCTRs) for different portfolios.
 
@@ -205,7 +205,7 @@ def generate_mctr_chart_input(
     # assemble mctr_data, first all keys
     all_mctr = {}
     for portfolio in portolios.keys():
-        all_mctr[portfolio] = factor_mctrs[portfolio].append(spec_risk_mctrs[portfolio])
+        all_mctr[portfolio] = factor_mctrs[portfolio]._append(spec_risk_mctrs[portfolio])
 
     # top 5 spec risk mctr (for portfolio) and if exists active risk are presented
     port_largest_contrib = set(spec_risk_mctrs["portfolio"].abs().nlargest(5).index)
@@ -242,8 +242,8 @@ def generate_mctr_chart_input(
 
 
 def generate_mctr_chart_input_reduced(
-    portolios: Dict[str, Dict[str, float]], all_mctr: Dict[str, pd.Series]
-) -> Dict[str, Dict[str, float]]:
+    portolios: dict[str, dict[str, float]], all_mctr: dict[str, pd.Series]
+) -> dict[str, dict[str, float]]:
     """
     Assembles and orders risk metrics (MCTRs) for different portfolios.
 
@@ -295,7 +295,7 @@ def generate_mctr_chart_input_reduced(
 
 def decompose_risk(
     total_risk: float, factor_covar: pd.DataFrame, spec_risk: float = None
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """Generates portfolio risk decomposition
     If more than 10 factors are provided the top 10 contributors are provided
 
@@ -340,8 +340,8 @@ def decompose_risk(
 
 
 def flip_risk_decomposition(
-    risk_decomposition: Dict[str, Dict[str, float]]
-) -> Dict[str, Dict[str, float]]:
+    risk_decomposition: dict[str, dict[str, float]]
+) -> dict[str, dict[str, float]]:
     risk_decomposition_mod = {}
     for port in risk_decomposition.keys():
         for key in risk_decomposition[port].keys():

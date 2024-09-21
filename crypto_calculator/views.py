@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from crypto_calculator.models import RawPriceData
 from asgiref.sync import sync_to_async
 import pandas as pd
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie
 from crypto_calculator.explorer_request_processing import (
     assemble_price_data,
     decode_explorer_input,
@@ -16,7 +16,7 @@ from crypto_calculator.risk_calc_request_processing import (
 )
 
 
-@csrf_exempt
+@ensure_csrf_cookie
 def get_raw_price_data(request):
     if request.method == "POST":
 
@@ -49,10 +49,10 @@ def get_raw_price_data(request):
         json_data["log"] = " ".join(log_elements)
         return JsonResponse(json_data)
     # default return
-    return {"ERROR_CODE": 404, "log": "404 Not Found"}
+    return JsonResponse({"ERROR_CODE": 404, "log": "404 Not Found"})
 
 
-@csrf_exempt
+@ensure_csrf_cookie
 def get_risk_calculation_output(request):
     if request.method == "POST":
         processed_input, log_elements, override_code = decode_risk_calc_input(request)
@@ -75,9 +75,10 @@ def get_risk_calculation_output(request):
         json_data["ERROR_CODE"] = override_code
         return JsonResponse(json_data)
     # default return
-    return {"ERROR_CODE": 404, "log": "404 Not Found"}
+    return JsonResponse({"ERROR_CODE": 404, "log": "404 Not Found"})
 
 
+@ensure_csrf_cookie
 async def get_available_symbols(request):
     symbols = await sync_to_async(list)(
         RawPriceData.objects.values("symbol").distinct()

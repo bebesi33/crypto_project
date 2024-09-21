@@ -74,7 +74,7 @@ def get_available_estimation_dates() -> list[str]:
 
 def get_coverage_for_date(cob_date: str) -> set[str]:
     symbols = (
-        RawPriceData.objects.using("default").filter(date=cob_date).values("symbol")
+        RawPriceData.objects.using("raw_price_data").filter(date=cob_date).values("symbol")
     )
     df = pd.DataFrame(list(symbols))
     return set(df["symbol"])

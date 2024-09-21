@@ -13,7 +13,11 @@ from factor_model.risk_calculations.simple_risk_calculation import (
 
 
 def get_close_data(symbol: str) -> pd.DataFrame:
-    raw_price_data = RawPriceData.objects.filter(symbol=symbol).values("close", "date")
+    raw_price_data = (
+        RawPriceData.objects.using("raw_price_data")
+        .filter(symbol=symbol)
+        .values("close", "date")
+    )
     df = pd.DataFrame(list(raw_price_data))
     if len(list(raw_price_data)) > 0:
         df["date"] = df["date"].apply(lambda x: x.strftime("%Y-%m-%d"))
@@ -120,7 +124,9 @@ def decode_explorer_input(request) -> tuple[dict, str, int, bool]:
     )
     processed_input["mean_to_zero"] = all_input["mean_to_zero"]
     if processed_input["mean_to_zero"]:
-        log_elements.append("The demeaned returns are used for the calculation of risk. ")
+        log_elements.append(
+            "The demeaned returns are used for the calculation of risk. "
+        )
 
     return processed_input, log_elements, override_code, is_factor
 
@@ -136,7 +142,10 @@ def get_ewma_estimates(
 ):
     if halflife is not None and min_periods is not None:
         ewma_std = create_ewma_std_estimates(
-            returns, halflife=halflife, min_periods=min_periods, mean_to_zero=mean_to_zero
+            returns,
+            halflife=halflife,
+            min_periods=min_periods,
+            mean_to_zero=mean_to_zero,
         )
         ewma_std.rename(columns={"total_return": "ewma_std"}, inplace=True)
         # align ouput length

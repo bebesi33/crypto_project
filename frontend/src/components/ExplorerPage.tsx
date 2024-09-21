@@ -4,7 +4,10 @@ import { API } from "../Api";
 import LineChart from "./charts/LineChart";
 import ReturnChart from "./charts/ReturnChart";
 import { errorStyles } from "./Colors";
+import csrftoken from "./token/Token";
+
 // https://dev.to/deboragaleano/how-to-handle-multiple-inputs-in-react-55el
+console.log('CSRF Token:', csrftoken);
 
 function ExplorerPage() {
   const [jsonData, setJsonData] = useState(null);
@@ -41,7 +44,8 @@ function ExplorerPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-        },
+          "X-CSRFToken": csrftoken,
+        } as HeadersInit,
         credentials: "include",
         body: JSON.stringify({
           symbol: values["symbol"],

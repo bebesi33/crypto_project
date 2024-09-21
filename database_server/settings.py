@@ -84,6 +84,10 @@ WSGI_APPLICATION = 'database_server.wsgi.application'
 DATABASES = {
     'default':{
         'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': DATABASE_LOCATION / Path('default.sqlite3'),   
+    },
+    'raw_price_data':{
+        'ENGINE': 'django.db.backends.sqlite3',
         'NAME': DATABASE_LOCATION / Path('raw_price_data.sqlite3'),   
     },
     'returns':{

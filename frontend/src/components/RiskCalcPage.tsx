@@ -7,6 +7,7 @@ import MarginalContribChart from "./charts/MarginalContribChart";
 import { errorStyles } from "./Colors";
 import PortfolioTable from "./tables/PortfolioTable";
 import RiskDecompositionChart from "./charts/RiskDecomposition";
+import csrftoken from "./token/Token";
 
 function RiskCalcPage() {
   const [jsonData, setJsonData] = useState(null);
@@ -73,7 +74,8 @@ function RiskCalcPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-          },
+            'X-CSRFToken': csrftoken
+          } as HeadersInit,
           credentials: "include",
           body: JSON.stringify({
             cob_date: inputValues["cob_date"],
