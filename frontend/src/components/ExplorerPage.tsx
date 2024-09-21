@@ -7,7 +7,7 @@ import { errorStyles } from "./Colors";
 import csrftoken from "./token/Token";
 
 // https://dev.to/deboragaleano/how-to-handle-multiple-inputs-in-react-55el
-console.log('CSRF Token:', csrftoken);
+
 
 function ExplorerPage() {
   const [jsonData, setJsonData] = useState(null);
