@@ -3,6 +3,7 @@ interface TableProps {
   metricColumn: string;
   valueColumn: string;
   tableTitle: string;
+  headerLevel?: keyof JSX.IntrinsicElements;
 } // end TableProps
 
 const SimpleTable: React.FC<TableProps> = ({
@@ -10,11 +11,12 @@ const SimpleTable: React.FC<TableProps> = ({
   tableTitle,
   metricColumn,
   valueColumn,
+  headerLevel = 'h3'
 }) => {
-  console.log("This is fine!");
+  const HeaderTag = headerLevel;
   return (
     <div>
-      <h3>{tableTitle}</h3>
+      <HeaderTag>{tableTitle}</HeaderTag>
       <table className="table table-striped">
         <thead className="thead-dark">
           <tr>
