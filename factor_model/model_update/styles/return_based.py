@@ -1,11 +1,10 @@
 import numpy as np
 import pandas as pd
-from typing import Dict, List
 
 
 def generate_x_month_price_change(
-    price_data_map: Dict[str, pd.DataFrame], x_len: int = 12, month_len: int = 30
-) -> Dict[str, pd.DataFrame]:
+    price_data_map: dict[str, pd.DataFrame], x_len: int = 12, month_len: int = 30
+) -> dict[str, pd.DataFrame]:
     """
     Analyzes price data to generate momentum and reversal like exposure values.
 
@@ -17,7 +16,7 @@ def generate_x_month_price_change(
     Returns:
         Dict[str, pd.DataFrame]: A dictionary containing exposure values for each stock.
     """
-    return_map: Dict[str, pd.DataFrame] = {}
+    return_map: dict[str, pd.DataFrame] = {}
     for key in price_data_map.keys():
         close_price_changes = np.matrix(
             price_data_map[key]["Close"]

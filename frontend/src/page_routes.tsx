@@ -13,8 +13,8 @@ const page_routes = [
   { path: '/risk_calc', element: <RiskCalcPage /> },
   { path: '/contacts', element: <Contacts /> },
   { path: '/tutorial', element: <Tutorial /> },
-  { path: '/factor_model_info', element: <RiskCalculationInfo /> },
-  { path: '/risk_calculation_info', element: <FactorModelInfo /> },
+  { path: '/risk_calculation_info', element: <RiskCalculationInfo /> },
+  { path: '/factor_model_info', element: <FactorModelInfo /> },
   // Add more routes as needed (Todo...)
 ];
 
