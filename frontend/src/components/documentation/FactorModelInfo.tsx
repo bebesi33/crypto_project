@@ -1,6 +1,8 @@
 import { BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
 import "./FactorModelInfo.css";
+import { useEffect, useState } from "react";
+import { API } from "../../Api";
 
 const volume_formula = `\\text{VolumeExposure}(t) = \\frac{1}{1,000,000} 
     \\sum_{i=t - TradingDays + 1}^{t} 
@@ -9,15 +11,45 @@ const volume_exposure = `\\text{VolumeExposure(t) is the aggregated volume at da
 const volue_trade_days = `\\text{ TradingDays: is the number of days per month. Default: 30.}`;
 const volume_input = `\\text{ Volume(i): is the trade volume at date \(i\)}.`;
 
-const reversal_formula = `\\text{Exposure}(t) = \\frac{\\text{Close}(t) - \\text{Close}(t - LookBack)}{\\text{Close}(t - LookBack)}`;
+const reversal_formula = `\\text{ReversalExposure}(t) = \\frac{\\text{Close}(t) - \\text{Close}(t - LookBack)}{\\text{Close}(t - LookBack)}`;
 const reversal_close = `\\text{Close}(t) : \\text{ closing price at date } t `;
 const reversal_lookback = `\\text{LookBack} : \\text{ the number of days used to look back. Reversal: 30, Momentum: 180 }`;
 
 const size_formula = `\\text{Size}(t) = \\log{(MarketCap(t)+1)}`;
 const size_market_cap = `\\text{MarketCap}(t): \\text{Total supply multiplied by the current market price, expressed in USD}`;
 
+const coin_formula = `\\text{NewCoin} =  0 \\text{ if } \\frac{A(t)}{MarketPresenceMax} > 1 \\text{  ,   }  1 - \\frac{A(t)}{MarketPresenceMax} \\text{  otherwise}`;
+const coin_At = `\\text{A}(t) :  \\text{the age of the crypto in days}`;
+const coin_P = `\\text{MarketPresenceMax}:  \\text{Represents the maximum number of days to define a new crypto asset. Default: 1095}`;
 
 function FactorModelInfo() {
+  const [jsonData, setJsonData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          API + "crypto/api/get_factor_return_stats"
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        if (response.ok) {
+          const jsonData = await response.json();
+          console.log("Data received successfully!");
+          console.log(jsonData);
+          setJsonData(jsonData);
+        } else {
+          console.error("Error recievig data from the backend.");
+        }
+      } catch (err) {
+        console.error("An error occurred:", err);
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array means this runs once when the component mounts
+
   return (
     <div>
       {" "}
@@ -48,9 +80,9 @@ function FactorModelInfo() {
       <h4> 2.2. Reversal and Momentum styles</h4>
       <p>
         Both style exposures rely on the same formula, albeit they use different
-        lookback time horizons: Reversal uses a 30 day lookback horizon, while Momentum
-        uses a 180 day lookback. Reversal style and reversal strategies are
-        based on the principle of mean reversion, ideally reversal investors
+        lookback time horizons: Reversal uses a 30 day lookback horizon, while
+        Momentum uses a 180 day lookback. Reversal style and reversal strategies
+        are based on the principle of mean reversion, ideally reversal investors
         take advantage of short-term price fluctuations due to market
         overreactions. Momentum style tries to capitalize on the tendency of
         securities to continue moving in the same direction (upward or downward)
@@ -73,6 +105,25 @@ function FactorModelInfo() {
       </p>
       <BlockMath math={size_formula} />
       <BlockMath math={size_market_cap} />
+      <h4> 2.3. New Coin style</h4>
+      <p>
+        The New Coin style calculates an exposure variable ranging from 0 to 1.
+        For cryptocurrencies that have been in the market for a long time, such
+        as Bitcoin (BTC), the exposure will be 0. In contrast, a recently
+        introduced coin will have an exposure value closer to 1.
+      </p>
+      <BlockMath math={coin_formula} />
+      <BlockMath math={coin_At} />
+      <BlockMath math={coin_P} />
+      <h4> 2.4. Market</h4>
+      <p>
+        The Market ("style") represents the cryptocurrency market and serves as
+        the constant in the regressions. Therefore, all records in the
+        regression have an exposure value of 1 with respect to the market.
+      </p>
+      <h2> 3. Factor return estimation</h2>
+      <h2> 4. Factor return related statistics</h2>
+      {jsonData !== null}
     </div>
   );
 }

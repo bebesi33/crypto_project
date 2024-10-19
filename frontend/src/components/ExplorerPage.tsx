@@ -57,7 +57,6 @@ function ExplorerPage() {
       if (response.ok) {
         const jsonData = await response.json();
         console.log("Data received successfully!");
-        console.log(jsonData);
         setJsonData(jsonData);
         setIsLoading(false);
       } else {

@@ -1,4 +1,9 @@
 from django.http import JsonResponse
+from crypto_calculator.factor_return_stats_requests import (
+    get_rsquares,
+    get_tstats_stats,
+    get_vif_stats,
+)
 from crypto_calculator.models import RawPriceData
 from asgiref.sync import sync_to_async
 import pandas as pd
@@ -7,7 +12,7 @@ from crypto_calculator.explorer_request_processing import (
     assemble_price_data,
     decode_explorer_input,
     get_ewma_estimates,
-    get_total_return
+    get_total_return,
 )
 from crypto_calculator.risk_calc_request_processing import (
     decode_risk_calc_input,
@@ -39,7 +44,7 @@ def get_raw_price_data(request):
                 json_data,
                 log_elements,
                 returns,
-                mean_to_zero=all_input.get("mean_to_zero")
+                mean_to_zero=all_input.get("mean_to_zero"),
             )
         else:
             # if no close price, throw and error
@@ -76,6 +81,19 @@ def get_risk_calculation_output(request):
         return JsonResponse(json_data)
     # default return
     return JsonResponse({"ERROR_CODE": 404, "log": "404 Not Found"})
+
+
+@ensure_csrf_cookie
+def get_factor_return_stats(request):
+    print(request)
+    if request.method == "GET":
+        json_data = {}
+        json_data["vifs"] = get_vif_stats()
+        json_data["tstats"] = get_tstats_stats()
+        json_data["rsquares"] = get_rsquares()
+        return JsonResponse(json_data)
+    else:
+        return JsonResponse({})
 
 
 @ensure_csrf_cookie
