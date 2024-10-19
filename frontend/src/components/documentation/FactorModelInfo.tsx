@@ -24,7 +24,7 @@ const coin_At = `\\text{A}(t) :  \\text{the age of the crypto in days}`;
 const coin_P = `\\text{MarketPresenceMax}:  \\text{Represents the maximum number of days to define a new crypto asset. Default: 1095}`;
 
 function FactorModelInfo() {
-  const [jsonData, setJsonData] = useState(null);
+  const [factor_stats, setJsonData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,10 +36,9 @@ function FactorModelInfo() {
           throw new Error("Network response was not ok");
         }
         if (response.ok) {
-          const jsonData = await response.json();
+          const factor_stats = await response.json();
           console.log("Data received successfully!");
-          console.log(jsonData);
-          setJsonData(jsonData);
+          setJsonData(factor_stats);
         } else {
           console.error("Error recievig data from the backend.");
         }
@@ -122,22 +121,23 @@ function FactorModelInfo() {
         <BlockMath math={coin_P} />
         <h4> 2.4. Market</h4>
         <p>
-          The Market ("style") represents the cryptocurrency market and serves
-          as the constant in the regressions. Therefore, all records in the
-          regression have an exposure value of 1 with respect to the market.
+          Market "style" represents the cryptocurrency market and serves as the
+          constant in the regressions. Therefore, all records in the regression
+          have an exposure value of 1 with respect to the market.
         </p>
         <h2> 3. Factor return estimation</h2>
         <h2> 4. Factor return related statistics</h2>
       </div>
-      {jsonData !== null && (
+      {factor_stats !== null && (
         <>
           <div>
             <p>
               The average estimated R-squared in the estimation universe is{" "}
-              {Math.round(jsonData["rsquares"]["avg_core_r2"] * 1000) / 1000}{" "}
+              {Math.round(factor_stats["rsquares"]["avg_core_r2"] * 1000) /
+                1000}{" "}
               percent, while the average number of observations is{" "}
-              {Math.round(jsonData["rsquares"]["avg_nobs"])} under{" "}
-              {jsonData["rsquares"]["len"]} time periods (days).
+              {Math.round(factor_stats["rsquares"]["avg_nobs"])} under{" "}
+              {factor_stats["rsquares"]["len"]} time periods (days).
             </p>
             <p>
               For each daily regression, the T-statistics of the estimated
@@ -147,29 +147,39 @@ function FactorModelInfo() {
               as active T-statistics. Ideally, an active T-statistic ratio is
               considered favorable when the proportion of active T-statistics
               exceeds 20 percent within a given time frame. The results below
-              cover {jsonData["rsquares"]["len"]} estimation dates between:{" "}
-              {jsonData["tstats"]["first_date"]} and{" "}
-              {jsonData["tstats"]["last_date"]}.
+              cover {factor_stats["rsquares"]["len"]} estimation dates between:{" "}
+              {factor_stats["tstats"]["first_date"]} and{" "}
+              {factor_stats["tstats"]["last_date"]}.
             </p>
           </div>
           <div className="stats-table-container">
             <SimpleTable
-              primaryData={jsonData["tstats"]["active_tstat_ratio"]}
+              primaryData={factor_stats["tstats"]["active_tstat_ratio"]}
               metricColumn="Style"
               valueColumn="Active T-statistics ratio"
               tableTitle="Active T-statistics ratio by styles in percentage points"
               headerLevel="h5"
             />
           </div>
-          <p>VIF related...</p>
+          <p>
+            The Variance Inflation Factor (VIF) is a useful tool in regression
+            analysis to observe multicollinearity among independent variables.
+            The higher the value the VIF the bigger the multicollinearity
+            problem. Ideally VIF between 1 and 5 shows moderate correlation,
+            which is generally acceptable. Problematic level of
+            multicollinearity is the case when VIF {">"} 5. Since this model
+            have hundreds of regressions for all trading days and all the
+            regressors have a VIF estimate for all trading days, only the
+            proportion of problematic VIF is shown.
+          </p>
           <div className="stats-table-container">
-          <SimpleTable
-            primaryData={jsonData["vifs"]["problematic_ratio"]}
-            metricColumn="Style"
-            valueColumn="Proportion of VIF over 5"
-            tableTitle="Proportion of VIF metrics over 5 in percentage points"
-            headerLevel="h5"
-          />
+            <SimpleTable
+              primaryData={factor_stats["vifs"]["problematic_ratio"]}
+              metricColumn="Style"
+              valueColumn="Proportion of VIF over 5"
+              tableTitle="Proportion of VIF metrics over 5 in percentage points"
+              headerLevel="h5"
+            />
           </div>
         </>
       )}
