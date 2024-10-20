@@ -23,6 +23,15 @@ const coin_formula = `\\text{NewCoin} =  0 \\text{ if } \\frac{A(t)}{MarketPrese
 const coin_At = `\\text{A}(t) :  \\text{the age of the crypto in days}`;
 const coin_P = `\\text{MarketPresenceMax}:  \\text{Represents the maximum number of days to define a new crypto asset. Default: 1095}`;
 
+const excess_return_formula = `\\text{Excess Return}_i(t) = R_i(t) - r_f(t)`;
+const excess_return_rf = `\\text{R}_i(t) : \\text{represents the total return between t and t-1}`;
+const excess_return_totret = `\\text{r}_f(t) : \\text{represents the daily USD risk free rate.}`;
+const wls_formula = `\\text{Excess Return}_i(t) = \\beta_0(t) + \\sum_{k=1}^{K} \\beta_k(t) \\cdot \\text{StyleExposure}_{i,k}(t-1) + \\epsilon_i(t)`;
+const wls_market = `\\beta_0(t) : \\text{the market factor's return on date t}`;
+const wls_style = `\\beta_k(t) : \\text{ factor return for style k on date t}`;
+const wls_style_exp = `\\text{StyleExposure}_{i,k}(t-1) : \\text{exposure to style k at date t-1}`;
+const wls_specific = `\\epsilon_i(t) : \\text{ specific return for cryptocurrency i on date t}`;
+
 function FactorModelInfo() {
   const [factor_stats, setJsonData] = useState(null);
 
@@ -126,6 +135,70 @@ function FactorModelInfo() {
           have an exposure value of 1 with respect to the market.
         </p>
         <h2> 3. Factor return estimation</h2>
+        <h4> 3.1 Estimation universe generation</h4>
+        <p>
+          For each time period a reduced set of crypto is defined as the
+          estimation universe. The regression estimation is performed on these
+          selected assets. There are two conditions that should be met:
+          <ul>
+            <li>
+              {" "}
+              Square root of market cap coverage: The cryptocurrencies are
+              ordered from highest to lowest by market capitalization. Based on
+              the square root of their market cap, assets are selected to cover
+              80 percent of the total square root of the market cap. This
+              approach ensures two things: 1{")"} the smallest coins are
+              excluded from the estimation, preventing additional noise in the
+              model, and 2{")"} the weighting reduces the impact of the largest
+              cryptocurrencies while still gives more weight to larger ones than
+              smaller ones.
+            </li>
+            <li>
+              New coin inclusion: The newest coins are not immidiately included
+              into the estimation universe. These should present in the market
+              for at least 14 days.
+            </li>
+          </ul>
+        </p>
+        <h4> 3.2 Factor return estimation technical details</h4>
+        <p>
+          {" "}
+          For each trading day, the factor returns are calculated by estimating
+          a cross-sectional weighted least squares (WLS) regression on the
+          elements of the estimation universe. The weighting is based on the
+          square root of market capitalization (as described in 3.1). The
+          regressors are the standardized style exposures, including the market
+          exposure (the latter serving as the constant in the regression). The
+          explanatory variable is the daily excess return of each
+          cryptocurrency, which is calculated by subtracting the risk-free rate
+          from the total returns.
+        </p>
+        <p>Excess returns can be specified using the following formula:</p>
+        <BlockMath math={excess_return_formula} />
+        <BlockMath math={excess_return_rf} />
+        <BlockMath math={excess_return_totret} />
+        <p>
+          In this model, 1/365th of the relevant SOFR (Secured overnight
+          Financing Rate) is used for all dates as a risk free rate.
+        </p>
+        <p>
+          The daily crosssectional regressions can be specfied with the
+          following formula:
+        </p>
+        <BlockMath math={wls_formula} />
+        <BlockMath math={wls_market} />
+        <BlockMath math={wls_style} />
+        <BlockMath math={wls_style_exp} />
+        <BlockMath math={wls_specific} />
+        <p>
+          It must be noted that for each day, the WLS regression uses the
+          previous day's style exposures. This is important, as the aim of this
+          regression is to explain the next day's returns (e.g., returns between
+          t and t-1) by using the available information on day t-1. The
+          residuals of the regression can be interpreted as specific returns. By
+          applying the estimated regression coefficients, the specific returns
+          for non-estimation universe elements are calculated.
+        </p>
         <h2> 4. Factor return related statistics</h2>
       </div>
       {factor_stats !== null && (
