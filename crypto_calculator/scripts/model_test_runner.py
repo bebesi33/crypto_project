@@ -17,6 +17,7 @@ class ManagedModelTestRunner(DiscoverRunner):
     def setup_test_environment(self, *args, **kwargs):
         logger.warning("ManagedModelTestRunner: setup_test_environment called")
         self.unmanaged_models = [m for m in apps.get_models() if not m._meta.managed]
+        logger.warning("List of unmanaged models: ")
         logger.warning(self.unmanaged_models)
         for model in self.unmanaged_models:
             model._meta.managed = True

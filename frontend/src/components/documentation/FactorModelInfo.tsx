@@ -25,7 +25,9 @@ const coin_P = `\\text{MarketPresenceMax}:  \\text{Represents the maximum number
 
 const excess_return_formula = `\\text{Excess Return}_i(t) = R_i(t) - r_f(t)`;
 const excess_return_rf = `\\text{R}_i(t) : \\text{represents the total return between t and t-1}`;
+const excess_return_rf2 = `\\text{R}_i(t) : \\ln \\Bigl( 1+\\frac{\\text{Close}_i(t) - \\text{Close}_i(t - 1)}{\\text{Close}_i(t - 1)}\\Bigl) \\text{ where, Close}_i(t)\\text{ is the close price for crypto i at date t}`;
 const excess_return_totret = `\\text{r}_f(t) : \\text{represents the daily USD risk free rate.}`;
+
 const wls_formula = `\\text{Excess Return}_i(t) = \\beta_0(t) + \\sum_{k=1}^{K} \\beta_k(t) \\cdot \\text{StyleExposure}_{i,k}(t-1) + \\epsilon_i(t)`;
 const wls_market = `\\beta_0(t) : \\text{the market factor's return on date t}`;
 const wls_style = `\\beta_k(t) : \\text{ factor return for style k on date t}`;
@@ -66,7 +68,12 @@ function FactorModelInfo() {
       <div className="content-text">
         <h2> 1. Overview</h2>
         <p>
-          The model presented in this webpage is a fundamental factor model.
+          The model presented on this webpage is a fundamental factor model. This
+          means that the factor returns are generated using a sequence of
+          cross-sectional regressions and are the result of regression
+          estimations (estimated coefficients). The style exposures (or
+          regressors in the regressions) are calculated based on asset
+          characteristics for each time period.
         </p>
         <h2> 2. Style factors</h2>
         <p>
@@ -176,6 +183,7 @@ function FactorModelInfo() {
         <p>Excess returns can be specified using the following formula:</p>
         <BlockMath math={excess_return_formula} />
         <BlockMath math={excess_return_rf} />
+        <BlockMath math={excess_return_rf2} />
         <BlockMath math={excess_return_totret} />
         <p>
           In this model, 1/365th of the relevant SOFR (Secured overnight
@@ -197,7 +205,9 @@ function FactorModelInfo() {
           t and t-1) by using the available information on day t-1. The
           residuals of the regression can be interpreted as specific returns. By
           applying the estimated regression coefficients, the specific returns
-          for non-estimation universe elements are calculated.
+          for non-estimation universe elements are calculated. As the specific
+          returns are derived from the error terms of the estimated regressions,
+          they are assumed to be independent of each other.
         </p>
         <h2> 4. Factor return related statistics</h2>
       </div>
@@ -255,6 +265,12 @@ function FactorModelInfo() {
             />
           </div>
         </>
+      )}
+      {factor_stats == null && (
+        <p>
+          Unfortunately some technical error occured, the factor return related
+          statistics are not available.
+        </p>
       )}
     </div>
   );
