@@ -1,5 +1,6 @@
+import json
 import sqlite3
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 import pandas as pd
 from crypto_calculator.factor_return_stats_requests import (
     get_rsquares,
@@ -7,6 +8,7 @@ from crypto_calculator.factor_return_stats_requests import (
     get_vif_stats,
 )
 from crypto_calculator.models import TStatistics
+from crypto_calculator.views import get_factor_return_stats
 from database_server.settings import BASE_DIR
 
 # notes:
@@ -16,9 +18,11 @@ from database_server.settings import BASE_DIR
 class FactorStatModelTest(TestCase):
     databases = {"factor_model_estimates"}
 
+    def setUp(self):
+        self.factory = RequestFactory()
+
     @classmethod
     def setUpTestData(cls):
-
         # setup t_statistics table on the fly, by hand...
         df = pd.DataFrame(
             {
@@ -120,13 +124,35 @@ class FactorStatModelTest(TestCase):
         self.assertEqual(str(result_struct.get("last_date")), "2024-10-19")
         self.assertEqual(str(result_struct.get("first_date")), "2024-10-17")
 
-
     def test_rquares(self):
-        result_struct=get_rsquares()
+        result_struct = get_rsquares()
         self.assertEqual(result_struct.get("len"), 3)
+        self.assertAlmostEqual(result_struct.get("avg_core_r2"), 26.666666, places=5)
+        self.assertAlmostEqual(result_struct.get("avg_nobs"), 266.666666, places=5)
+
+    def test_stat_request(self):
+        request = self.factory.get("api/get_factor_return_stats")
+        stat_response = get_factor_return_stats(request)
+        result_struct = json.loads(stat_response.content)
+
         self.assertAlmostEqual(
-            result_struct.get("avg_core_r2"), 26.666666, places=5
+            result_struct.get("vifs").get("problematic_ratio").get("new_coin"),
+            66.7,
+            places=5,
+        )
+        self.assertEqual(result_struct.get("vifs").get("len"), 3)
+        self.assertEqual(str(result_struct.get("vifs").get("last_date")), "2024-10-19")
+        self.assertAlmostEqual(
+            result_struct.get("rsquares").get("avg_core_r2"), 26.666666, places=5
         )
         self.assertAlmostEqual(
-            result_struct.get("avg_nobs"), 266.666666, places=5
+            result_struct.get("rsquares").get("avg_nobs"), 266.666666, places=5
+        )
+        self.assertAlmostEqual(
+            result_struct.get("tstats").get("active_tstat_ratio").get("volume"),
+            50.0,
+            places=5,
+        )
+        self.assertEqual(
+            str(result_struct.get("tstats").get("last_date")), "2024-10-20"
         )
