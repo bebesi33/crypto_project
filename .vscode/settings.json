@@ -8,5 +8,7 @@
     ],
     "python.testing.pytestEnabled": false,
     "python.testing.unittestEnabled": true,
-    "python.testing.cwd": "E:\\Thesis\\crypto_project"
+    "python.testing.cwd": "E:\\Thesis\\crypto_project",
+    "sqliteViewer.maxFileSize": 1000,
+    "python.defaultInterpreterPath": "E:\\Thesis\\crypto_env\\Scripts\\python.exe"
 }

@@ -36,13 +36,13 @@ DATABASE_LOCATION = os.path.join(BASE_DIR.parent, "database")
 # Application definition
 
 INSTALLED_APPS = [
-    "crypto_calculator.apps.CryptoCalculatorConfig",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles'
+    'django.contrib.staticfiles',
+    'crypto_calculator'
 ]
 
 MIDDLEWARE = [
@@ -84,23 +84,28 @@ WSGI_APPLICATION = 'database_server.wsgi.application'
 DATABASES = {
     'default':{
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DATABASE_LOCATION / Path('default.sqlite3'),   
+        'NAME': DATABASE_LOCATION / Path('default.sqlite3'),
+        'TEST': {'DEPENDENCIES': [], 'NAME': 'test_default'},
     },
     'raw_price_data':{
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DATABASE_LOCATION / Path('raw_price_data.sqlite3'),   
+        'NAME': DATABASE_LOCATION / Path('raw_price_data.sqlite3'),
+        'TEST': {'DEPENDENCIES': [], 'NAME': 'test_raw_price_data'},
     },
     'returns':{
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DATABASE_LOCATION / Path('returns.sqlite3'),   
+        'NAME': DATABASE_LOCATION / Path('returns.sqlite3'),
+        'TEST': {'DEPENDENCIES': [],},
     },
     'factor_model_estimates':{
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DATABASE_LOCATION / Path('factor_model_estimates.sqlite3'),   
+        'NAME': DATABASE_LOCATION / Path('factor_model_estimates.sqlite3'),
+        'TEST': {'DEPENDENCIES': [], 'NAME': 'test_factor_model_estimates'},
     },
     'specific_risk_estimates':{
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DATABASE_LOCATION / Path('specific_risk_estimates.sqlite3'),   
+        'NAME': DATABASE_LOCATION / Path('specific_risk_estimates.sqlite3'),
+        'TEST': {'DEPENDENCIES': [],},
     }
 }
 
@@ -152,3 +157,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+TEST_RUNNER = 'crypto_calculator.scripts.model_test_runner.ManagedModelTestRunner'

@@ -19,7 +19,7 @@ def generate_x_month_aggregate_volume(
             containing the 'date' and 'exposure' (aggregated volume) columns. The 'exposure' represents the rolling
             sum of the 'Volume' column divided by 1,000,000 to scale the values.
     """
-    return_map: dict[str, pd.DataFrame] = {}
+    return_map = {}
     for key in price_data_map.keys():
         volume_rolling = (
             price_data_map[key]["Volume"].rolling(x_len * month_len).sum() / 1000000
@@ -30,6 +30,6 @@ def generate_x_month_aggregate_volume(
                 "exposure": volume_rolling,
             }
         )
-        df_temp.fillna(0, inplace=True)
+        df_temp["exposure"] = df_temp["exposure"].fillna(0.0)
         return_map[key] = df_temp.tail(-x_len * month_len)
     return return_map

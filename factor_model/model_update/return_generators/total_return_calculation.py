@@ -1,9 +1,8 @@
 import numpy as np
 import pandas as pd
-from typing import Dict
 
 
-def generate_return_data(price_data_map: Dict):
+def generate_return_data(price_data_map: dict):
     return_map = dict()
     for key in price_data_map.keys():
         gg = np.matrix(price_data_map[key]["Close"].diff().tail(-1)) / np.matrix(

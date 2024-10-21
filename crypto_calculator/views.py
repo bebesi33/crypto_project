@@ -85,7 +85,6 @@ def get_risk_calculation_output(request):
 
 @ensure_csrf_cookie
 def get_factor_return_stats(request):
-    print(request)
     if request.method == "GET":
         json_data = {}
         json_data["vifs"] = get_vif_stats()

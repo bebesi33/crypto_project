@@ -16,7 +16,7 @@ def get_vif_stats():
     vif_dict = {}
     for style in sorted(list(set(vifs.columns) - {"date"})):
         vif_dict[style] = np.round(
-            sum(abs(vifs[style].astype(float)) > 5) / len(vifs) * 100, 1
+            sum(abs(vifs[style].astype(float)) > 5.0) / len(vifs) * 100, 1
         )
     return {
         "len": len(vifs),
