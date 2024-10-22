@@ -8,7 +8,7 @@ from crypto_calculator.tests.resources.conftest import (
     update_expected_output,
 )
 from crypto_calculator.views import get_raw_price_data
-from database_server.settings import BASE_DIR
+from database_server.settings import BASE_DIR, TEST_DATABASE_LOCATION
 from factor_model.utilities.common_utility import compare_dictionaries
 
 
@@ -32,21 +32,22 @@ class FactorExplorerToolTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        for test_db, table, test_input in zip(
-            ["test_returns", "test_raw_price_data", "test_factor_model_estimates"],
-            ["returns", "raw_price_data", "factor_returns"],
-            [
-                "test_coin_total_returns.csv",
-                "test_raw_price_data.csv",
-                "test_factor_returns.csv",
-            ],
-        ):
-            df = pd.read_csv(
-                cls.test_location / "resources" / "test_input" / test_input,
-                sep=";",
-            )
-            with sqlite3.connect(BASE_DIR / test_db) as conn:
-                df.to_sql(table, conn, if_exists="replace", index=False)
+        if REFRESH_TESTS:
+            for test_db, table, test_input in zip(
+                ["test_returns.sqlite3", "test_raw_price_data.sqlite3", "test_factor_model_estimates.sqlite3"],
+                ["returns", "raw_price_data", "factor_returns"],
+                [
+                    "test_coin_total_returns.csv",
+                    "test_raw_price_data.csv",
+                    "test_factor_returns.csv",
+                ],
+            ):
+                df = pd.read_csv(
+                    cls.test_location / "resources" / "test_input" / test_input,
+                    sep=";",
+                )
+                with sqlite3.connect(TEST_DATABASE_LOCATION / test_db) as conn:
+                    df.to_sql(table, conn, if_exists="replace", index=False)
 
     def test_explorer_with_symbol(self):
         test_case_name = "test_explorer_with_symbol"

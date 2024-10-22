@@ -8,8 +8,9 @@ from crypto_calculator.factor_return_stats_requests import (
     get_vif_stats,
 )
 from crypto_calculator.models import TStatistics
+from crypto_calculator.tests.resources.conftest import REFRESH_TESTS
 from crypto_calculator.views import get_factor_return_stats
-from database_server.settings import BASE_DIR
+from database_server.settings import BASE_DIR, TEST_DATABASE_LOCATION
 
 # notes:
 # https://dev.to/vergeev/testing-against-unmanaged-models-in-django
@@ -24,49 +25,56 @@ class FactorStatModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         # setup t_statistics table on the fly, by hand...
-        df = pd.DataFrame(
-            {
-                "id": [0, 1, 2],
-                "market": [0.1, 1.1, 2.2],
-                "size": [-1.1, -1, 2],
-                "momentum": [0.5, -1.99, -2.0],
-                "reversal": [0.5, 1.99, 2.0],
-                "volume": [0.5, 1.99, 2.0],
-                "new_coin": [0.5, 1.99, 2.0],
-                "date": ["2024-10-17", "2024-10-18", "2024-10-19"],
-                "version_date": ["2024-10-20", "2024-10-20", "2024-10-20"],
-            }
-        )
-        with sqlite3.connect(BASE_DIR / "test_factor_model_estimates") as conn:
-            df.to_sql("t_statistics", conn, if_exists="replace", index=False)
-        # setup t_statistics table on the fly, by hand...
-        vifs = pd.DataFrame(
-            {
-                "id": [0, 1, 2],
-                "market": [0.1, 1.1, 2.2],
-                "size": [1.1, 1, 2],
-                "momentum": [0.5, 1.99, 2.0],
-                "reversal": [0.5, 1.99, 2.0],
-                "volume": [0.5, 11.99, 51.0],
-                "new_coin": [0.5, 11.99, 20.0],
-                "date": ["2024-10-17", "2024-10-18", "2024-10-19"],
-                "version_date": ["2024-10-20", "2024-10-20", "2024-10-20"],
-            }
-        )
-        with sqlite3.connect(BASE_DIR / "test_factor_model_estimates") as conn:
-            vifs.to_sql("vifs", conn, if_exists="replace", index=False)
-        r_sq = pd.DataFrame(
-            {
-                "id": [0, 1, 2],
-                "r2_core": [0.15, 0.25, 0.4],
-                "r2_adj": [0.1, 0.1, 0.3],
-                "nobs": [100, 300, 400],
-                "date": ["2024-10-17", "2024-10-18", "2024-10-19"],
-                "version_date": ["2024-10-20", "2024-10-20", "2024-10-20"],
-            }
-        )
-        with sqlite3.connect(BASE_DIR / "test_factor_model_estimates") as conn:
-            r_sq.to_sql("r_squares", conn, if_exists="replace", index=False)
+        if REFRESH_TESTS:
+            df = pd.DataFrame(
+                {
+                    "id": [0, 1, 2],
+                    "market": [0.1, 1.1, 2.2],
+                    "size": [-1.1, -1, 2],
+                    "momentum": [0.5, -1.99, -2.0],
+                    "reversal": [0.5, 1.99, 2.0],
+                    "volume": [0.5, 1.99, 2.0],
+                    "new_coin": [0.5, 1.99, 2.0],
+                    "date": ["2024-10-17", "2024-10-18", "2024-10-19"],
+                    "version_date": ["2024-10-20", "2024-10-20", "2024-10-20"],
+                }
+            )
+            with sqlite3.connect(
+                TEST_DATABASE_LOCATION / "test_factor_model_estimates.sqlite3"
+            ) as conn:
+                df.to_sql("t_statistics", conn, if_exists="replace", index=False)
+            # setup t_statistics table on the fly, by hand...
+            vifs = pd.DataFrame(
+                {
+                    "id": [0, 1, 2],
+                    "market": [0.1, 1.1, 2.2],
+                    "size": [1.1, 1, 2],
+                    "momentum": [0.5, 1.99, 2.0],
+                    "reversal": [0.5, 1.99, 2.0],
+                    "volume": [0.5, 11.99, 51.0],
+                    "new_coin": [0.5, 11.99, 20.0],
+                    "date": ["2024-10-17", "2024-10-18", "2024-10-19"],
+                    "version_date": ["2024-10-20", "2024-10-20", "2024-10-20"],
+                }
+            )
+            with sqlite3.connect(
+                TEST_DATABASE_LOCATION / "test_factor_model_estimates.sqlite3"
+            ) as conn:
+                vifs.to_sql("vifs", conn, if_exists="replace", index=False)
+            r_sq = pd.DataFrame(
+                {
+                    "id": [0, 1, 2],
+                    "r2_core": [0.15, 0.25, 0.4],
+                    "r2_adj": [0.1, 0.1, 0.3],
+                    "nobs": [100, 300, 400],
+                    "date": ["2024-10-17", "2024-10-18", "2024-10-19"],
+                    "version_date": ["2024-10-20", "2024-10-20", "2024-10-20"],
+                }
+            )
+            with sqlite3.connect(
+                TEST_DATABASE_LOCATION / "test_factor_model_estimates.sqlite3"
+            ) as conn:
+                r_sq.to_sql("r_squares", conn, if_exists="replace", index=False)
         TStatistics.objects.using("factor_model_estimates").create(
             id=3,
             market=2.0,

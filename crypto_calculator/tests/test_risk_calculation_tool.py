@@ -8,7 +8,7 @@ from crypto_calculator.tests.resources.conftest import (
     update_expected_output,
 )
 from crypto_calculator.views import get_risk_calculation_output
-from database_server.settings import BASE_DIR
+from database_server.settings import BASE_DIR, TEST_DATABASE_LOCATION
 from factor_model.utilities.common_utility import compare_dictionaries
 
 
@@ -37,39 +37,39 @@ class FactorRiskCalcToolTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-
-        for test_db, table, test_input in zip(
-            [
-                "test_returns",
-                "test_raw_price_data",
-                "test_factor_model_estimates",
-                "test_factor_model_estimates",
-                "test_factor_model_estimates",
-                "test_specific_risk_estimates",
-            ],
-            [
-                "returns",
-                "raw_price_data",
-                "factor_returns",
-                "exposures",
-                "specific_returns",
-                "core_specific_risk",
-            ],
-            [
-                "test_coin_total_returns.csv",
-                "test_raw_price_data.csv",
-                "test_factor_returns.csv",
-                "test_exposures.csv",
-                "test_specific_returns.csv",
-                "test_core_specific_risk.csv",
-            ],
-        ):
-            df = pd.read_csv(
-                cls.test_location / "resources" / "test_input" / test_input,
-                sep=";",
-            )
-            with sqlite3.connect(BASE_DIR / test_db) as conn:
-                df.to_sql(table, conn, if_exists="replace", index=False)
+        if REFRESH_TESTS:
+            for test_db, table, test_input in zip(
+                [
+                    "test_returns.sqlite3",
+                    "test_raw_price_data.sqlite3",
+                    "test_factor_model_estimates.sqlite3",
+                    "test_factor_model_estimates.sqlite3",
+                    "test_factor_model_estimates.sqlite3",
+                    "test_specific_risk_estimates.sqlite3",
+                ],
+                [
+                    "returns",
+                    "raw_price_data",
+                    "factor_returns",
+                    "exposures",
+                    "specific_returns",
+                    "core_specific_risk",
+                ],
+                [
+                    "test_coin_total_returns.csv",
+                    "test_raw_price_data.csv",
+                    "test_factor_returns.csv",
+                    "test_exposures.csv",
+                    "test_specific_returns.csv",
+                    "test_core_specific_risk.csv",
+                ],
+            ):
+                df = pd.read_csv(
+                    cls.test_location / "resources" / "test_input" / test_input,
+                    sep=";",
+                )
+                with sqlite3.connect(TEST_DATABASE_LOCATION / test_db) as conn:
+                    df.to_sql(table, conn, if_exists="replace", index=False)
 
     def test_risk_calc_tool_default(self):
         test_case_name = "test_risk_calc_tool_default"

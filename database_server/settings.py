@@ -79,37 +79,50 @@ WSGI_APPLICATION = "database_server.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+TEST_DATABASE_LOCATION = (
+    BASE_DIR / "crypto_calculator" / "tests" / "resources" / "test_db"
+)
+
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": DATABASE_LOCATION / Path("default.sqlite3"),
-        "TEST": {"DEPENDENCIES": [], "NAME": "test_default"},
+        "TEST": {
+            "DEPENDENCIES": [],
+            "NAME": TEST_DATABASE_LOCATION / "test_default.sqlite3",
+        },
     },
     "raw_price_data": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": DATABASE_LOCATION / Path("raw_price_data.sqlite3"),
-        "TEST": {"DEPENDENCIES": [], "NAME": "test_raw_price_data"},
+        "TEST": {
+            "DEPENDENCIES": [],
+            "NAME": TEST_DATABASE_LOCATION / "test_raw_price_data.sqlite3",
+        },
     },
     "returns": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": DATABASE_LOCATION / Path("returns.sqlite3"),
         "TEST": {
             "DEPENDENCIES": [],
-            "NAME": "test_returns"
+            "NAME": TEST_DATABASE_LOCATION / "test_returns.sqlite3",
         },
     },
     "factor_model_estimates": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": DATABASE_LOCATION / Path("factor_model_estimates.sqlite3"),
-        "TEST": {"DEPENDENCIES": [], "NAME": "test_factor_model_estimates"},
+        "TEST": {
+            "DEPENDENCIES": [],
+            "NAME": TEST_DATABASE_LOCATION / "test_factor_model_estimates.sqlite3",
+        },
     },
     "specific_risk_estimates": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": DATABASE_LOCATION / Path("specific_risk_estimates.sqlite3"),
         "TEST": {
             "DEPENDENCIES": [],
-            "NAME": "test_specific_risk_estimates"
+            "NAME": TEST_DATABASE_LOCATION / "test_specific_risk_estimates.sqlite3",
         },
     },
 }
