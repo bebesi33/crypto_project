@@ -14,6 +14,7 @@ class RawPriceData(models.Model):
     symbol = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "raw_price_data"
 
 

@@ -96,6 +96,7 @@ DATABASES = {
         "NAME": DATABASE_LOCATION / Path("returns.sqlite3"),
         "TEST": {
             "DEPENDENCIES": [],
+            "NAME": "test_returns"
         },
     },
     "factor_model_estimates": {
@@ -108,6 +109,7 @@ DATABASES = {
         "NAME": DATABASE_LOCATION / Path("specific_risk_estimates.sqlite3"),
         "TEST": {
             "DEPENDENCIES": [],
+            "NAME": "test_specific_risk_estimates"
         },
     },
 }

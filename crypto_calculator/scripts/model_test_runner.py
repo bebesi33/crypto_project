@@ -40,7 +40,7 @@ class ManagedModelTestRunner(DiscoverRunner):
 
     def get_test_databases(self):
         """Return the list of test databases to be used in tests."""
-        return ["default", "factor_model_estimates"]
+        return ["default", "factor_model_estimates", "returns"]
 
     def teardown_test_environment(self, *args, **kwargs):
         logger.warning("ManagedModelTestRunner: teardown_test_environment called")
