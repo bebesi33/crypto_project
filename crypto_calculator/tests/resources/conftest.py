@@ -2,7 +2,7 @@ import json
 from database_server.settings import BASE_DIR
 
 
-REFRESH_TESTS = True
+REFRESH_TESTS = False
 TEST_LOCATION = BASE_DIR / "crypto_calculator" / "tests"
 
 
