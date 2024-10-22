@@ -1,0 +1,6 @@
+{
+    "raw_price": {},
+    "symbol": "NOT-COVERED-USD",
+    "ERROR_CODE": 404,
+    "log": "The input 'NOT-COVERED-USD' is parsed as a symbol.  The half-life input value of 10.0 is correct.  If minimum number of observations for risk calculation smaller than 2: min_obs, minimum number of observations for risk calculation set to default 20 days.  The minimum number of observations for risk calculation should be a positive number, at least 2.  Please note that for symbols (coins) the total return is presented.  No price data for NOT-COVERED-USD!"
+}

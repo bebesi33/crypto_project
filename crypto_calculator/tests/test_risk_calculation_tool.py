@@ -7,38 +7,61 @@ from crypto_calculator.tests.resources.conftest import (
     get_expected_output,
     update_expected_output,
 )
-from crypto_calculator.views import get_raw_price_data
+from crypto_calculator.views import get_risk_calculation_output
 from database_server.settings import BASE_DIR
 from factor_model.utilities.common_utility import compare_dictionaries
 
 
-# notes:
-# https://dev.to/vergeev/testing-against-unmanaged-models-in-django
-
-
-class FactorExplorerToolTest(TestCase):
-    databases = {"factor_model_estimates", "returns", "raw_price_data"}
+class FactorRiskCalcToolTest(TestCase):
+    databases = {
+        "factor_model_estimates",
+        "returns",
+        "raw_price_data",
+        "specific_risk_estimates",
+    }
     test_location = BASE_DIR / "crypto_calculator" / "tests"
 
     def setUp(self):
         self.factory = RequestFactory()
         self.default_params = {
-            "symbol": "TEST-USD",
+            "portfolio": "EXAMPLE-USD;0.50\r\nTEST-USD;0.50",
+            "benchmark": "EXAMPLE-USD;0.40\r\nTEST-USD;0.60",
             "cob_date": "2023-01-23",
-            "halflife": 10,
-            "min_obs": 5,
+            "correlation_hl": 10,
+            "factor_risk_hl": 5,
+            "specific_risk_hl": 5,
+            "min_ret_hist": 5,
             "mean_to_zero": False,
+            "use_factors": True,
         }
 
     @classmethod
     def setUpTestData(cls):
+
         for test_db, table, test_input in zip(
-            ["test_returns", "test_raw_price_data", "test_factor_model_estimates"],
-            ["returns", "raw_price_data", "factor_returns"],
+            [
+                "test_returns",
+                "test_raw_price_data",
+                "test_factor_model_estimates",
+                "test_factor_model_estimates",
+                "test_factor_model_estimates",
+                "test_specific_risk_estimates",
+            ],
+            [
+                "returns",
+                "raw_price_data",
+                "factor_returns",
+                "exposures",
+                "specific_returns",
+                "core_specific_risk",
+            ],
             [
                 "test_coin_total_returns.csv",
                 "test_raw_price_data.csv",
                 "test_factor_returns.csv",
+                "test_exposures.csv",
+                "test_specific_returns.csv",
+                "test_core_specific_risk.csv",
             ],
         ):
             df = pd.read_csv(
@@ -48,140 +71,160 @@ class FactorExplorerToolTest(TestCase):
             with sqlite3.connect(BASE_DIR / test_db) as conn:
                 df.to_sql(table, conn, if_exists="replace", index=False)
 
-    def test_explorer_with_symbol(self):
-        test_case_name = "test_explorer_with_symbol"
+    def test_risk_calc_tool_default(self):
+        test_case_name = "test_risk_calc_tool_default"
         request = self.factory.post(
-            "api/get_raw_price_data",
+            "api/get_risk_calculation_output",
             json.dumps(self.default_params),
             content_type="application/json",
         )
-        json_response = get_raw_price_data(request)
+        json_response = get_risk_calculation_output(request)
         result_struct = json.loads(json_response.content)
-
         if REFRESH_TESTS:
             update_expected_output(test_case_name, result_struct)
         expected_struct = get_expected_output(test_case_name)
         self.assertTrue(compare_dictionaries(expected_struct, result_struct))
 
-    def test_explorer_with_symbol_no_mean(self):
-        test_case_name = "test_explorer_with_symbol_no_mean"
+    def test_risk_calc_tool_no_factor_no_mean(self):
+        test_case_name = "test_risk_calc_tool_no_factor_no_mean"
         params = self.default_params.copy()
+        params["use_factors"] = False
+        request = self.factory.post(
+            "api/get_risk_calculation_output",
+            json.dumps(params),
+            content_type="application/json",
+        )
+        json_response = get_risk_calculation_output(request)
+        result_struct = json.loads(json_response.content)
+        if REFRESH_TESTS:
+            update_expected_output(test_case_name, result_struct)
+        expected_struct = get_expected_output(test_case_name)
+        self.assertTrue(compare_dictionaries(expected_struct, result_struct))
+
+    def test_risk_calc_tool_no_factor_w_mean_hl_problem(self):
+        test_case_name = "test_risk_calc_tool_no_factor_w_mean_hl_problem"
+        params = self.default_params.copy()
+        params["use_factors"] = False
         params["mean_to_zero"] = True
+        params["factor_risk_hl"] = 0
+        params["specific_risk_hl"] = "-2"
+        params["correlation_hl"] = -20
         request = self.factory.post(
-            "api/get_raw_price_data",
+            "api/get_risk_calculation_output",
             json.dumps(params),
             content_type="application/json",
         )
-        json_response = get_raw_price_data(request)
-        result_struct = json.loads(json_response.content)
-
-        json_response = get_raw_price_data(request)
-        result_struct = json.loads(json_response.content)
-        if REFRESH_TESTS:
-            update_expected_output(test_case_name, result_struct)
-        expected_struct = get_expected_output(test_case_name)
-        self.assertTrue(compare_dictionaries(expected_struct, result_struct))
-
-    def test_explorer_with_symbol_problematic_output(self):
-        test_case_name = "test_explorer_with_symbol_problematic_output"
-        params = self.default_params.copy()
-        params["halflife"] = -1
-        params["min_obs"] = -1
-        request = self.factory.post(
-            "api/get_raw_price_data",
-            json.dumps(params),
-            content_type="application/json",
-        )
-
-        json_response = get_raw_price_data(request)
+        json_response = get_risk_calculation_output(request)
         result_struct = json.loads(json_response.content)
         if REFRESH_TESTS:
             update_expected_output(test_case_name, result_struct)
         expected_struct = get_expected_output(test_case_name)
         self.assertTrue(compare_dictionaries(expected_struct, result_struct))
 
-    def test_explorer_with_factor(self):
-        test_case_name = "test_explorer_with_factor"
+    def test_risk_calc_tool_uncovered_element(self):
+        test_case_name = "test_risk_calc_tool_uncovered_element"
         params = self.default_params.copy()
-        params["symbol"] = "market"
+        params["portfolio"] = (
+            "EXAMPLE-USD;0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        params["benchmark"] = (
+            "EXAMPLE-USD;0.150\r\nTEST-USD;0.650\r\nTEST99-USD;0.650\r\nTEST22-USD;0.750"
+        )
         request = self.factory.post(
-            "api/get_raw_price_data",
+            "api/get_risk_calculation_output",
             json.dumps(params),
             content_type="application/json",
         )
-
-        json_response = get_raw_price_data(request)
+        json_response = get_risk_calculation_output(request)
         result_struct = json.loads(json_response.content)
         if REFRESH_TESTS:
             update_expected_output(test_case_name, result_struct)
         expected_struct = get_expected_output(test_case_name)
         self.assertTrue(compare_dictionaries(expected_struct, result_struct))
 
-    def test_explorer_with_factor_incorrect_hl(self):
-        test_case_name = "test_explorer_with_factor_incorrect_hl"
+    def test_risk_calc_tool_no_input(self):
+        test_case_name = "test_risk_calc_tool_no_input"
         params = self.default_params.copy()
-        params["symbol"] = "size"
-        params["halflife"] = -1000
+        params["portfolio"] = ""
         request = self.factory.post(
-            "api/get_raw_price_data",
+            "api/get_risk_calculation_output",
             json.dumps(params),
             content_type="application/json",
         )
-
-        json_response = get_raw_price_data(request)
+        json_response = get_risk_calculation_output(request)
         result_struct = json.loads(json_response.content)
         if REFRESH_TESTS:
             update_expected_output(test_case_name, result_struct)
         expected_struct = get_expected_output(test_case_name)
         self.assertTrue(compare_dictionaries(expected_struct, result_struct))
 
-    def test_explorer_with_factor_incorrect_min_obs(self):
-        test_case_name = "test_explorer_with_factor_incorrect_min_obs"
+    def test_risk_calc_tool_default_benchmark(self):
+        test_case_name = "test_risk_calc_tool_default_benchmark"
         params = self.default_params.copy()
-        params["symbol"] = "size"
-        params["min_obs"] = "-1000"
+        params["portfolio"] = (
+            "EXAMPLE-USD;0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        params["benchmark"] = None
         request = self.factory.post(
-            "api/get_raw_price_data",
+            "api/get_risk_calculation_output",
             json.dumps(params),
             content_type="application/json",
         )
-
-        json_response = get_raw_price_data(request)
+        json_response = get_risk_calculation_output(request)
         result_struct = json.loads(json_response.content)
         if REFRESH_TESTS:
             update_expected_output(test_case_name, result_struct)
         expected_struct = get_expected_output(test_case_name)
         self.assertTrue(compare_dictionaries(expected_struct, result_struct))
 
-    def test_explorer_symbol_no_coverage(self):
-        test_case_name = "test_explorer_symbol_no_coverage"
+    def test_risk_calc_tool_default_benchmark_no_factor(self):
+        test_case_name = "test_risk_calc_tool_default_benchmark_no_factor"
         params = self.default_params.copy()
-        params["symbol"] = "NOT-COVERED-USD"
-        params["min_obs"] = "-1000"
+        params["portfolio"] = (
+            "EXAMPLE-USD;0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        params["use_factors"] = False
+        params["benchmark"] = None
         request = self.factory.post(
-            "api/get_raw_price_data",
+            "api/get_risk_calculation_output",
             json.dumps(params),
             content_type="application/json",
         )
-
-        json_response = get_raw_price_data(request)
+        json_response = get_risk_calculation_output(request)
         result_struct = json.loads(json_response.content)
         if REFRESH_TESTS:
             update_expected_output(test_case_name, result_struct)
         expected_struct = get_expected_output(test_case_name)
         self.assertTrue(compare_dictionaries(expected_struct, result_struct))
 
-    def test_explorer_min_obs_too_large(self):
-        test_case_name = "test_explorer_min_obs_too_large"  # larger then the available history
+    def test_risk_calc_tool_no_input_at_all(self):
+        test_case_name = "test_risk_calc_tool_no_input_at_all"
         params = self.default_params.copy()
-        params["min_obs"] = 1000
+        params["portfolio"] = ""
+        params["use_factors"] = False
+        params["benchmark"] = None
         request = self.factory.post(
-            "api/get_raw_price_data",
+            "api/get_risk_calculation_output",
             json.dumps(params),
             content_type="application/json",
         )
+        json_response = get_risk_calculation_output(request)
+        result_struct = json.loads(json_response.content)
+        if REFRESH_TESTS:
+            update_expected_output(test_case_name, result_struct)
+        expected_struct = get_expected_output(test_case_name)
+        self.assertTrue(compare_dictionaries(expected_struct, result_struct))
 
-        json_response = get_raw_price_data(request)
+    def test_risk_calc_tool_cob_date_incorrect(self):
+        test_case_name = "test_risk_calc_tool_cob_date_incorrect"
+        params = self.default_params.copy()
+        params["cob_date"] = "2024-01-01"
+        request = self.factory.post(
+            "api/get_risk_calculation_output",
+            json.dumps(params),
+            content_type="application/json",
+        )
+        json_response = get_risk_calculation_output(request)
         result_struct = json.loads(json_response.content)
         if REFRESH_TESTS:
             update_expected_output(test_case_name, result_struct)

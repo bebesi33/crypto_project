@@ -74,7 +74,9 @@ def get_available_estimation_dates() -> list[str]:
 
 def get_coverage_for_date(cob_date: str) -> set[str]:
     symbols = (
-        RawPriceData.objects.using("raw_price_data").filter(date=cob_date).values("symbol")
+        RawPriceData.objects.using("raw_price_data")
+        .filter(date=cob_date)
+        .values("symbol")
     )
     df = pd.DataFrame(list(symbols))
     return set(df["symbol"])
@@ -301,7 +303,9 @@ def risk_calc_request_full(
             non_style_fields=EXPOSURE_NON_STYLE_FIELDS,
             is_total_space=True if portfolio != "active" else False,
         )
-        port_exposures[portfolio] = port_exposures[portfolio].reindex(factor_covariance.index)
+        port_exposures[portfolio] = port_exposures[portfolio].reindex(
+            factor_covariance.index
+        )
         # 2.2. factor risk related
         (
             factor_risks[portfolio],
@@ -336,8 +340,12 @@ def risk_calc_request_full(
         )
 
         # 2.4 other risk calcs
-        total_risks[portfolio] = np.sqrt(factor_risks[portfolio] ** 2 + spec_risks[portfolio] ** 2)
-        factor_mctrs[portfolio] = factor_attributions[portfolio] / total_risks[portfolio]
+        total_risks[portfolio] = np.sqrt(
+            factor_risks[portfolio] ** 2 + spec_risks[portfolio] ** 2
+        )
+        factor_mctrs[portfolio] = (
+            factor_attributions[portfolio] / total_risks[portfolio]
+        )
         spec_risk_attributions[portfolio], spec_risk_var_decomps[portfolio] = (
             calculate_spec_risk_mctr(
                 combined_spec_risk[portfolio],
@@ -345,7 +353,9 @@ def risk_calc_request_full(
                 True if portfolio != "active" else False,
             )
         )
-        spec_risk_mctrs[portfolio] = spec_risk_attributions[portfolio] / total_risks[portfolio]
+        spec_risk_mctrs[portfolio] = (
+            spec_risk_attributions[portfolio] / total_risks[portfolio]
+        )
         risk_decomposition[portfolio] = decompose_risk(
             total_risk=total_risks[portfolio],
             factor_covar=factor_covars[portfolio],
@@ -397,7 +407,9 @@ def risk_calc_request_full(
     risk_metrics_extended["Portfolio VaR (1-day, 99%, total space)"] = var99 * 100
     risk_metrics_extended["Portfolio ES (1-day, 99%, total space)"] = es99 * 100
     for key in risk_metrics_extended.keys():
-        risk_metrics_extended[key] = round_float_to_n_decimals_str(risk_metrics_extended[key])
+        risk_metrics_extended[key] = round_float_to_n_decimals_str(
+            risk_metrics_extended[key]
+        )
 
     exposures = {}
     for portfolio in portfolios.keys():
@@ -497,7 +509,7 @@ def decode_risk_calc_input(request) -> tuple[dict, str, int]:
         bmrk_error_code = 404
 
     # check coverage
-    if processed_input["cob_date"] in available_dates:
+    if processed_input["cob_date"] in available_dates and bmrk_error_code != 404:
         symbol_coverage = get_coverage_for_date(date)
         for portfolio in ["market", "portfolio"]:
             override_code += check_missing_coverage(
@@ -510,11 +522,17 @@ def decode_risk_calc_input(request) -> tuple[dict, str, int]:
             log_elements.append(f"No benchmark coverage for date : {date}! ")
         if len(processed_input["portfolio"].keys()) < 1:
             log_elements.append(f"No portfolio coverage for date : {date}! ")
-    else:
+    elif processed_input["cob_date"] not in available_dates:
         processed_input["market"] = {}
         processed_input["portfolio"] = {}
         log_elements.append(
             "The symbol coverage was not evaluated as the provided calculation date is outside model estimation range! "
+        )
+    else:
+        processed_input["market"] = {}
+        processed_input["portfolio"] = {}
+        log_elements.append(
+            "The benchmark data is incorrect! "
         )
 
     if (
@@ -651,7 +669,9 @@ def risk_calc_request_reduced(
     risk_metrics_extended["Portfolio VaR (1-day, 99%, total space)"] = var99 * 100
     risk_metrics_extended["Portfolio ES (1-day, 99%, total space)"] = es99 * 100
     for key in risk_metrics_extended.keys():
-        risk_metrics_extended[key] = round_float_to_n_decimals_str(risk_metrics_extended[key])
+        risk_metrics_extended[key] = round_float_to_n_decimals_str(
+            risk_metrics_extended[key]
+        )
 
     mctr_output = generate_mctr_chart_input_reduced(portfolios, mctrs)
 
@@ -661,9 +681,13 @@ def risk_calc_request_reduced(
     port_weights = {}
     for portfolio in portfolios.keys():
         if portfolio == "market":
-            port_weights["market"] = {"exposure": portfolio_df["benchmark"].head(10).to_dict()}
+            port_weights["market"] = {
+                "exposure": portfolio_df["benchmark"].head(10).to_dict()
+            }
         else:
-            port_weights[portfolio] = {"exposure": portfolio_df[portfolio].head(10).to_dict()}
+            port_weights[portfolio] = {
+                "exposure": portfolio_df[portfolio].head(10).to_dict()
+            }
 
     return {
         "risk_metrics": risk_metrics_extended,

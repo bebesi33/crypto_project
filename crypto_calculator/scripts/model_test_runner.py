@@ -27,7 +27,7 @@ class ManagedModelTestRunner(DiscoverRunner):
         """Set up the test databases and apply migrations to copy the schema."""
         logger.warning("ManagedModelTestRunner: setup_databases called")
         databases = super().setup_databases(**kwargs)
-        self.apply_migrations_to_databases()
+        # self.apply_migrations_to_databases()  # most of the time not needed
         return databases
 
     def apply_migrations_to_databases(self):
@@ -40,7 +40,7 @@ class ManagedModelTestRunner(DiscoverRunner):
 
     def get_test_databases(self):
         """Return the list of test databases to be used in tests."""
-        return ["default", "factor_model_estimates", "returns"]
+        return ["default", "factor_model_estimates", "returns", "specific_risk_estimates"]
 
     def teardown_test_environment(self, *args, **kwargs):
         logger.warning("ManagedModelTestRunner: teardown_test_environment called")

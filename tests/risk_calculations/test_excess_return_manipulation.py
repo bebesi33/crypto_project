@@ -24,7 +24,6 @@ class TestGenerateProcessedExcessReturns(unittest.TestCase):
 
         # Call the function
         result_df = generate_processed_excess_returns(return_data, fill_miss_data)
-        print(result_df)
         # Assert that the result dataframe has the expected columns
         expected_columns = ["date", "A1", "A2"]
         self.assertListEqual(list(result_df.columns), expected_columns)

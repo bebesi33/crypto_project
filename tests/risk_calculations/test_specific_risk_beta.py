@@ -24,7 +24,6 @@ class TestGetSpecificRiskBeta(unittest.TestCase):
 
     def test_get_specific_risk_beta(self):
         result = get_specific_risk_beta(self.portfolio_details, self.market_portfolio, self.spec_risk)
-        print(result)
         self.assertIsInstance(result, float)
         self.assertAlmostEqual(result, 9.465555555555556e-05, places=6)
 

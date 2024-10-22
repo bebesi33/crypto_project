@@ -289,7 +289,6 @@ def generate_mctr_chart_input_reduced(
             )
     if "active" in portolios.keys() and "market" in all_mctr_ordered["active"].keys():
         all_mctr_ordered["active"]["market"] = 0
-    print(all_mctr_ordered["active"].keys())
     return all_mctr_ordered
 
 

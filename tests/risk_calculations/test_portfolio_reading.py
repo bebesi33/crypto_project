@@ -34,7 +34,6 @@ class TestPortfolioParser(unittest.TestCase):
         port_weights, log_messages, error_code = parse_file_input_into_portfolio(
             input_stream
         )
-        print(log_messages)
         expected_result = {"BTC-USD": 1.00}
         self.assertEqual(port_weights, expected_result)
         self.assertEqual(error_code, 1)

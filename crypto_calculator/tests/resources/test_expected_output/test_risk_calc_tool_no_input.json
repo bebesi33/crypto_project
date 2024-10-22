@@ -1,0 +1,11 @@
+{
+    "log": [
+        "The correlation half-life input value of 10.0 is correct. ",
+        "The factor risk half-life input value of 5.0 is correct. ",
+        "The specific risk half-life input value of 5.0 is correct. ",
+        "The minimum number of observations for risk calculation input value of 5.0 is correct. ",
+        "The portfolio input is empty!",
+        "No portfolio coverage for date : 2023-01-23! "
+    ],
+    "ERROR_CODE": 404
+}

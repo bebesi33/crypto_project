@@ -1,0 +1,88 @@
+{
+    "risk_metrics": {
+        "Total Risk (portfolio)": "9.817",
+        "Total Risk (benchmark)": "8.369",
+        "Total Risk (active)": "2.467",
+        "Portfolio Beta (vs benchmark)": "114.458",
+        "Portfolio VaR (1-day, 95%, total space)": "14.911",
+        "Portfolio ES (1-day, 95%, total space)": "18.278",
+        "Portfolio VaR (1-day, 99%, total space)": "20.417",
+        "Portfolio ES (1-day, 99%, total space)": "22.986"
+    },
+    "exposures": {
+        "portfolio": {
+            "exposure": {
+                "TEST-USD": 0.5,
+                "EXAMPLE-USD": 0.5
+            }
+        },
+        "market": {
+            "exposure": {
+                "TEST-USD": 0.6,
+                "EXAMPLE-USD": 0.4
+            }
+        },
+        "active": {
+            "exposure": {
+                "TEST-USD": -0.09999999999999998,
+                "EXAMPLE-USD": 0.09999999999999998
+            }
+        }
+    },
+    "mctr": {
+        "portfolio": {
+            "EXAMPLE-USD": 0.18074046415551082,
+            "TEST-USD": 0.015597828755081138
+        },
+        "market": {
+            "EXAMPLE-USD": 0.1562844702902112,
+            "TEST-USD": 0.03528766723956229
+        },
+        "active": {
+            "EXAMPLE-USD": 0.1890652610284287,
+            "TEST-USD": -0.057635490858248206
+        }
+    },
+    "all_portfolios": {
+        "TEST-USD": {
+            "portfolio": 0.5,
+            "benchmark": 0.6,
+            "active": -0.1
+        },
+        "EXAMPLE-USD": {
+            "portfolio": 0.5,
+            "benchmark": 0.4,
+            "active": 0.1
+        }
+    },
+    "decomposition": {
+        "EXAMPLE-USD": {
+            "portfolio": 10.457564724896129,
+            "benchmark": 7.851103889656377,
+            "active": 1.664543290108241
+        },
+        "TEST-USD": {
+            "portfolio": 2.200432954874645,
+            "benchmark": 3.7169851124216677,
+            "active": 0.3502455884064366
+        },
+        "diversification": {
+            "portfolio": -2.8410830342411764,
+            "benchmark": -3.199450156095858,
+            "active": 0.4522186403520907
+        }
+    },
+    "model": "no-factor",
+    "log": [
+        "If correlation half-life smaller than 0.0001: correlation_hl, correlation half-life set to default 30 days. ",
+        "The correlation half-life should be a positive number. ",
+        "If factor risk half-life smaller than 0.0001: factor_risk_hl, factor risk half-life set to default 30 days. ",
+        "The factor risk half-life should be a positive number. ",
+        "If specific risk half-life smaller than 0.0001: specific_risk_hl, specific risk half-life set to default 30 days. ",
+        "The specific risk half-life should be a positive number. ",
+        "The minimum number of observations for risk calculation input value of 5.0 is correct. ",
+        "The demeaned returns are used for the calculation of risk. ",
+        "All cryptocurrency is treated as a single factor. "
+    ],
+    "ERROR_CODE": 1
+}
