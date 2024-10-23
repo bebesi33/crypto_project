@@ -129,6 +129,8 @@ def generate_combined_spec_risk(
         hist_ratio = min(
             0.0, max(spec_risk_hist[key] / parameters["minimum_history_spec_ret"], 1.0)
         )
+        if raw_spec_risk[key] is None:
+            raw_spec_risk[key] = 0.0
         combined_spec_risk[key] = (
             hist_ratio * raw_spec_risk[key] + (1 - hist_ratio) * core_half_life
         )
