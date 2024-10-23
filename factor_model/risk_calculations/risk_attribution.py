@@ -37,6 +37,7 @@ def generate_factor_covariance_attribution(
     port_exposure: pd.DataFrame,
     factor_covariance: pd.DataFrame,
     market_exposure: pd.DataFrame = None,
+    variance_only = False
 ):
     if market_exposure is None:
         market_exposure = port_exposure
@@ -44,14 +45,14 @@ def generate_factor_covariance_attribution(
     port_exposure = port_exposure.reindex(factor_covariance.index)
     market_exposure = market_exposure.reindex(factor_covariance.index)
 
-    factor_attribution = np.matmul(port_exposure["exposure"].T, factor_covariance)
-
-    factor_std = np.sqrt(
-        np.matmul(
+    factor_attribution = np.matmul(port_exposure["exposure"].T, factor_covariance)   
+    factor_std = np.matmul(
             factor_attribution,
             market_exposure["exposure"],
         )
-    )
+    if not variance_only:
+        factor_std = np.sqrt(factor_std)
+
     return factor_std, factor_attribution
 
 
@@ -88,7 +89,10 @@ def calculate_spec_risk_mctr(
     if is_total_space:
         port_total = sum(portfolio_details.values())
     else:
-        port_total = 1
+        port_total = 1.0
+    
+    if abs(port_total) < 10e-10:
+        port_total = 1.0  # we want to avoid dividing by zero
 
     spec_risk_mctr = {}
     spec_risk_var_contrib = {}
@@ -131,7 +135,11 @@ def generate_active_space_portfolio(
     """
     active_space_portfolio = {}
     total_port_w = sum(portfolio_details.values())
+    if abs(total_port_w) < 10e-10:
+        total_port_w = 1.0
     total_market_w = sum(market_portfolio.values())
+    if abs(total_market_w) < 10e-10:
+        total_market_w = 1.0  # we want to avoid dividing by zero
 
     for ticker in set(portfolio_details.keys()).union(market_portfolio.keys()):
         port_w = portfolio_details.get(ticker, 0)
@@ -171,6 +179,11 @@ def get_specific_risk_beta(
     spec_risk_beta = 0
     port_total = sum(portfolio_details.values())
     market_total = sum(market_portfolio.values())
+    if abs(port_total) < 10e-10:
+        port_total = 1.0
+    if abs(market_total) < 10e-10:
+        market_total = 1.0
+
     for ticker in set(portfolio_details.keys()).union(market_portfolio.keys()):
         spec_risk_temp = spec_risk.get(ticker)
         if spec_risk_temp:
@@ -307,6 +320,8 @@ def decompose_risk(
         Dict[str, float]: _description_
     """
     total_variance = total_risk**2
+    if abs(total_variance) < 10e-10:
+        total_variance = 1  # we want to avoid dividing by zero
     all_ratios = {}
     if spec_risk is not None:
         spec_risk_ratio = (spec_risk**2) / total_variance

@@ -1,13 +1,13 @@
 {
     "risk_metrics": {
         "Total Risk (portfolio)": "7.739",
-        "Total Risk (benchmark)": "8.407",
-        "Total Risk (active)": "4.648",
+        "Total Risk (benchmark)": "7.739",
+        "Total Risk (active)": "0.000",
         "Factor Risk (portfolio)": "7.739",
-        "Factor Risk (active)": "4.648",
+        "Factor Risk (active)": "0.000",
         "Specific Risk (portfolio)": "0.007",
-        "Specific Risk (active)": "0.003",
-        "Portfolio Beta (vs benchmark)": "77.089",
+        "Specific Risk (active)": "0.000",
+        "Portfolio Beta (vs benchmark)": "100.000",
         "Portfolio VaR (1-day, 95%, total space)": "11.953",
         "Portfolio ES (1-day, 95%, total space)": "14.720",
         "Portfolio VaR (1-day, 99%, total space)": "16.477",
@@ -27,21 +27,21 @@
         "market": {
             "exposure": {
                 "market": 1.0,
-                "momentum": 0.4299741894051532,
-                "new_coin": -0.6931786040994045,
-                "reversal": 0.07311065290848157,
-                "size": 0.0001816325472564495,
-                "volume": 0.43438637796061064
+                "momentum": 0.17879378038961047,
+                "new_coin": -0.5561338747244156,
+                "reversal": 0.12167201454729645,
+                "size": 0.525816940499862,
+                "volume": 0.13033782629596147
             }
         },
         "active": {
             "exposure": {
                 "market": 0.0,
-                "momentum": -0.2511804090155427,
-                "new_coin": 0.13704472937498896,
-                "reversal": 0.04856136163881488,
-                "size": 0.5256353079526056,
-                "volume": -0.30404855166464917
+                "momentum": 0.0,
+                "new_coin": 0.0,
+                "reversal": 0.0,
+                "size": 0.0,
+                "volume": 0.0
             }
         }
     },
@@ -57,78 +57,78 @@
             "EXAMPLE-USD": 6.460527210598948e-08
         },
         "market": {
-            "market": 0.04525285988716692,
-            "momentum": 0.014869925615340665,
-            "new_coin": -0.023258494467386825,
-            "reversal": -0.00946543013561864,
-            "size": 3.216610826174054e-05,
-            "volume": 0.03912752157655205,
-            "TEST-USD": 3.693905574861357e-08,
-            "EXAMPLE-USD": 8.200470376192213e-08
+            "market": 0.04619223929350247,
+            "momentum": 0.010422504690209809,
+            "new_coin": -0.021082684100657986,
+            "reversal": -0.00962173264075663,
+            "size": 0.03240336141549021,
+            "volume": 0.013387872172058035,
+            "TEST-USD": 6.460527210598948e-08,
+            "EXAMPLE-USD": 6.460527210598948e-08
         },
         "active": {
             "market": 0,
-            "momentum": -0.009542941348294927,
-            "new_coin": 0.006966035534610882,
-            "reversal": 0.0011002032750330312,
-            "size": 0.0538986693501142,
-            "volume": -0.04848451628747245,
-            "TEST-USD": 4.075946521363612e-08,
-            "EXAMPLE-USD": -4.07594652136361e-08
+            "momentum": 0,
+            "new_coin": 0,
+            "reversal": 0,
+            "size": 0,
+            "volume": 0,
+            "TEST-USD": 0,
+            "EXAMPLE-USD": 0
         }
     },
     "all_portfolios": {
         "EXAMPLE-USD": {
             "portfolio": 0.5,
-            "benchmark": 0.689,
-            "active": -0.189
+            "benchmark": 0.5,
+            "active": 0.0
         },
         "TEST-USD": {
             "portfolio": 0.5,
-            "benchmark": 0.311,
-            "active": 0.189
+            "benchmark": 0.5,
+            "active": 0.0
         }
     },
     "decomposition": {
         "market": {
             "portfolio": 4.569512453881076,
-            "benchmark": 4.206429078289107,
+            "benchmark": 4.569512453881076,
             "active": 0.0
         },
         "size": {
             "portfolio": 1.6815557662061813,
-            "benchmark": 1.8470267267187086e-07,
-            "active": 2.7981290798438856
+            "benchmark": 1.6815557662061813,
+            "active": 0.0
         },
         "new_coin": {
             "portfolio": 0.8578565562172822,
-            "benchmark": 1.2268457993522228,
-            "active": 0.08674355357438293
+            "benchmark": 0.8578565562172822,
+            "active": 0.0
         },
         "diversification": {
             "portfolio": 0.3539680714724607,
-            "benchmark": 1.1762912755244472,
-            "active": 0.36111618411175067
+            "benchmark": 0.3539680714724607,
+            "active": 0.0
         },
         "momentum": {
             "portfolio": 0.13293503023598627,
-            "benchmark": 0.7077226629038137,
-            "active": 0.4368805489433585
+            "benchmark": 0.13293503023598627,
+            "active": 0.0
         },
         "volume": {
             "portfolio": 0.10536867287381833,
-            "benchmark": 1.0773744288243208,
-            "active": 0.9548012936059147
+            "benchmark": 0.10536867287381833,
+            "active": 0.0
         },
         "reversal": {
             "portfolio": 0.03810345230174793,
-            "benchmark": 0.01266449738806057,
-            "active": 0.010106975150554472
+            "benchmark": 0.03810345230174793,
+            "active": 0.0
         },
         "specific_risk": {
             "portfolio": 6.460527210598949e-06,
-            "benchmark": 6.8009160900646186e-06,
-            "active": 1.5443027192744118e-06
+            "benchmark": 6.460527210598949e-06,
+            "active": 0.0
         }
     },
     "model": "factor",
@@ -137,7 +137,7 @@
         "The factor risk half-life input value of 5.0 is correct. ",
         "The specific risk half-life input value of 5.0 is correct. ",
         "The minimum number of observations for risk calculation input value of 5.0 is correct. ",
-        "No benchmark was provided, hence the model universe based benchmark is loaded! ",
+        "No coverage for market input: ['TEST22-USD', 'TEST99-USD']. ",
         "No coverage for portfolio input: ['TEST22-USD', 'TEST99-USD']. "
     ],
     "ERROR_CODE": 1

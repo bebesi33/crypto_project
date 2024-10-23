@@ -69,6 +69,8 @@ def generate_raw_portfolio_specific_risk(
         float: The raw specific risk of the portfolio.
     """
     port_total = sum(portfolio_details.values()) if is_total_space else 1
+    if abs(port_total) < 10e-10:
+        port_total = 1.0  # we want to avoid dividing by zero
     spec_risk_total = 0.0
     weight_coverage = 0.0
 

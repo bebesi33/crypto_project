@@ -1,5 +1,6 @@
 import json
 import sqlite3
+import logging
 from django.test import RequestFactory, TestCase
 import pandas as pd
 from crypto_calculator.tests.resources.conftest import (
@@ -10,6 +11,9 @@ from crypto_calculator.tests.resources.conftest import (
 from crypto_calculator.views import get_risk_calculation_output
 from database_server.settings import BASE_DIR, TEST_DATABASE_LOCATION
 from factor_model.utilities.common_utility import compare_dictionaries
+
+
+logger = logging.getLogger(__file__)
 
 
 class FactorRiskCalcToolTest(TestCase):
@@ -71,24 +75,9 @@ class FactorRiskCalcToolTest(TestCase):
                 with sqlite3.connect(TEST_DATABASE_LOCATION / test_db) as conn:
                     df.to_sql(table, conn, if_exists="replace", index=False)
 
-    def test_risk_calc_tool_default(self):
-        test_case_name = "test_risk_calc_tool_default"
-        request = self.factory.post(
-            "api/get_risk_calculation_output",
-            json.dumps(self.default_params),
-            content_type="application/json",
-        )
-        json_response = get_risk_calculation_output(request)
-        result_struct = json.loads(json_response.content)
-        if REFRESH_TESTS:
-            update_expected_output(test_case_name, result_struct)
-        expected_struct = get_expected_output(test_case_name)
-        self.assertTrue(compare_dictionaries(expected_struct, result_struct))
-
-    def test_risk_calc_tool_no_factor_no_mean(self):
-        test_case_name = "test_risk_calc_tool_no_factor_no_mean"
-        params = self.default_params.copy()
-        params["use_factors"] = False
+    def perform_risk_calc_test_routine(self, test_case_name: str, params: dict = None):
+        if params is None:
+            params = self.default_params
         request = self.factory.post(
             "api/get_risk_calculation_output",
             json.dumps(params),
@@ -99,7 +88,20 @@ class FactorRiskCalcToolTest(TestCase):
         if REFRESH_TESTS:
             update_expected_output(test_case_name, result_struct)
         expected_struct = get_expected_output(test_case_name)
-        self.assertTrue(compare_dictionaries(expected_struct, result_struct))
+        test_result = compare_dictionaries(expected_struct, result_struct)
+        if not test_result:
+            logger.error(f"test case: {test_case_name} failed!")
+        self.assertTrue(test_result)
+
+    def test_risk_calc_tool_default(self):
+        test_case_name = "test_risk_calc_tool_default"
+        self.perform_risk_calc_test_routine(test_case_name)
+
+    def test_risk_calc_tool_no_factor_no_mean(self):
+        test_case_name = "test_risk_calc_tool_no_factor_no_mean"
+        params = self.default_params.copy()
+        params["use_factors"] = False
+        self.perform_risk_calc_test_routine(test_case_name, params)
 
     def test_risk_calc_tool_no_factor_w_mean_hl_problem(self):
         test_case_name = "test_risk_calc_tool_no_factor_w_mean_hl_problem"
@@ -109,17 +111,7 @@ class FactorRiskCalcToolTest(TestCase):
         params["factor_risk_hl"] = 0
         params["specific_risk_hl"] = "-2"
         params["correlation_hl"] = -20
-        request = self.factory.post(
-            "api/get_risk_calculation_output",
-            json.dumps(params),
-            content_type="application/json",
-        )
-        json_response = get_risk_calculation_output(request)
-        result_struct = json.loads(json_response.content)
-        if REFRESH_TESTS:
-            update_expected_output(test_case_name, result_struct)
-        expected_struct = get_expected_output(test_case_name)
-        self.assertTrue(compare_dictionaries(expected_struct, result_struct))
+        self.perform_risk_calc_test_routine(test_case_name, params)
 
     def test_risk_calc_tool_uncovered_element(self):
         test_case_name = "test_risk_calc_tool_uncovered_element"
@@ -130,33 +122,13 @@ class FactorRiskCalcToolTest(TestCase):
         params["benchmark"] = (
             "EXAMPLE-USD;0.150\r\nTEST-USD;0.650\r\nTEST99-USD;0.650\r\nTEST22-USD;0.750"
         )
-        request = self.factory.post(
-            "api/get_risk_calculation_output",
-            json.dumps(params),
-            content_type="application/json",
-        )
-        json_response = get_risk_calculation_output(request)
-        result_struct = json.loads(json_response.content)
-        if REFRESH_TESTS:
-            update_expected_output(test_case_name, result_struct)
-        expected_struct = get_expected_output(test_case_name)
-        self.assertTrue(compare_dictionaries(expected_struct, result_struct))
+        self.perform_risk_calc_test_routine(test_case_name, params)
 
     def test_risk_calc_tool_no_input(self):
         test_case_name = "test_risk_calc_tool_no_input"
         params = self.default_params.copy()
         params["portfolio"] = ""
-        request = self.factory.post(
-            "api/get_risk_calculation_output",
-            json.dumps(params),
-            content_type="application/json",
-        )
-        json_response = get_risk_calculation_output(request)
-        result_struct = json.loads(json_response.content)
-        if REFRESH_TESTS:
-            update_expected_output(test_case_name, result_struct)
-        expected_struct = get_expected_output(test_case_name)
-        self.assertTrue(compare_dictionaries(expected_struct, result_struct))
+        self.perform_risk_calc_test_routine(test_case_name, params)
 
     def test_risk_calc_tool_default_benchmark(self):
         test_case_name = "test_risk_calc_tool_default_benchmark"
@@ -165,17 +137,7 @@ class FactorRiskCalcToolTest(TestCase):
             "EXAMPLE-USD;0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
         )
         params["benchmark"] = None
-        request = self.factory.post(
-            "api/get_risk_calculation_output",
-            json.dumps(params),
-            content_type="application/json",
-        )
-        json_response = get_risk_calculation_output(request)
-        result_struct = json.loads(json_response.content)
-        if REFRESH_TESTS:
-            update_expected_output(test_case_name, result_struct)
-        expected_struct = get_expected_output(test_case_name)
-        self.assertTrue(compare_dictionaries(expected_struct, result_struct))
+        self.perform_risk_calc_test_routine(test_case_name, params)
 
     def test_risk_calc_tool_default_benchmark_no_factor(self):
         test_case_name = "test_risk_calc_tool_default_benchmark_no_factor"
@@ -185,17 +147,7 @@ class FactorRiskCalcToolTest(TestCase):
         )
         params["use_factors"] = False
         params["benchmark"] = None
-        request = self.factory.post(
-            "api/get_risk_calculation_output",
-            json.dumps(params),
-            content_type="application/json",
-        )
-        json_response = get_risk_calculation_output(request)
-        result_struct = json.loads(json_response.content)
-        if REFRESH_TESTS:
-            update_expected_output(test_case_name, result_struct)
-        expected_struct = get_expected_output(test_case_name)
-        self.assertTrue(compare_dictionaries(expected_struct, result_struct))
+        self.perform_risk_calc_test_routine(test_case_name, params)
 
     def test_risk_calc_tool_no_input_at_all(self):
         test_case_name = "test_risk_calc_tool_no_input_at_all"
@@ -203,30 +155,68 @@ class FactorRiskCalcToolTest(TestCase):
         params["portfolio"] = ""
         params["use_factors"] = False
         params["benchmark"] = None
-        request = self.factory.post(
-            "api/get_risk_calculation_output",
-            json.dumps(params),
-            content_type="application/json",
-        )
-        json_response = get_risk_calculation_output(request)
-        result_struct = json.loads(json_response.content)
-        if REFRESH_TESTS:
-            update_expected_output(test_case_name, result_struct)
-        expected_struct = get_expected_output(test_case_name)
-        self.assertTrue(compare_dictionaries(expected_struct, result_struct))
+        self.perform_risk_calc_test_routine(test_case_name, params)
 
     def test_risk_calc_tool_cob_date_incorrect(self):
         test_case_name = "test_risk_calc_tool_cob_date_incorrect"
         params = self.default_params.copy()
         params["cob_date"] = "2024-01-01"
-        request = self.factory.post(
-            "api/get_risk_calculation_output",
-            json.dumps(params),
-            content_type="application/json",
+        self.perform_risk_calc_test_routine(test_case_name, params)
+
+    def test_risk_calc_tool_default_benchmark_with_factor(self):
+        test_case_name = "test_risk_calc_tool_default_benchmark_with_factor"
+        params = self.default_params.copy()
+        params["portfolio"] = (
+            "EXAMPLE-USD;0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
         )
-        json_response = get_risk_calculation_output(request)
-        result_struct = json.loads(json_response.content)
-        if REFRESH_TESTS:
-            update_expected_output(test_case_name, result_struct)
-        expected_struct = get_expected_output(test_case_name)
-        self.assertTrue(compare_dictionaries(expected_struct, result_struct))
+        params["use_factors"] = True
+        params["benchmark"] = None
+        self.perform_risk_calc_test_routine(test_case_name, params)
+
+    def test_risk_calc_tool_no_active_risk_with_factor(self):
+        test_case_name = "test_risk_calc_tool_no_active_risk_with_factor"
+        params = self.default_params.copy()
+        params["portfolio"] = (
+            "EXAMPLE-USD;0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        params["use_factors"] = True
+        params["benchmark"] = (
+            "EXAMPLE-USD;0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        self.perform_risk_calc_test_routine(test_case_name, params)
+
+    def test_risk_calc_tool_no_active_risk_no_factor(self):
+        test_case_name = "test_risk_calc_tool_no_active_risk_no_factor"
+        params = self.default_params.copy()
+        params["portfolio"] = (
+            "EXAMPLE-USD;0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        params["use_factors"] = True
+        params["benchmark"] = (
+            "EXAMPLE-USD;0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        self.perform_risk_calc_test_routine(test_case_name, params)
+
+    def test_risk_calc_tool_long_short_no_factor(self):
+        test_case_name = "test_risk_calc_tool_long_short_no_factor"
+        params = self.default_params.copy()
+        params["portfolio"] = (
+            "EXAMPLE-USD;-0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        params["use_factors"] = False
+        params["benchmark"] = (
+            "EXAMPLE-USD;0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        self.perform_risk_calc_test_routine(test_case_name, params)
+
+    def test_risk_calc_tool_long_short_with_factor(self):
+        test_case_name = "test_risk_calc_tool_long_short_with_factor"
+        params = self.default_params.copy()
+        params["portfolio"] = (
+            "EXAMPLE-USD;-0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        params["use_factors"] = True
+        params["benchmark"] = (
+            "EXAMPLE-USD;0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        self.perform_risk_calc_test_routine(test_case_name, params)

@@ -121,6 +121,8 @@ def check_missing_coverage(
         for symbol in missing_coverage:
             del processed_input[portfolio_name][symbol]
         total_weight = sum(processed_input[portfolio_name].values())
+        if abs(total_weight) < 10e-10:
+            total_weight = 1.0
         processed_input[portfolio_name] = {
             key: value / total_weight
             for (key, value) in processed_input[portfolio_name].items()
@@ -364,14 +366,15 @@ def risk_calc_request_full(
 
     # 3. beta calculation...
     factor_beta_covar, _ = generate_factor_covariance_attribution(
-        port_exposures["portfolio"], factor_covariance, port_exposures["market"]
+        port_exposures["portfolio"], factor_covariance, port_exposures["market"],
+        variance_only = True
     )
     spec_risk_covar = get_specific_risk_beta(
         portfolios["portfolio"],
         market_portfolio=portfolios["market"],
         spec_risk=combined_spec_risk["active"],
     )
-    portfolio_beta = (factor_beta_covar**2 + spec_risk_covar) / (
+    portfolio_beta = (factor_beta_covar + spec_risk_covar) / (
         total_risks["market"] ** 2
     )
 
@@ -643,9 +646,10 @@ def risk_calc_request_reduced(
         all_exposure[[0]].rename(columns={0: "exposure"}),
         cov_for_beta,
         all_exposure[[1]].rename(columns={1: "exposure"}),
+        variance_only = True
     )
 
-    portfolio_beta = (factor_beta_covar**2) / (total_risks["market"] ** 2)
+    portfolio_beta = (factor_beta_covar) / (total_risks["market"] ** 2)
 
     es95, var95 = calculate_lognormal_es_var(total_risks["portfolio"], 0.95)
     es99, var99 = calculate_lognormal_es_var(total_risks["portfolio"], 0.99)
