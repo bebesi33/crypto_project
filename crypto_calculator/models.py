@@ -16,6 +16,7 @@ class RawPriceData(models.Model):
     class Meta:
         managed = False
         db_table = "raw_price_data"
+        unique_together = (('date', 'symbol'),)
 
 
 class Returns(models.Model):
@@ -31,12 +32,12 @@ class Returns(models.Model):
     class Meta:
         managed = False
         db_table = "returns"
+        unique_together = (('date', 'symbol'),)
 
 
 class RiskFreeRates(models.Model):
-    id = models.AutoField(primary_key=True, default=-1)
     risk_free_rate = models.FloatField(blank=True, null=True)
-    date = models.DateField(blank=True, null=True)
+    date = models.DateField(primary_key=True)
     source = models.TextField(blank=True, null=True)
     symbol = models.TextField(blank=True, null=True)
 
@@ -59,22 +60,22 @@ class Exposures(models.Model):
     new_coin = models.FloatField(blank=True, null=True)
     momentum = models.FloatField(blank=True, null=True)
     size = models.FloatField(blank=True, null=True)
-    date = models.TextField(blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = "exposures"
+        unique_together = (('date', 'ticker'),)
 
 
 class FactorReturns(models.Model):
-    id = models.AutoField(primary_key=True, default=-1)
     market = models.FloatField(blank=True, null=True)
     size = models.FloatField(blank=True, null=True)
     momentum = models.FloatField(blank=True, null=True)
     reversal = models.FloatField(blank=True, null=True)
     volume = models.FloatField(blank=True, null=True)
     new_coin = models.FloatField(blank=True, null=True)
-    date = models.DateField(blank=True, null=True)
+    date = models.DateField(primary_key=True)
     version_date = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -98,22 +99,22 @@ class SpecificReturns(models.Model):
     id = models.AutoField(primary_key=True, default=-1)
     ticker = models.TextField(blank=True, null=True)
     specific_return = models.FloatField(blank=True, null=True)
-    date = models.TextField(blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = "specific_returns"
+        unique_together = (('date', 'ticker'),)
 
 
 class TStatistics(models.Model):
-    id = models.AutoField(primary_key=True, default=-1)
     market = models.FloatField(blank=True, null=True)
     size = models.FloatField(blank=True, null=True)
     momentum = models.FloatField(blank=True, null=True)
     reversal = models.FloatField(blank=True, null=True)
     volume = models.FloatField(blank=True, null=True)
     new_coin = models.FloatField(blank=True, null=True)
-    date = models.DateField(blank=True, null=True)
+    date = models.DateField(primary_key=True)
     version_date = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -122,14 +123,13 @@ class TStatistics(models.Model):
 
 
 class Vifs(models.Model):
-    id = models.AutoField(primary_key=True, default=-1)
     market = models.FloatField(blank=True, null=True)
     size = models.FloatField(blank=True, null=True)
     momentum = models.FloatField(blank=True, null=True)
     reversal = models.FloatField(blank=True, null=True)
     volume = models.FloatField(blank=True, null=True)
     new_coin = models.FloatField(blank=True, null=True)
-    date = models.DateField(blank=True, null=True)
+    date = models.DateField(primary_key=True)
     version_date = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -139,7 +139,7 @@ class Vifs(models.Model):
 
 class CoreSpecificRisk(models.Model):
     id = models.AutoField(primary_key=True, default=-1)
-    date = models.TextField(blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
     half_life = models.IntegerField(blank=True, null=True)
     specific_risk = models.FloatField(blank=True, null=True)
     version_date = models.TextField(blank=True, null=True)
@@ -147,3 +147,4 @@ class CoreSpecificRisk(models.Model):
     class Meta:
         managed = False
         db_table = "core_specific_risk"
+        unique_together = (('date', 'half_life'),)

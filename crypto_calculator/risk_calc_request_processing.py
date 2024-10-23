@@ -67,7 +67,7 @@ FRONTEND_TO_BACKEND = {
 
 
 def get_available_estimation_dates() -> list[str]:
-    dates = FactorReturns.objects.using("factor_model_estimates").values("date")
+    dates = CoreSpecificRisk.objects.using("specific_risk_estimates").values("date")
     df = pd.DataFrame(list(dates))
     return [str(date_value) for date_value in set(df["date"])]
 

@@ -76,7 +76,6 @@ class FactorStatModelTest(TestCase):
             ) as conn:
                 r_sq.to_sql("r_squares", conn, if_exists="replace", index=False)
         TStatistics.objects.using("factor_model_estimates").create(
-            id=3,
             market=2.0,
             size=1.0,
             momentum=2.4,

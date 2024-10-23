@@ -12,6 +12,7 @@ def refresh_database(
     key_field_name: str = "symbol",
     update_mode: str = "append",
     delete_database: bool = True,
+    drop_id_col: bool=False
 ):
     """
     Refreshes the database with new data.
@@ -36,9 +37,10 @@ def refresh_database(
             df_temp[key_field_name] = key
             df_temp.columns = [col.lower().replace(" ", "_") for col in df_temp.columns]
             df_temp.reset_index(inplace=True)
-            df_temp.rename(
-                columns={"index": "id"}, inplace=True
-            )  # for some reason django needs an id col
+            if not drop_id_col:
+                df_temp.rename(
+                    columns={"index": "id"}, inplace=True
+                )  # for some reason django needs an id col
             df_temp.to_sql(
                 database_table_name, conn, if_exists=update_mode, index=False
             )
