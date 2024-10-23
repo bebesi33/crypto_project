@@ -15,9 +15,10 @@ def create_portfolio_exposures(
     ].copy()
     expo_selected["portfolio_weight"] = expo_selected["ticker"].map(portfolio_details)
     if is_total_space:
-        expo_selected["portfolio_weight"] = expo_selected["portfolio_weight"] / sum(
-            expo_selected["portfolio_weight"]
-        )
+        total_port_weight = sum(expo_selected["portfolio_weight"])
+        if abs(total_port_weight) < 10e-10:
+            total_port_weight = 1.0
+        expo_selected["portfolio_weight"] = expo_selected["portfolio_weight"] / total_port_weight
     weighted_port_exposure = dict()
     for col in available_styles:
         weighted_port_exposure[col] = sum(
@@ -86,13 +87,9 @@ def calculate_spec_risk_mctr(
         Dict: The variance decomposition for specific risk
     """
     weight_coverage = 0
-    if is_total_space:
-        port_total = sum(portfolio_details.values())
-    else:
+    port_total = sum(portfolio_details.values())
+    if not is_total_space or abs(port_total) < 10e-10:
         port_total = 1.0
-    
-    if abs(port_total) < 10e-10:
-        port_total = 1.0  # we want to avoid dividing by zero
 
     spec_risk_mctr = {}
     spec_risk_var_contrib = {}
@@ -106,7 +103,7 @@ def calculate_spec_risk_mctr(
 
     spec_risk_mctr = pd.Series(spec_risk_mctr)
     spec_risk_var_contrib = pd.Series(spec_risk_var_contrib)
-    if is_total_space:
+    if is_total_space and abs(weight_coverage) > 10e-10:
         spec_risk_mctr = spec_risk_mctr / weight_coverage
         spec_risk_var_contrib = spec_risk_var_contrib / (weight_coverage**2)
     else:
