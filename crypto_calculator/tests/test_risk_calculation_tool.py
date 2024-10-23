@@ -239,8 +239,32 @@ class FactorRiskCalcToolTest(TestCase):
         params["portfolio"] = (
             "EXAMPLE-USD;-0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
         )
-        params["use_factors"] = True
+        params["use_factors"] = False
         params["benchmark"] = (
             "EXAMPLE-USD;-0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        self.perform_risk_calc_test_routine(test_case_name, params)
+
+    def test_risk_calc_tool_double_entry_with_factor(self):
+        test_case_name = "test_risk_calc_tool_double_entry_with_factor"
+        params = self.default_params.copy()
+        params["portfolio"] = (
+            "EXAMPLE-USD;-0.250\r\nEXAMPLE-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        params["use_factors"] = True
+        params["benchmark"] = (
+            "EXAMPLE-USD;0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        self.perform_risk_calc_test_routine(test_case_name, params)
+
+    def test_risk_calc_tool_double_entry_no_factor(self):
+        test_case_name = "test_risk_calc_tool_double_entry_no_factor"
+        params = self.default_params.copy()
+        params["portfolio"] = (
+            "EXAMPLE-USD;-0.250\r\nEXAMPLE-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
+        )
+        params["use_factors"] = False
+        params["benchmark"] = (
+            "EXAMPLE-USD;0.250\r\nTEST-USD;0.250\r\nTEST99-USD;0.50\r\nTEST22-USD;0.50"
         )
         self.perform_risk_calc_test_routine(test_case_name, params)
