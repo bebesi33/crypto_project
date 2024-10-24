@@ -8,7 +8,7 @@ from crypto_calculator.factor_return_stats_requests import (
     get_vif_stats,
 )
 from crypto_calculator.models import TStatistics
-from crypto_calculator.tests.resources.conftest import REFRESH_TESTS
+from crypto_calculator.tests.resources.conftest import REFRESH_TEST_DB, REFRESH_TESTS
 from crypto_calculator.views import get_factor_return_stats
 from database_server.settings import BASE_DIR, TEST_DATABASE_LOCATION
 
@@ -25,7 +25,7 @@ class FactorStatModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         # setup t_statistics table on the fly, by hand...
-        if REFRESH_TESTS:
+        if REFRESH_TEST_DB:
             df = pd.DataFrame(
                 {
                     "id": [0, 1, 2],

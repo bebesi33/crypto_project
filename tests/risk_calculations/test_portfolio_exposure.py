@@ -6,7 +6,7 @@ class TestCreatePortfolioExposures(unittest.TestCase):
     def setUp(self):
         # Create a sample exposures DataFrame
         self.exposures = pd.DataFrame({
-            "ticker": ["C1", "C2", "C3"],
+            "symbol": ["C1", "C2", "C3"],
             "momentum": [0.1, 0.2, 0.3],
             "volume": [0.4, 0.5, 0.6]
         })
@@ -19,7 +19,7 @@ class TestCreatePortfolioExposures(unittest.TestCase):
         }
         self.non_exposure_fields = [
             "id",
-            "ticker",
+            "symbol",
             "return",
             "core_universe",
             "transformed_market_cap",

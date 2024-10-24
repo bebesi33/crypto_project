@@ -7,7 +7,7 @@ class TestGenerateRawSpecificRisk(unittest.TestCase):
 
     def setUp(self):
         self.specific_returns_data = {
-            "ticker": ["T1", "T1", "T1", "T2", "T2", "T2", "T3", "T3", "T5"],
+            "symbol": ["T1", "T1", "T1", "T2", "T2", "T2", "T3", "T3", "T5"],
             "date": [
                 "2024-03-01",
                 "2024-03-02",

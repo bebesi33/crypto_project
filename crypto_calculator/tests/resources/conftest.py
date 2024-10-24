@@ -3,6 +3,7 @@ from database_server.settings import BASE_DIR
 
 
 REFRESH_TESTS = False
+REFRESH_TEST_DB = False
 TEST_LOCATION = BASE_DIR / "crypto_calculator" / "tests"
 
 

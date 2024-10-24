@@ -199,12 +199,12 @@ def query_exposures_for_market_portfolio_data(cob_date: str) -> pd.DataFrame:
         cob_date (str): The close of business date in the format "YYYY-MM-DD".
 
     Returns:
-        pd.DataFrame: A DataFrame with ticker and transformed market cap data.
+        pd.DataFrame: A DataFrame with symbol and transformed market cap data.
     """
     exposures = (
         Exposures.objects.using("factor_model_estimates")
         .filter(date=cob_date)
-        .values("ticker", "transformed_market_cap")
+        .values("symbol", "transformed_market_cap")
     )
     return pd.DataFrame(list(exposures))
 
@@ -222,7 +222,7 @@ def query_specific_returns(cob_date: str, symbols: list[str]) -> pd.DataFrame:
     specific_returns = (
         SpecificReturns.objects.using("factor_model_estimates")
         .filter(date__lte=cob_date)
-        .filter(ticker__in=symbols)
+        .filter(symbol__in=symbols)
         .values()
     )
     df = pd.DataFrame(list(specific_returns))
@@ -438,8 +438,8 @@ def generate_market_portfolio(cob_date: str):
     df = df.head(20).copy()
     df["weight"] = df["transformed_market_cap"] / sum(df["transformed_market_cap"])
     return {
-        list(df["ticker"])[idx]: list(df["weight"])[idx]
-        for idx in range(len(list(df["ticker"])))
+        list(df["symbol"])[idx]: list(df["weight"])[idx]
+        for idx in range(len(list(df["symbol"])))
     }
 
 

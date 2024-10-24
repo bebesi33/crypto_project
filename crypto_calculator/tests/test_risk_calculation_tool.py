@@ -4,6 +4,7 @@ import logging
 from django.test import RequestFactory, TestCase
 import pandas as pd
 from crypto_calculator.tests.resources.conftest import (
+    REFRESH_TEST_DB,
     REFRESH_TESTS,
     get_expected_output,
     update_expected_output,
@@ -41,7 +42,7 @@ class FactorRiskCalcToolTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        if REFRESH_TESTS:
+        if REFRESH_TEST_DB:
             for test_db, table, test_input in zip(
                 [
                     "test_returns.sqlite3",

@@ -10,10 +10,10 @@ def create_portfolio_exposures(
     is_total_space: bool = True,
 ) -> pd.DataFrame:
     available_styles = sorted(list(set(exposures.columns) - set(non_style_fields)))
-    expo_selected = exposures[exposures["ticker"].isin(portfolio_details.keys())][
-        ["ticker"] + available_styles
+    expo_selected = exposures[exposures["symbol"].isin(portfolio_details.keys())][
+        ["symbol"] + available_styles
     ].copy()
-    expo_selected["portfolio_weight"] = expo_selected["ticker"].map(portfolio_details)
+    expo_selected["portfolio_weight"] = expo_selected["symbol"].map(portfolio_details)
     if is_total_space:
         total_port_weight = sum(expo_selected["portfolio_weight"])
         if abs(total_port_weight) < 10e-10:

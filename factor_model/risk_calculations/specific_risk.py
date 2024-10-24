@@ -26,7 +26,7 @@ def generate_raw_specific_risk(
     available_spec_return_history = dict()
     for symbol in portfolio_details.keys():
         specific_returns_temp = specific_returns[
-            (specific_returns["ticker"] == symbol)
+            (specific_returns["symbol"] == symbol)
             & (specific_returns["date"].astype(str) <= parameters["date"])
         ].copy()
         available_spec_return_history[symbol] = len(specific_returns_temp)

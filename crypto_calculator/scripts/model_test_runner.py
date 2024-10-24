@@ -27,7 +27,7 @@ class ManagedModelTestRunner(DiscoverRunner):
         """Set up the test databases and apply migrations to copy the schema."""
         logger.warning("ManagedModelTestRunner: setup_databases called")
         databases = super().setup_databases(**kwargs)
-        # self.apply_migrations_to_databases()  # most of the time not needed
+        self.apply_migrations_to_databases()  # most of the time not needed
         return databases
 
     def apply_migrations_to_databases(self):
