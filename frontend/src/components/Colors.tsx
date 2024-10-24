@@ -5,7 +5,7 @@ export const CHART_BASE_BACKGROUND = 'rgb(140,170,220)'
 export const CHART_DARK='rgb(32,55,100)'
 export const CHART_DARK_BACKGROUND='rgb(48,84,150)'
 export const DARK_COLOR='rgb(0,0,139)'
-export const NAVBAR_BACKGROUND='rgb(227,242,253)'
+export const NAVBAR_BACKGROUND='rgb(181, 221, 254)'
 
 export const errorStyles = {
     "0": "alert alert-info",

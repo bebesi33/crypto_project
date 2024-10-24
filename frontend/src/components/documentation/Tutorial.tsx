@@ -2,7 +2,7 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import { Carousel } from "react-bootstrap";
-import "./Tutorial.css";
+import "../assets/css/tutorial.css";
 import explorer_1 from "../assets/images/explorer_1.jpg";
 import explorer_2 from "../assets/images/explorer_2.jpg";
 import risk_calc_1 from "../assets/images/risk_calc_1.jpg";

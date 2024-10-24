@@ -9,8 +9,7 @@ function MainNavbar() {
   return (
     <Navbar
       expand="lg"
-      className="bg-body-tertiary"
-      bg={NAVBAR_BACKGROUND}
+      style={{ backgroundColor: NAVBAR_BACKGROUND }}
       data-bs-theme="light"
       fixed="top"
     >

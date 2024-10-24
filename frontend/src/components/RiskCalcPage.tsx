@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { API } from "../Api";
-import "./RiskCalcPage.css";
+import "./assets/css/risk_calc_page.css"
 import SimpleTable from "./tables/SimpleTable";
 import ExposureChart from "./charts/ExposureChart";
 import MarginalContribChart from "./charts/MarginalContribChart";

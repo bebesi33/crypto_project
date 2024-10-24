@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./ExplorerPage.css";
+import "./assets/css/explorer_page.css"
 import { API } from "../Api";
 import LineChart from "./charts/LineChart";
 import ReturnChart from "./charts/ReturnChart";

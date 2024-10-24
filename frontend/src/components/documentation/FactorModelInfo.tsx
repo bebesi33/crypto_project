@@ -1,6 +1,6 @@
 import { BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
-import "./FactorModelInfo.css";
+import "../assets/css/factor_model_info.css";
 import { useEffect, useState } from "react";
 import { API } from "../../Api";
 import SimpleTable from "../tables/SimpleTable";

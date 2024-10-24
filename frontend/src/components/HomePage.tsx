@@ -1,6 +1,6 @@
 import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
-import "./HomePage.css";
+import "./assets/css/home_page.css"
 import risk_calc_image from "./assets/images/risk_calc_image.jpg";
 import explorer_image from "./assets/images/explorer_image.jpg";
 
