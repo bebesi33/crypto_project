@@ -131,12 +131,12 @@
   pointer-events: auto;
   top: 490px;
   left: 1%;
-  min-width: 100px;
+  min-width: 150px;
   max-width: 19%;
 }
 .log-container {
   position: absolute;
-  top: 550px;
+  top: 600px;
   left: 1%;
   min-width: 100px;
   max-width: 325px;
@@ -174,4 +174,14 @@
   left: 780px;
   width: 450px;
   height: 400px;
+}
+#export-rc-btn {
+  position: absolute;
+  top: 540px;
+  left: 1%;
+  min-width: 150px;
+  max-width: 19%;
+}
+.pdf-mode .exclude-from-pdf {
+  display: none !important;
 }

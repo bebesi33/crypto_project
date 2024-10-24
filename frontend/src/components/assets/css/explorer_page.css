@@ -67,6 +67,16 @@
   position: absolute;
   top: 350px;
   left: 1%;
-  min-width: 100px;
+  min-width: 150px;
   max-width: 19%;
+}
+#export-btn {
+  position: absolute;
+  top: 400px;
+  left: 1%;
+  min-width: 150px;
+  max-width: 19%;
+}
+.pdf-mode .exclude-from-pdf {
+  display: none !important;
 }

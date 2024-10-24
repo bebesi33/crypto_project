@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { API } from "../Api";
-import "./assets/css/risk_calc_page.css"
+import "./assets/css/risk_calc_page.css";
 import SimpleTable from "./tables/SimpleTable";
 import ExposureChart from "./charts/ExposureChart";
 import MarginalContribChart from "./charts/MarginalContribChart";
@@ -8,6 +8,7 @@ import { errorStyles } from "./Colors";
 import PortfolioTable from "./tables/PortfolioTable";
 import RiskDecompositionChart from "./charts/RiskDecomposition";
 import csrftoken from "./token/Token";
+import html2pdf from "html2pdf.js";
 
 function RiskCalcPage() {
   const [jsonData, setJsonData] = useState(null);
@@ -25,6 +26,66 @@ function RiskCalcPage() {
     use_factors: true,
   };
   const [inputValues, setInputValues] = useState(initialInputValues);
+  const [isUnderExport, setIsUnderExport] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [isContentReady, setIsContentReady] = useState(true);
+
+  const handleExport = (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+    setIsLoading(true);
+    setIsUnderExport(true);
+  }; // end handleExport
+
+  const generateFileName = (): string => {
+    const now = new Date();
+    const timeStamp = now.toISOString().replace(/[:.]/g, "-");
+    const filename = inputValues.cob_date.concat("-", timeStamp.toString());
+    return filename;
+  }; // end generateFileName
+
+  useEffect(() => {
+    if (isUnderExport) {
+      const filename = generateFileName();
+      const contentReference = contentRef.current;
+      if (contentReference) {
+        const options = {
+          margin: 1,
+          filename: filename,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: {
+            scale: 3,
+            scrollY: 0,
+            useCORS: true,
+            width: contentReference.scrollWidth,
+            height: contentReference.scrollHeight,
+            onclone: (documentClone: {
+              querySelectorAll: (arg0: string) => any[];
+            }) => {
+              documentClone
+                .querySelectorAll(".exclude-from-pdf")
+                .forEach((element) => {
+                  element.style.display = "none";
+                });
+            }, // very crude solution to drop the buttons
+          },
+          jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        };
+        html2pdf()
+          .from(contentReference)
+          .set(options)
+          .save()
+          .then(() => {
+            setIsLoading(false);
+            setIsUnderExport(false);
+            document.body.classList.remove("exclude-from-pdf");
+          });
+      } else {
+        console.error("Element not found");
+        setIsLoading(false);
+        setIsUnderExport(false);
+      }
+    }
+  }, [isUnderExport]); // end useEffect
 
   const handleInputChange =
     (property: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,7 +135,7 @@ function RiskCalcPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            'X-CSRFToken': csrftoken
+            "X-CSRFToken": csrftoken,
           } as HeadersInit,
           credentials: "include",
           body: JSON.stringify({
@@ -96,19 +157,21 @@ function RiskCalcPage() {
         setJsonData(jsonData);
         console.log(jsonData);
         setIsLoading(false);
+        setIsContentReady(true);
       } else {
         console.error("Error sending data to the backend.");
         setIsLoading(false);
+        setIsContentReady(false);
       }
     } catch (error) {
       console.error("An error occurred:", error);
       setIsLoading(false);
+      setIsContentReady(false);
     }
   };
 
   return (
-    <div className="parent-container">
-      <link href="/RiskCalcPage.css"></link>
+    <div className="parent-container" ref={contentRef}>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <strong>
@@ -276,7 +339,7 @@ function RiskCalcPage() {
           >
             <button
               type="submit"
-              className="btn btn-primary"
+              className="btn btn-primary exclude-from-pdf"
               id="calc-btn"
               onClick={handleSubmit}
               disabled={isLoading || inputValues["portfolio"] == null}
@@ -293,6 +356,24 @@ function RiskCalcPage() {
           </span>
         </div>
       </form>
+
+      <button
+        type="submit"
+        className="btn btn-primary exclude-from-pdf"
+        id="export-rc-btn"
+        onClick={handleExport}
+        disabled={isLoading || !isContentReady || isUnderExport}
+      >
+        {isUnderExport && (
+          <span
+            className="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+        )}
+        Export to PDF
+      </button>
+
       <div className="log-container">
         {jsonData !== null && (
           <div

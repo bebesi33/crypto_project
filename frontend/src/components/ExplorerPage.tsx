@@ -1,17 +1,21 @@
-import { useState } from "react";
-import "./assets/css/explorer_page.css"
+import { useState, useEffect, useRef } from "react";
+import "./assets/css/explorer_page.css";
 import { API } from "../Api";
 import LineChart from "./charts/LineChart";
 import ReturnChart from "./charts/ReturnChart";
 import { errorStyles } from "./Colors";
 import csrftoken from "./token/Token";
+import html2pdf from "html2pdf.js";
 
 // https://dev.to/deboragaleano/how-to-handle-multiple-inputs-in-react-55el
-
 
 function ExplorerPage() {
   const [jsonData, setJsonData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isContentReady, setIsContentReady] = useState(true);
+  const [isUnderExport, setIsUnderExport] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  //  https://www.nutrient.io/blog/how-to-convert-html-to-pdf-using-html2df-and-react/
 
   const initialValues = {
     symbol: "BTC-USD",
@@ -20,6 +24,64 @@ function ExplorerPage() {
     mean_to_zero: false,
   };
   const [values, setValues] = useState(initialValues);
+
+  const handleExport = (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+    setIsLoading(true);
+    setIsUnderExport(true);
+  }; // end handleExport
+
+  const generateFileName = (): string => {
+    const now = new Date();
+    const timeStamp = now.toISOString().replace(/[:.]/g, "-");
+    const filename = values.symbol.concat("-", timeStamp.toString());
+    return filename;
+  }; // end generateFileName
+
+  useEffect(() => {
+    if (isUnderExport) {
+      const filename = generateFileName();
+      const contentReference = contentRef.current;
+      console.log(contentReference);
+      if (contentReference) {
+        const options = {
+          margin: 1,
+          filename: filename,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: {
+            scale: 3,
+            scrollY: 0,
+            useCORS: true,
+            width: contentReference.scrollWidth,
+            height: contentReference.scrollHeight,
+            onclone: (documentClone: {
+              querySelectorAll: (arg0: string) => any[];
+            }) => {
+              documentClone
+                .querySelectorAll(".exclude-from-pdf")
+                .forEach((element) => {
+                  element.style.display = "none";
+                });
+            }, // very crude solution to drop the buttons
+          },
+          jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        };
+        html2pdf()
+          .from(contentReference)
+          .set(options)
+          .save()
+          .then(() => {
+            setIsLoading(false);
+            setIsUnderExport(false);
+            document.body.classList.remove("exclude-from-pdf");
+          });
+      } else {
+        console.error("Element not found");
+        setIsLoading(false);
+        setIsUnderExport(false);
+      }
+    }
+  }, [isUnderExport]); // end useEffect
 
   const handleInputChange =
     (property: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,19 +121,25 @@ function ExplorerPage() {
         console.log("Data received successfully!");
         setJsonData(jsonData);
         setIsLoading(false);
+        setIsContentReady(true);
       } else {
         console.error("Error sending data to the backend.");
         setIsLoading(false);
+        setIsContentReady(false);
       }
     } catch (error) {
       console.error("An error occurred:", error);
       setIsLoading(false);
+      setIsContentReady(false);
     }
   }; // end handleSubmit
 
   return (
-    <div className="parent-container">
-      <link href="/ExplorerPage.css"></link>
+    <div
+      className="parent-container"
+      id="main-exploler-page-container"
+      ref={contentRef}
+    >
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label
@@ -135,7 +203,7 @@ function ExplorerPage() {
 
           <button
             type="submit"
-            className="btn btn-primary"
+            className="btn btn-primary exclude-from-pdf"
             id="explore-btn"
             onClick={handleSubmit}
             disabled={isLoading}
@@ -151,15 +219,31 @@ function ExplorerPage() {
           </button>
         </div>
       </form>
-      <div className="chart-container">
+      <button
+        type="submit"
+        className="btn btn-primary exclude-from-pdf"
+        id="export-btn"
+        onClick={handleExport}
+        disabled={isLoading || !isContentReady || isUnderExport}
+      >
+        {isUnderExport && (
+          <span
+            className="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+        )}
+        Export to PDF
+      </button>
+      <div className="chart-container" ref={contentRef}>
         {jsonData !== null && (
-          <div
+          <p
             className={errorStyles[jsonData["ERROR_CODE"]]}
             role="alert"
             style={{ textAlign: "left" }}
           >
             {jsonData["log"]}
-          </div>
+          </p>
         )}
         {jsonData !== null &&
           "raw_price" in jsonData &&
