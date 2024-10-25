@@ -39,6 +39,7 @@ DATABASE_LOCATION = os.path.join(BASE_DIR.parent, "database")
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

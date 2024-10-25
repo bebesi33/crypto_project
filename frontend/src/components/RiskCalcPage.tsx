@@ -9,6 +9,7 @@ import PortfolioTable from "./tables/PortfolioTable";
 import RiskDecompositionChart from "./charts/RiskDecomposition";
 import csrftoken from "./token/Token";
 import html2pdf from "html2pdf.js";
+import axios from "axios";
 
 function RiskCalcPage() {
   const [jsonData, setJsonData] = useState(null);
@@ -112,7 +113,6 @@ function RiskCalcPage() {
           "load",
           () => {
             const file_content = reader.result;
-            console.log("file content:", file_content);
             setInputValues({
               ...inputValues,
               [property]: file_content,
@@ -128,34 +128,32 @@ function RiskCalcPage() {
     event.preventDefault();
     try {
       setIsLoading(true);
-      console.log(inputValues);
-      const response = await fetch(
+      const response = await axios.post(
         API + "crypto/api/get_risk_calculation_output",
         {
-          method: "POST",
+          cob_date: inputValues["cob_date"],
+          correlation_hl: inputValues["correlation_hl"],
+          factor_risk_hl: inputValues["factor_risk_hl"],
+          specific_risk_hl: inputValues["specific_risk_hl"],
+          min_ret_hist: inputValues["min_ret_hist"],
+          portfolio: inputValues["portfolio"],
+          benchmark: inputValues["benchmark"],
+          mean_to_zero: inputValues["mean_to_zero"],
+          use_factors: inputValues["use_factors"],
+        },
+        {
           headers: {
             "Content-Type": "application/json",
             "X-CSRFToken": csrftoken,
-          } as HeadersInit,
-          credentials: "include",
-          body: JSON.stringify({
-            cob_date: inputValues["cob_date"],
-            correlation_hl: inputValues["correlation_hl"],
-            factor_risk_hl: inputValues["factor_risk_hl"],
-            specific_risk_hl: inputValues["specific_risk_hl"],
-            min_ret_hist: inputValues["min_ret_hist"],
-            portfolio: inputValues["portfolio"],
-            benchmark: inputValues["benchmark"],
-            mean_to_zero: inputValues["mean_to_zero"],
-            use_factors: inputValues["use_factors"],
-          }),
+          },
+          withCredentials: true,
+          responseType: "json",
         }
       );
-      if (response.ok) {
-        const jsonData = await response.json();
+      if (response.status == 200) {
+        const jsonData = await response.data;
         console.log("Data received successfully!");
         setJsonData(jsonData);
-        console.log(jsonData);
         setIsLoading(false);
         setIsContentReady(true);
       } else {

@@ -6,6 +6,7 @@ import ReturnChart from "./charts/ReturnChart";
 import { errorStyles } from "./Colors";
 import csrftoken from "./token/Token";
 import html2pdf from "html2pdf.js";
+import axios from "axios";
 
 // https://dev.to/deboragaleano/how-to-handle-multiple-inputs-in-react-55el
 
@@ -102,22 +103,25 @@ function ExplorerPage() {
     event.preventDefault();
     try {
       setIsLoading(true);
-      const response = await fetch(API + "crypto/api/get_raw_price_data", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": csrftoken,
-        } as HeadersInit,
-        credentials: "include",
-        body: JSON.stringify({
+      const response = await axios.post(
+        API + "crypto/api/get_raw_price_data",
+        {
           symbol: values["symbol"],
           halflife: values["halflife"],
           min_obs: values["min_obs"],
           mean_to_zero: values["mean_to_zero"],
-        }),
-      });
-      if (response.ok) {
-        const jsonData = await response.json();
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrftoken,
+          },
+          withCredentials: true,
+          responseType: 'json',
+        }
+      );
+      if (response.status == 200) {
+        const jsonData = await response.data;
         console.log("Data received successfully!");
         setJsonData(jsonData);
         setIsLoading(false);
