@@ -68,29 +68,31 @@ function FactorModelInfo() {
       <div className="content-text">
         <h2> 1. Overview</h2>
         <p>
-          The model presented on this webpage is a fundamental factor model. This
-          means that the factor returns are generated using a sequence of
+          The model presented on this webpage is a fundamental factor model.
+          This means that the factor returns are generated using a sequence of
           cross-sectional regressions and are the result of regression
-          estimations (estimated coefficients). The style exposures (or
-          regressors in the regressions) are calculated based on asset
-          characteristics for each time period.
+          estimations (estimated coefficients). The target variable in each
+          cross-sectional regression is the logarithmic version of the excess
+          returns, while the independent variables are the style factor
+          exposres. The style exposures (or regressors in the regressions) are
+          calculated based on asset characteristics for each time period.
         </p>
         <h2> 2. Style factors</h2>
         <p>
           The following section explain the calculation of "raw" style
           exposures. These exposure values are considered "raw", as they are not
-          directly fed into the risk factor return regressions. All of the "raw"
-          exposures below are subject to standardization on the estimation
-          universe, the standardized version of these style exposures is used to
-          estimate factor returns.
+          directly fed into the risk factor return regressions. The "raw"
+          exposures below (with the exception of the Market) are subject to
+          standardization on the estimation universe, the standardized version
+          of these style exposures is used to estimate factor returns.
         </p>
         <h4> 2.1. Volume style</h4>
         <p>
-          The rolling volume exposure is calculated by summing the volume over a
-          specified number of days, corresponding to a certain number of months,
-          and then scaling the result by dividing by 1,000,000 to convert the
-          units into USD millions. Currently the calculation uses 30 trading
-          days as a default.
+          The "rolling" volume exposure is calculated by summing the volume over
+          a specified number of days, corresponding to a certain number of
+          months, and then scaling the result by dividing by 1,000,000 to
+          convert the units into USD millions. Currently the calculation uses 30
+          trading days as a default.
         </p>
         <BlockMath math={volume_formula} />
         <BlockMath math={volume_exposure} />
@@ -98,13 +100,13 @@ function FactorModelInfo() {
         <BlockMath math={volume_input} />
         <h4> 2.2. Reversal and Momentum styles</h4>
         <p>
-          Both style exposures rely on the same formula, albeit they use
-          different lookback time horizons: Reversal uses a 30 day lookback
-          horizon, while Momentum uses a 180 day lookback. Reversal style and
-          reversal strategies are based on the principle of mean reversion,
-          ideally reversal investors take advantage of short-term price
-          fluctuations due to market overreactions. Momentum style tries to
-          capitalize on the tendency of securities to continue moving in the
+          Both reversal and momentum style exposures rely on the same formula,
+          albeit they use different lookback time horizons: Reversal uses a 30
+          day lookback horizon, while Momentum uses a 180 day lookback. Reversal
+          style and reversal strategies are based on the principle of mean
+          reversion, ideally reversal investors take advantage of short-term
+          price fluctuations due to market overreactions. Momentum style tries
+          to capitalize on the tendency of securities to continue moving in the
           same direction (upward or downward) for a certain period. This style
           is based on the belief that stocks or in this case crypto assets that
           performed well in the past will continue to perform well in the near
@@ -120,7 +122,7 @@ function FactorModelInfo() {
           (or market cap) for cryptocurrencies is calculated by multiplying the
           total supply of a cryptocurrency by its current market price.
           Typically cryptocurrencies with more than 10 billion USD market cap
-          are considered Large-cap. Some examples are Bitcoin (BTC) amd Ethereum
+          are considered Large-cap. Some examples are Bitcoin (BTC) and Ethereum
           (ETH).
         </p>
         <BlockMath math={size_formula} />
@@ -144,9 +146,10 @@ function FactorModelInfo() {
         <h2> 3. Factor return estimation</h2>
         <h4> 3.1 Estimation universe generation</h4>
         <p>
-          For each time period a reduced set of crypto is defined as the
-          estimation universe. The regression estimation is performed on these
-          selected assets. There are two conditions that should be met:
+          For each time period a reduced set of cryptocrurrencies are defined as
+          the estimation universe. The regression estimation is performed on
+          these selected assets. There are two conditions that should be met for
+          a given crypto to be included into the estiamtion universe:
           <ul>
             <li>
               {" "}
@@ -178,7 +181,7 @@ function FactorModelInfo() {
           exposure (the latter serving as the constant in the regression). The
           explanatory variable is the daily excess return of each
           cryptocurrency, which is calculated by subtracting the risk-free rate
-          from the total returns.
+          from the total (logarithmic) returns.
         </p>
         <p>Excess returns can be specified using the following formula:</p>
         <BlockMath math={excess_return_formula} />

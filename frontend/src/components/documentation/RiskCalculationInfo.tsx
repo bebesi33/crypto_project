@@ -184,7 +184,7 @@ function RiskCalculationInfo() {
           return time series are treated as a separate factor. (Hence a
           covariance matrix is calculated for elements in the portfolio.) The
           user can govern the half-life of this covariance matrix with the
-          factor related half-life parameters. The variance can be specified:
+          factor related half-life parameters. The variance for portfolio P can be specified:
         </p>
         <BlockMath math={port_variance_no_factor} />
         <p>

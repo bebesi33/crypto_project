@@ -29,7 +29,7 @@ function RiskCalcPage() {
   const [inputValues, setInputValues] = useState(initialInputValues);
   const [isUnderExport, setIsUnderExport] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [isContentReady, setIsContentReady] = useState(true);
+  const [isContentReady, setIsContentReady] = useState(false);
 
   const handleExport = (event: { preventDefault: () => void }) => {
     event.preventDefault();

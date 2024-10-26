@@ -13,7 +13,7 @@ import axios from "axios";
 function ExplorerPage() {
   const [jsonData, setJsonData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isContentReady, setIsContentReady] = useState(true);
+  const [isContentReady, setIsContentReady] = useState(false);
   const [isUnderExport, setIsUnderExport] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   //  https://www.nutrient.io/blog/how-to-convert-html-to-pdf-using-html2df-and-react/
@@ -159,6 +159,7 @@ function ExplorerPage() {
             id="ticker-input"
             value={values.symbol}
             onChange={handleInputChange("symbol")}
+            title="This should be a crypto symbol name as in YahooFinance or factor name"
           ></input>
           <label
             htmlFor="half-life-input"
