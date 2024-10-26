@@ -26,8 +26,6 @@ def create_portfolio_exposures(
         )
     if is_total_space:
         weighted_port_exposure["market"] = 1.0
-    else:
-        weighted_port_exposure["market"] = 0.0
 
     port_exposure = pd.Series(weighted_port_exposure).to_frame().reset_index()
     port_exposure.columns = ["factor", "exposure"]
@@ -141,9 +139,10 @@ def generate_active_space_portfolio(
     for ticker in set(portfolio_details.keys()).union(market_portfolio.keys()):
         port_w = portfolio_details.get(ticker, 0)
         market_w = market_portfolio.get(ticker, 0)
-        active_space_portfolio[ticker] = (port_w / total_port_w) - (
-            market_w / total_market_w
+        active_space_portfolio[ticker] = (port_w / abs(total_port_w)) - (
+            market_w / abs(total_market_w)
         )
+
     return active_space_portfolio
 
 

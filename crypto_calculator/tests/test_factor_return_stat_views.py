@@ -8,9 +8,19 @@ from crypto_calculator.factor_return_stats_requests import (
     get_vif_stats,
 )
 from crypto_calculator.models import TStatistics
-from crypto_calculator.tests.resources.conftest import REFRESH_TEST_DB, REFRESH_TESTS
+from crypto_calculator.tests.resources.conftest import (
+    REFRESH_TEST_DB,
+    REFRESH_TESTS,
+    get_expected_output,
+    update_expected_output,
+)
 from crypto_calculator.views import get_factor_return_stats
 from database_server.settings import BASE_DIR, TEST_DATABASE_LOCATION
+from factor_model.utilities.common_utility import compare_dictionaries
+import logging
+
+
+logger = logging.getLogger(__file__)
 
 # notes:
 # https://dev.to/vergeev/testing-against-unmanaged-models-in-django
@@ -86,6 +96,18 @@ class FactorStatModelTest(TestCase):
             version_date="2024-10-20",
         )
 
+    def perform_get_stat_routine(self, test_case_name: str):
+        request = self.factory.get("api/get_factor_return_stats")
+        stat_response = get_factor_return_stats(request)
+        result_struct = json.loads(stat_response.content)
+        if REFRESH_TESTS:
+            update_expected_output(test_case_name, result_struct)
+        expected_struct = get_expected_output(test_case_name)
+        test_result = compare_dictionaries(expected_struct, result_struct)
+        if not test_result:
+            logger.error(f"test case: {test_case_name} failed!")
+        self.assertTrue(test_result)
+
     def test_tstatistics(self):
         result_struct = get_tstats_stats()
         self.assertEqual(result_struct.get("len"), 4)
@@ -138,28 +160,5 @@ class FactorStatModelTest(TestCase):
         self.assertAlmostEqual(result_struct.get("avg_nobs"), 266.666666, places=5)
 
     def test_stat_request(self):
-        request = self.factory.get("api/get_factor_return_stats")
-        stat_response = get_factor_return_stats(request)
-        result_struct = json.loads(stat_response.content)
-
-        self.assertAlmostEqual(
-            result_struct.get("vifs").get("problematic_ratio").get("new_coin"),
-            66.7,
-            places=5,
-        )
-        self.assertEqual(result_struct.get("vifs").get("len"), 3)
-        self.assertEqual(str(result_struct.get("vifs").get("last_date")), "2024-10-19")
-        self.assertAlmostEqual(
-            result_struct.get("rsquares").get("avg_core_r2"), 26.666666, places=5
-        )
-        self.assertAlmostEqual(
-            result_struct.get("rsquares").get("avg_nobs"), 266.666666, places=5
-        )
-        self.assertAlmostEqual(
-            result_struct.get("tstats").get("active_tstat_ratio").get("volume"),
-            50.0,
-            places=5,
-        )
-        self.assertEqual(
-            str(result_struct.get("tstats").get("last_date")), "2024-10-20"
-        )
+        test_case_name = "test_stat_request"
+        self.perform_get_stat_routine(test_case_name)

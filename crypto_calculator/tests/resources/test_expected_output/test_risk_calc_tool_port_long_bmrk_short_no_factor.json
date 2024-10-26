@@ -1,0 +1,71 @@
+{
+    "risk_metrics": {
+        "Total Risk (portfolio)": "17.738",
+        "Total Risk (benchmark)": "17.738",
+        "Total Risk (active)": "35.475",
+        "Portfolio Beta (vs benchmark)": "-100.000",
+        "Portfolio VaR (1-day, 95%, total space)": "25.305",
+        "Portfolio ES (1-day, 95%, total space)": "30.495",
+        "Portfolio VaR (1-day, 99%, total space)": "33.810",
+        "Portfolio ES (1-day, 99%, total space)": "37.579"
+    },
+    "exposures": {
+        "portfolio": {
+            "exposure": {
+                "EXAMPLE-USD": 1.0
+            }
+        },
+        "market": {
+            "exposure": {
+                "EXAMPLE-USD": -1.0
+            }
+        },
+        "active": {
+            "exposure": {
+                "EXAMPLE-USD": 2.0
+            }
+        }
+    },
+    "mctr": {
+        "portfolio": {
+            "EXAMPLE-USD": 0.0629248608162249
+        },
+        "market": {
+            "EXAMPLE-USD": -0.0629248608162249
+        },
+        "active": {
+            "EXAMPLE-USD": 0.1258497216324498
+        }
+    },
+    "all_portfolios": {
+        "EXAMPLE-USD": {
+            "portfolio": 1.0,
+            "benchmark": -1.0,
+            "active": 2.0
+        }
+    },
+    "decomposition": {
+        "EXAMPLE-USD": {
+            "portfolio": 17.73765215808238,
+            "benchmark": 17.73765215808238,
+            "active": 35.47530431616476
+        },
+        "diversification": {
+            "portfolio": 0.0,
+            "benchmark": 0.0,
+            "active": 0.0
+        }
+    },
+    "model": "no-factor",
+    "log": [
+        "The correlation half-life input value of 10.0 is correct. ",
+        "The factor risk half-life input value of 5.0 is correct. ",
+        "The specific risk half-life input value of 5.0 is correct. ",
+        "The minimum number of observations for risk calculation input value of 5.0 is correct. ",
+        "There are multiple instances for EXAMPLE-USD in the input data. (EXAMPLE-USD, 0.250) ",
+        "There are multiple instances for EXAMPLE-USD in the input data. (EXAMPLE-USD, -0.250) ",
+        "The total portfolio weights are less then 0! Are you sure, that this can be shorted?",
+        "All cryptocurrency is treated as a single factor. "
+    ],
+    "ERROR_CODE": 0
+}

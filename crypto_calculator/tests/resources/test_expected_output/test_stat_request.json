@@ -1,0 +1,33 @@
+{
+    "vifs": {
+        "len": 3,
+        "last_date": "2024-10-19",
+        "first_date": "2024-10-17",
+        "problematic_ratio": {
+            "momentum": 0.0,
+            "new_coin": 66.7,
+            "reversal": 0.0,
+            "size": 0.0,
+            "volume": 66.7
+        }
+    },
+    "tstats": {
+        "len": 4,
+        "last_date": "2024-10-20",
+        "first_date": "2024-10-17",
+        "active_tstat_ratio": {
+            "market": 50.0,
+            "momentum": 75.0,
+            "new_coin": 50.0,
+            "reversal": 50.0,
+            "size": 25.0,
+            "volume": 50.0
+        }
+    },
+    "rsquares": {
+        "len": 3,
+        "avg_core_r2": 26.666666666666668,
+        "avg_core_r2_adj": 16.666666666666664,
+        "avg_nobs": 266.6666666666667
+    }
+}

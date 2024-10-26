@@ -2,9 +2,9 @@
     "risk_metrics": {
         "Total Risk (portfolio)": "8.181",
         "Total Risk (benchmark)": "7.739",
-        "Total Risk (active)": "6.407",
+        "Total Risk (active)": "9.124",
         "Factor Risk (portfolio)": "8.181",
-        "Factor Risk (active)": "6.407",
+        "Factor Risk (active)": "9.124",
         "Specific Risk (portfolio)": "0.000",
         "Specific Risk (active)": "0.008",
         "Portfolio Beta (vs benchmark)": "71.600",
@@ -36,7 +36,7 @@
         },
         "active": {
             "exposure": {
-                "market": 0.0,
+                "market": -1.0,
                 "momentum": -0.5102695660576628,
                 "new_coin": 0.7369879848012453,
                 "reversal": -0.057586938941975176,
@@ -53,8 +53,8 @@
             "reversal": 0.0005853305128259101,
             "size": 0.006245560927360118,
             "volume": -0.004793154900032134,
-            "EXAMPLE-USD": -5e-09,
-            "TEST-USD": 5e-09
+            "TEST-USD": 5e-09,
+            "EXAMPLE-USD": -5e-09
         },
         "market": {
             "market": 0.0071499179227541764,
@@ -63,18 +63,18 @@
             "reversal": -0.001489310752375054,
             "size": 0.005015590888980426,
             "volume": 0.0020722569127321826,
-            "EXAMPLE-USD": 1e-08,
-            "TEST-USD": 1e-08
+            "TEST-USD": 1e-08,
+            "EXAMPLE-USD": 1e-08
         },
         "active": {
             "market": 0,
-            "momentum": -0.0031618800621441372,
-            "new_coin": 0.0038807888394067867,
-            "reversal": 0.002074641265200964,
-            "size": 0.0012299700383796922,
-            "volume": -0.006865411812764316,
-            "EXAMPLE-USD": -1.5000000000000002e-08,
-            "TEST-USD": -5e-09
+            "momentum": -0.002783900296329006,
+            "new_coin": 0.004117836867045048,
+            "reversal": 0.0016242736707139526,
+            "size": 0.001596207017053233,
+            "volume": -0.008019895827196142,
+            "TEST-USD": -5e-09,
+            "EXAMPLE-USD": -1.5000000000000002e-08
         }
     },
     "all_portfolios": {
@@ -93,42 +93,42 @@
         "market": {
             "portfolio": 4.322916510198288,
             "benchmark": 4.569512453881076,
-            "active": 0.0
+            "active": 3.8760948119283003
         },
         "size": {
             "portfolio": 2.7685365416751204,
             "benchmark": 1.6815557662061813,
-            "active": 0.20697890743685424
+            "active": 0.14534692876793104
         },
         "volume": {
             "portfolio": 0.9447034772013202,
             "benchmark": 0.10536867287381833,
-            "active": 2.1171723971405614
+            "active": 1.4867433083272048
         },
         "momentum": {
             "portfolio": 0.43226017441777753,
             "benchmark": 0.13293503023598627,
-            "active": 1.3079125726236045
+            "active": 0.9184562711338164
         },
         "new_coin": {
             "portfolio": 0.08582616847641335,
             "benchmark": 0.8578565562172822,
-            "active": 1.819791149290226
+            "active": 1.2779130870090838
         },
         "reversal": {
             "portfolio": 0.010000085497011311,
             "benchmark": 0.03810345230174793,
-            "active": 0.010310403777990793
+            "active": 0.00724028135062713
         },
         "specific_risk": {
             "portfolio": 0.0,
             "benchmark": 6.460527210598949e-06,
-            "active": 9.754897942349494e-06
+            "active": 6.850188137154358e-06
         },
         "diversification": {
             "portfolio": -0.3834564012320884,
             "benchmark": 0.3539680714724607,
-            "active": 0.9448626300277099
+            "active": 1.4120354638159975
         }
     },
     "model": "factor",
