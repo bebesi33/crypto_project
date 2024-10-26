@@ -33,7 +33,6 @@ function RiskCalcPage() {
 
   const handleExport = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    setIsLoading(true);
     setIsUnderExport(true);
   }; // end handleExport
 
@@ -76,13 +75,11 @@ function RiskCalcPage() {
           .set(options)
           .save()
           .then(() => {
-            setIsLoading(false);
             setIsUnderExport(false);
             document.body.classList.remove("exclude-from-pdf");
           });
       } else {
         console.error("Element not found");
-        setIsLoading(false);
         setIsUnderExport(false);
       }
     }
@@ -340,7 +337,7 @@ function RiskCalcPage() {
               className="btn btn-primary exclude-from-pdf"
               id="calc-btn"
               onClick={handleSubmit}
-              disabled={isLoading || inputValues["portfolio"] == null}
+              disabled={isLoading || isUnderExport || inputValues["portfolio"] == null}
             >
               {isLoading && (
                 <span
@@ -367,6 +364,7 @@ function RiskCalcPage() {
             className="spinner-border spinner-border-sm"
             role="status"
             aria-hidden="true"
+            title="Only available if risk calculation output is rendered on the screen"
           ></span>
         )}
         Export to PDF

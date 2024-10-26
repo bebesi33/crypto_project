@@ -28,7 +28,6 @@ function ExplorerPage() {
 
   const handleExport = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    setIsLoading(true);
     setIsUnderExport(true);
   }; // end handleExport
 
@@ -72,13 +71,11 @@ function ExplorerPage() {
           .set(options)
           .save()
           .then(() => {
-            setIsLoading(false);
             setIsUnderExport(false);
             document.body.classList.remove("exclude-from-pdf");
           });
       } else {
         console.error("Element not found");
-        setIsLoading(false);
         setIsUnderExport(false);
       }
     }
@@ -211,7 +208,7 @@ function ExplorerPage() {
             className="btn btn-primary exclude-from-pdf"
             id="explore-btn"
             onClick={handleSubmit}
-            disabled={isLoading}
+            disabled={isLoading || isUnderExport}
           >
             {isLoading && (
               <span
@@ -236,6 +233,7 @@ function ExplorerPage() {
             className="spinner-border spinner-border-sm"
             role="status"
             aria-hidden="true"
+            title="Only available if explorer output is rendered on the screen"
           ></span>
         )}
         Export to PDF
