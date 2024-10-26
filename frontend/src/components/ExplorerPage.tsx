@@ -117,7 +117,7 @@ function ExplorerPage() {
             "X-CSRFToken": csrftoken,
           },
           withCredentials: true,
-          responseType: 'json',
+          responseType: "json",
         }
       );
       if (response.status == 200) {

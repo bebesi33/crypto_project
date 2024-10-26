@@ -97,7 +97,7 @@ def calculate_spec_risk_mctr(
         spec_risk = spec_std.get(ticker)
         if spec_risk:
             current_weight = portfolio_details.get(ticker) / port_total
-            spec_risk_mctr[ticker] = current_weight * spec_risk**2
+            spec_risk_mctr[ticker] = 2 * current_weight * spec_risk**2
             spec_risk_var_contrib[ticker] = spec_risk_mctr[ticker] * current_weight
             weight_coverage += current_weight
 

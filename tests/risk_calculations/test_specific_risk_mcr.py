@@ -9,8 +9,8 @@ class TestCalculateSpecRiskMctr(unittest.TestCase):
         self.spec_std = {"C1": 0.1, "C2": 0.08, "C3": 0.12}
 
         self.portfolio_details = {"C1": 0.4, "C2": 0.3, "C3": 0.3}
-        self.expected_var_contrib = {"C1": 0.001600, "C2": 0.000576, "C3": 0.001296}
-        self.expected_mctr = {"C1": 0.00400, "C2": 0.00192, "C3": 0.00432}
+        self.expected_var_contrib = {"C1": 0.003200, "C2": 0.001152, "C3": 0.002592}
+        self.expected_mctr = {"C1": 0.00800, "C2": 0.00384, "C3": 0.00864}
 
     def test_calculate_spec_risk_mctr(self):
         # Call the function with sample data

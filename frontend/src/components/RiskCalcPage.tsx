@@ -410,7 +410,7 @@ function RiskCalcPage() {
           {"mctr" in jsonData && (
             <MarginalContribChart
               primaryData={jsonData["mctr"]}
-              titleText="Marginal contribution to risk breakdown"
+              titleText="Marginal contribution to variance breakdown"
             />
           )}
         </div>

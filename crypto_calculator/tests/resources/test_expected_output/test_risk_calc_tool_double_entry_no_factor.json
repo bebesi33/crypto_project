@@ -31,16 +31,16 @@
     },
     "mctr": {
         "portfolio": {
-            "EXAMPLE-USD": 0.1773765215808238,
+            "EXAMPLE-USD": 0.0629248608162249,
             "TEST-USD": 0
         },
         "market": {
-            "EXAMPLE-USD": 0.15358228563949886,
-            "TEST-USD": 0.02448644268129868
+            "EXAMPLE-USD": 0.02734820229642705,
+            "TEST-USD": 0.004360269709358957
         },
         "active": {
-            "EXAMPLE-USD": 0.16210545879787122,
-            "TEST-USD": -0.057360676294829605
+            "EXAMPLE-USD": 0.035576658519797855,
+            "TEST-USD": -0.012588725932729757
         }
     },
     "all_portfolios": {

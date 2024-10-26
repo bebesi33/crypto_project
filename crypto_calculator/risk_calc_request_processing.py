@@ -346,7 +346,7 @@ def risk_calc_request_full(
             factor_risks[portfolio] ** 2 + spec_risks[portfolio] ** 2
         )
         factor_mctrs[portfolio] = (
-            factor_attributions[portfolio] / total_risks[portfolio]
+            2 * factor_attributions[portfolio]
         )
         spec_risk_attributions[portfolio], spec_risk_var_decomps[portfolio] = (
             calculate_spec_risk_mctr(
@@ -356,7 +356,7 @@ def risk_calc_request_full(
             )
         )
         spec_risk_mctrs[portfolio] = (
-            spec_risk_attributions[portfolio] / total_risks[portfolio]
+            spec_risk_attributions[portfolio]
         )
         risk_decomposition[portfolio] = decompose_risk(
             total_risk=total_risks[portfolio],
@@ -623,7 +623,7 @@ def risk_calc_request_reduced(
             port_exposures[portfolio].to_frame("exposure"),
             covariance_matrixes[portfolio],
         )
-        mctrs[portfolio] = total_attributions[portfolio] / total_risks[portfolio]
+        mctrs[portfolio] = 2 * total_attributions[portfolio]
 
         factor_covars[portfolio] = generate_factor_covariance_table(
             port_exposures[portfolio].to_frame("exposure"),

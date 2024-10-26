@@ -7,7 +7,7 @@ class TestGenerateMarketPortfolio(unittest.TestCase):
         # Create a sample exposure DataFrame
         exposure_data = {
             "core_universe": [1, 0, 1, 1],
-            "ticker": ["C1", "C2", "C3", "C4"],
+            "symbol": ["C1", "C2", "C3", "C4"],
             "transformed_market_cap": [1000, 2000, 1500, 1800],
         }
         exposure_df = pd.DataFrame(exposure_data)
