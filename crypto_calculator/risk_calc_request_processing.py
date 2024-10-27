@@ -22,6 +22,7 @@ from factor_model.risk_calculations.factor_covariance import (
 from factor_model.risk_calculations.parameter_processing import (
     check_input_param_correctness,
     parse_file_input_into_portfolio,
+    sanitize_dict,
 )
 from factor_model.risk_calculations.portfolio_output import (
     assemble_portfolios_into_df,
@@ -446,6 +447,7 @@ def generate_market_portfolio(cob_date: str):
 def decode_risk_calc_input(request) -> tuple[dict, str, int]:
     # parse request body and check whether correct date input is provided
     all_input = json.loads(request.body.decode("utf-8"))
+    all_input = sanitize_dict(all_input)
     log_elements = list()
     processed_input = {}
     override_code = 0  # we set it to one if any override occurs

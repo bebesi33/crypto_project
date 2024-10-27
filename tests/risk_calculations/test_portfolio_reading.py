@@ -26,7 +26,7 @@ class TestPortfolioParser(unittest.TestCase):
         self.assertEqual(port_weights, expected_result)
         self.assertEqual(error_code, 1)
         self.assertIn(
-            "Symbol: BTC-USD cannot be parsed with value: herh0.50.", log_messages
+            "Symbol: BTC-USD cannot be parsed with value: herh0.50\r.", log_messages
         )
 
     def test_duplicate_input(self):

@@ -1,4 +1,23 @@
 from typing import Dict, List, Tuple
+import bleach
+
+
+def sanitize_dict(input_dict):
+    sanitized_dict = {}
+
+    for key, value in input_dict.items():
+        if isinstance(value, str):
+            sanitized_dict[key] = bleach.clean(value)
+        elif isinstance(value, dict):
+            sanitized_dict[key] = sanitize_dict(value)
+        elif isinstance(value, list):
+            sanitized_dict[key] = [
+                bleach.clean(item) if isinstance(item, str) else item for item in value
+            ]
+        else:
+            sanitized_dict[key] = value
+
+    return sanitized_dict
 
 
 def check_input_param_correctness(
@@ -54,7 +73,7 @@ def check_input_param_correctness(
 def parse_file_input_into_portfolio(
     input_stream: str,
 ) -> Tuple[Dict[str, float], List[str], int]:
-    lines = input_stream.split("\r\n")
+    lines = input_stream.split("\n")
 
     # Only two separators are accepted: "," and ";"
     separator = ","
@@ -79,7 +98,9 @@ def parse_file_input_into_portfolio(
                     else:
                         port_weights[symbol] = float(value)
                 except ValueError:
-                    log_message = f"Symbol: {symbol} cannot be parsed with value: {value}."
+                    log_message = (
+                        f"Symbol: {symbol} cannot be parsed with value: {value}."
+                    )
                     log_messages.append(log_message)
                     error_code = 1
             except ValueError:

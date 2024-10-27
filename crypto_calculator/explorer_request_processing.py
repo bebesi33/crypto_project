@@ -6,6 +6,7 @@ from factor_model.model_update.database_generators import RECOGNIZED_STYLES
 from factor_model.risk_calculations import HALF_LIFE_DEFAULT, MIN_OBS_DEFAULT
 from factor_model.risk_calculations.parameter_processing import (
     check_input_param_correctness,
+    sanitize_dict,
 )
 from factor_model.risk_calculations.simple_risk_calculation import (
     create_ewma_std_estimates,
@@ -81,6 +82,7 @@ def query_explorer_factor_return_data(style_name: str) -> pd.DataFrame:
 
 def decode_explorer_input(request) -> tuple[dict, str, int, bool]:
     all_input = json.loads(request.body.decode("utf-8"))
+    all_input = sanitize_dict(all_input)
     log_elements = list()
     processed_input = {}
 
