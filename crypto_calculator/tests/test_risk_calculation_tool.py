@@ -306,3 +306,16 @@ class FactorRiskCalcToolTest(TestCase):
             "EXAMPLE-USD;-0;250\r\nEXAMPLE-USD;-0.250"
         )
         self.perform_risk_calc_test_routine(test_case_name, params)
+
+
+    def test_risk_calc_tool_hacky_input(self):
+        test_case_name = "test_risk_calc_tool_hacky_input"
+        params = self.default_params.copy()
+        params["portfolio"] = (
+            "<script>alert('Hacked!')</script>;0.250"
+        )
+        params["use_factors"] = False
+        params["benchmark"] = (
+            "Some <b>bold</b> description with <i>HTML</i> tags.;-0.250"
+        )
+        self.perform_risk_calc_test_routine(test_case_name, params)

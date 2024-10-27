@@ -1,0 +1,16 @@
+{
+    "log": [
+        "The correlation half-life input value of 10.0 is correct. ",
+        "The factor risk half-life input value of 5.0 is correct. ",
+        "The specific risk half-life input value of 5.0 is correct. ",
+        "The minimum number of observations for risk calculation input value of 5.0 is correct. ",
+        "Line: &lt;script&gt;alert('Hacked!')&lt;/script&gt;;0.250 cannot be parsed. ",
+        "The portfolio input is empty!",
+        "The total portfolio weights are less then 0! Are you sure, that this can be shorted?",
+        "No coverage for market input: ['Some <b>bold</b> description with <i>HTML</i> tags.']. ",
+        "No benchmark coverage for date : 2023-01-23! ",
+        "No portfolio coverage for date : 2023-01-23! ",
+        "All cryptocurrency is treated as a single factor. "
+    ],
+    "ERROR_CODE": 404
+}
