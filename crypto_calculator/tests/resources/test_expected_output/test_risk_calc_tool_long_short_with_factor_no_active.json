@@ -53,8 +53,8 @@
             "reversal": 0.0005853305128259101,
             "size": 0.006245560927360118,
             "volume": -0.004793154900032134,
-            "TEST-USD": 5e-09,
-            "EXAMPLE-USD": -5e-09
+            "EXAMPLE-USD": -5e-09,
+            "TEST-USD": 5e-09
         },
         "market": {
             "market": 0.0064669768414657375,
@@ -63,8 +63,8 @@
             "reversal": 0.0005853305128259101,
             "size": 0.006245560927360118,
             "volume": -0.004793154900032134,
-            "TEST-USD": 5e-09,
-            "EXAMPLE-USD": -5e-09
+            "EXAMPLE-USD": -5e-09,
+            "TEST-USD": 5e-09
         },
         "active": {
             "market": 0,
@@ -73,8 +73,8 @@
             "reversal": 0.0,
             "size": 0.0,
             "volume": 0.0,
-            "TEST-USD": 0.0,
-            "EXAMPLE-USD": 0.0
+            "EXAMPLE-USD": 0.0,
+            "TEST-USD": 0.0
         }
     },
     "all_portfolios": {
