@@ -70,7 +70,8 @@ FRONTEND_TO_BACKEND = {
 def get_available_estimation_dates() -> list[str]:
     dates = CoreSpecificRisk.objects.using("specific_risk_estimates").values("date")
     df = pd.DataFrame(list(dates))
-    return [str(date_value) for date_value in set(df["date"])]
+    all_dates = sorted([str(date_value) for date_value in set(df["date"])])[1:]
+    return all_dates
 
 
 def get_coverage_for_date(cob_date: str) -> set[str]:

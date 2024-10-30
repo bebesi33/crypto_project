@@ -1,0 +1,143 @@
+{
+    "risk_metrics": {
+        "Total Risk (portfolio)": "11.879",
+        "Total Risk (benchmark)": "13.350",
+        "Total Risk (active)": "1.471",
+        "Factor Risk (portfolio)": "11.879",
+        "Factor Risk (active)": "1.471",
+        "Specific Risk (portfolio)": "0.007",
+        "Specific Risk (active)": "0.001",
+        "Portfolio Beta (vs benchmark)": "88.983",
+        "Portfolio VaR (1-day, 95%, total space)": "17.749",
+        "Portfolio ES (1-day, 95%, total space)": "21.658",
+        "Portfolio VaR (1-day, 99%, total space)": "24.146",
+        "Portfolio ES (1-day, 99%, total space)": "27.090"
+    },
+    "exposures": {
+        "portfolio": {
+            "exposure": {
+                "market": 1.0,
+                "momentum": 0.189517544677688,
+                "new_coin": -1.77637070765996,
+                "reversal": 0.601427665198088,
+                "size": -0.9466962467819084,
+                "volume": -0.41948414643174353
+            }
+        },
+        "market": {
+            "exposure": {
+                "market": 1.0,
+                "momentum": 0.29502106973469516,
+                "new_coin": -1.735807089751684,
+                "reversal": 0.5886538527614462,
+                "size": -0.9178210033219042,
+                "volume": -0.527539838803204
+            }
+        },
+        "active": {
+            "exposure": {
+                "market": 0.0,
+                "momentum": -0.10550352505700716,
+                "new_coin": -0.04056361790827598,
+                "reversal": 0.012773812436641795,
+                "size": -0.028875243460004307,
+                "volume": 0.10805569237146048
+            }
+        }
+    },
+    "mctr": {
+        "portfolio": {
+            "market": -0.01625543761775538,
+            "momentum": 0.04544929533049086,
+            "new_coin": 0.004078319963773081,
+            "reversal": 0.034056756904718904,
+            "size": -0.02515171987545643,
+            "volume": 0.0028216045493102498,
+            "TEST-USD": 1e-08,
+            "EXAMPLE-USD": 1e-08
+        },
+        "market": {
+            "market": -0.018267997415901134,
+            "momentum": 0.05107630007727726,
+            "new_coin": 0.004583250252090864,
+            "reversal": 0.03827326964423412,
+            "size": -0.028265714187136918,
+            "volume": 0.00317094290707949,
+            "TEST-USD": 1.2e-08,
+            "EXAMPLE-USD": 8e-09
+        },
+        "active": {
+            "market": 0,
+            "momentum": -0.005627004746786399,
+            "new_coin": -0.0005049302883177839,
+            "reversal": -0.004216512739515212,
+            "size": 0.0031139943116804875,
+            "volume": -0.0003493383577692402,
+            "TEST-USD": -1.9999999999999997e-09,
+            "EXAMPLE-USD": 1.9999999999999997e-09
+        }
+    },
+    "all_portfolios": {
+        "TEST-USD": {
+            "portfolio": 0.5,
+            "benchmark": 0.6,
+            "active": -0.1
+        },
+        "EXAMPLE-USD": {
+            "portfolio": 0.5,
+            "benchmark": 0.4,
+            "active": 0.1
+        }
+    },
+    "decomposition": {
+        "size": {
+            "portfolio": 8.455232464512259,
+            "benchmark": 7.071767326834618,
+            "active": 0.06353386849170499
+        },
+        "reversal": {
+            "portfolio": 6.256655580683422,
+            "benchmark": 5.333387823464453,
+            "active": 0.02279639975699355
+        },
+        "market": {
+            "portfolio": 3.9406348906737914,
+            "benchmark": 3.506500750169979,
+            "active": 0.0
+        },
+        "momentum": {
+            "portfolio": 1.1064250944515552,
+            "benchmark": 2.3858161803604974,
+            "active": 2.7695350419362605
+        },
+        "new_coin": {
+            "portfolio": 0.7827060006819853,
+            "benchmark": 0.6650313380300414,
+            "active": 0.003296511327610223
+        },
+        "volume": {
+            "portfolio": 0.02089258919202266,
+            "benchmark": 0.029402172617939766,
+            "active": 0.011197116843250893
+        },
+        "specific_risk": {
+            "portfolio": 4.2090062671537355e-06,
+            "benchmark": 3.895118275205143e-06,
+            "active": 1.3598446985302075e-06
+        },
+        "diversification": {
+            "portfolio": -8.683262268813484,
+            "benchmark": -5.641865578811941,
+            "active": -1.3996041139379283
+        }
+    },
+    "model": "factor",
+    "log": [
+        "The correlation half-life input value of 10.0 is correct. ",
+        "The factor risk half-life input value of 5.0 is correct. ",
+        "The specific risk half-life input value of 5.0 is correct. ",
+        "The time window length (backward looking) input value of 30.0 is correct. ",
+        "First date in time window: 2023-01-01, last date in time window: 2023-01-02."
+    ],
+    "ERROR_CODE": 0
+}

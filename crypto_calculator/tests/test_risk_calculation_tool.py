@@ -270,52 +270,78 @@ class FactorRiskCalcToolTest(TestCase):
         )
         self.perform_risk_calc_test_routine(test_case_name, params)
 
-
     def test_risk_calc_tool_port_long_bmrk_short_factor(self):
         test_case_name = "test_risk_calc_tool_port_long_bmrk_short_factor"
         params = self.default_params.copy()
-        params["portfolio"] = (
-            "EXAMPLE-USD;0.250\r\nEXAMPLE-USD;0.250"
-        )
+        params["portfolio"] = "EXAMPLE-USD;0.250\r\nEXAMPLE-USD;0.250"
         params["use_factors"] = True
-        params["benchmark"] = (
-            "EXAMPLE-USD;-0.250\r\nEXAMPLE-USD;-0.250"
-        )
+        params["benchmark"] = "EXAMPLE-USD;-0.250\r\nEXAMPLE-USD;-0.250"
         self.perform_risk_calc_test_routine(test_case_name, params)
 
     def test_risk_calc_tool_port_long_bmrk_short_no_factor(self):
         test_case_name = "test_risk_calc_tool_port_long_bmrk_short_no_factor"
         params = self.default_params.copy()
-        params["portfolio"] = (
-            "EXAMPLE-USD;0.250\r\nEXAMPLE-USD;0.250"
-        )
+        params["portfolio"] = "EXAMPLE-USD;0.250\r\nEXAMPLE-USD;0.250"
         params["use_factors"] = False
-        params["benchmark"] = (
-            "EXAMPLE-USD;-0.250\r\nEXAMPLE-USD;-0.250"
-        )
+        params["benchmark"] = "EXAMPLE-USD;-0.250\r\nEXAMPLE-USD;-0.250"
         self.perform_risk_calc_test_routine(test_case_name, params)
 
     def test_risk_calc_tool_wrong_number_format(self):
         test_case_name = "test_risk_calc_tool_wrong_number_format"
         params = self.default_params.copy()
-        params["portfolio"] = (
-            "EXAMPLE-USD,0,250\r\nEXAMPLE-USD;0.250"
-        )
+        params["portfolio"] = "EXAMPLE-USD,0,250\r\nEXAMPLE-USD;0.250"
         params["use_factors"] = False
-        params["benchmark"] = (
-            "EXAMPLE-USD;-0;250\r\nEXAMPLE-USD;-0.250"
-        )
+        params["benchmark"] = "EXAMPLE-USD;-0;250\r\nEXAMPLE-USD;-0.250"
         self.perform_risk_calc_test_routine(test_case_name, params)
-
 
     def test_risk_calc_tool_hacky_input(self):
         test_case_name = "test_risk_calc_tool_hacky_input"
         params = self.default_params.copy()
-        params["portfolio"] = (
-            "<script>alert('Hacked!')</script>;0.250"
-        )
+        params["portfolio"] = "<script>alert('Hacked!')</script>;0.250"
         params["use_factors"] = False
         params["benchmark"] = (
             "Some <b>bold</b> description with <i>HTML</i> tags.;-0.250"
         )
+        self.perform_risk_calc_test_routine(test_case_name, params)
+
+    def test_risk_calc_tool_too_short_horizon_no_factor(self):
+        test_case_name = "test_risk_calc_tool_too_short_horizon_no_factor"
+        params = self.default_params.copy()
+        params["cob_date"] = "2023-01-01"
+        params["use_factors"] = False
+        self.perform_risk_calc_test_routine(test_case_name, params)
+
+    def test_risk_calc_tool_too_short_horizon_factor(self):
+        test_case_name = "test_risk_calc_tool_too_short_horizon_factor"
+        params = self.default_params.copy()
+        params["cob_date"] = "2023-01-01"
+        params["use_factors"] = True
+        self.perform_risk_calc_test_routine(test_case_name, params)
+
+    def test_risk_calc_tool_2_day_horizon_no_factor(self):
+        test_case_name = "test_risk_calc_tool_2_day_horizon_no_factor"
+        params = self.default_params.copy()
+        params["cob_date"] = "2023-01-02"
+        params["use_factors"] = False
+        self.perform_risk_calc_test_routine(test_case_name, params)
+
+    def test_risk_calc_tool_2_day_horizon_factor(self):
+        test_case_name = "test_risk_calc_tool_2_day_horizon_factor"
+        params = self.default_params.copy()
+        params["cob_date"] = "2023-01-02"
+        params["use_factors"] = True
+        self.perform_risk_calc_test_routine(test_case_name, params)
+
+    def test_risk_calc_tool_short_w_horizon_no_factor(self):
+        test_case_name = "test_risk_calc_tool_short_w_horizon_no_factor"
+        params = self.default_params.copy()
+        params["time_window_len"] = 10
+        params["use_factors"] = False
+        self.perform_risk_calc_test_routine(test_case_name, params)
+
+    def test_risk_calc_tool_short_w_horizon_factor(self):
+        test_case_name = "test_risk_calc_tool_short_w_horizon_factor"
+        params = self.default_params.copy()
+        params["time_window_len"] = 10
+        params["use_factors"] = True
         self.perform_risk_calc_test_routine(test_case_name, params)

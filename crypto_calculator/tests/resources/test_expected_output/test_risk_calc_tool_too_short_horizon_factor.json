@@ -1,0 +1,11 @@
+{
+    "log": [
+        "The calculation date (2023-01-01) is not covered by the model! ",
+        "The correlation half-life input value of 10.0 is correct. ",
+        "The factor risk half-life input value of 5.0 is correct. ",
+        "The specific risk half-life input value of 5.0 is correct. ",
+        "The time window length (backward looking) input value of 30.0 is correct. ",
+        "The symbol coverage was not evaluated as the provided calculation date is outside model estimation range! "
+    ],
+    "ERROR_CODE": 404
+}

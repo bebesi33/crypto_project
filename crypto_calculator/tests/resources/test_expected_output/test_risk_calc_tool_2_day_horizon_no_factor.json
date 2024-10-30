@@ -1,0 +1,85 @@
+{
+    "risk_metrics": {
+        "Total Risk (portfolio)": "8.194",
+        "Total Risk (benchmark)": "9.585",
+        "Total Risk (active)": "1.391",
+        "Portfolio Beta (vs benchmark)": "85.491",
+        "Portfolio VaR (1-day, 95%, total space)": "12.609",
+        "Portfolio ES (1-day, 95%, total space)": "15.512",
+        "Portfolio VaR (1-day, 99%, total space)": "17.356",
+        "Portfolio ES (1-day, 99%, total space)": "19.593"
+    },
+    "exposures": {
+        "portfolio": {
+            "exposure": {
+                "TEST-USD": 0.5,
+                "EXAMPLE-USD": 0.5
+            }
+        },
+        "market": {
+            "exposure": {
+                "TEST-USD": 0.6,
+                "EXAMPLE-USD": 0.4
+            }
+        },
+        "active": {
+            "exposure": {
+                "TEST-USD": -0.09999999999999998,
+                "EXAMPLE-USD": 0.09999999999999998
+            }
+        }
+    },
+    "mctr": {
+        "portfolio": {
+            "EXAMPLE-USD": 0.0020333457095464903,
+            "TEST-USD": 0.02482381154169723
+        },
+        "market": {
+            "EXAMPLE-USD": 0.002378437302709974,
+            "TEST-USD": 0.029036813114963894
+        },
+        "active": {
+            "EXAMPLE-USD": -0.00034509159316348416,
+            "TEST-USD": -0.0042130015732666625
+        }
+    },
+    "all_portfolios": {
+        "TEST-USD": {
+            "portfolio": 0.5,
+            "benchmark": 0.6,
+            "active": -0.1
+        },
+        "EXAMPLE-USD": {
+            "portfolio": 0.5,
+            "benchmark": 0.4,
+            "active": 0.1
+        }
+    },
+    "decomposition": {
+        "TEST-USD": {
+            "portfolio": 7.0003035473870145,
+            "benchmark": 8.617849005745661,
+            "active": 1.6498851279589652
+        },
+        "diversification": {
+            "portfolio": 1.1468051277857272,
+            "benchmark": 0.9411966555803853,
+            "active": -0.27028781140598
+        },
+        "EXAMPLE-USD": {
+            "portfolio": 0.04696803475066973,
+            "benchmark": 0.025698151124633688,
+            "active": 0.01106978597428322
+        }
+    },
+    "model": "no-factor",
+    "log": [
+        "The correlation half-life input value of 10.0 is correct. ",
+        "The factor risk half-life input value of 5.0 is correct. ",
+        "The specific risk half-life input value of 5.0 is correct. ",
+        "The time window length (backward looking) input value of 30.0 is correct. ",
+        "All cryptocurrency is treated as a single factor. ",
+        "First date in time window: 2023-01-01, last date in time window: 2023-01-02."
+    ],
+    "ERROR_CODE": 0
+}
