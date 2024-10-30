@@ -67,12 +67,14 @@ def get_risk_calculation_output(request):
                 portfolio_details=processed_input["portfolio"],
                 market_portfolio=processed_input["market"],
                 risk_calculation_parameters=processed_input,
+                log_elements=log_elements
             )
         elif override_code != 404 and not processed_input["use_factors"]:
             json_data = risk_calc_request_reduced(
                 portfolio_details=processed_input["portfolio"],
                 market_portfolio=processed_input["market"],
                 risk_calculation_parameters=processed_input,
+                log_elements=log_elements
             )
         else:
             json_data = {}

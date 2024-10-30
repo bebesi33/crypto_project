@@ -77,8 +77,9 @@
         "The correlation half-life input value of 10.0 is correct. ",
         "The factor risk half-life input value of 5.0 is correct. ",
         "The specific risk half-life input value of 5.0 is correct. ",
-        "The minimum number of observations for risk calculation input value of 5.0 is correct. ",
-        "All cryptocurrency is treated as a single factor. "
+        "The time window length (backward looking) input value of 30.0 is correct. ",
+        "All cryptocurrency is treated as a single factor. ",
+        "First date in time window: 2023-01-01, last date in time window: 2023-01-23."
     ],
     "ERROR_CODE": 0
 }

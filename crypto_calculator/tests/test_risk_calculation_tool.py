@@ -35,7 +35,7 @@ class FactorRiskCalcToolTest(TestCase):
             "correlation_hl": 10,
             "factor_risk_hl": 5,
             "specific_risk_hl": 5,
-            "min_ret_hist": 5,
+            "time_window_len": 30,
             "mean_to_zero": False,
             "use_factors": True,
         }

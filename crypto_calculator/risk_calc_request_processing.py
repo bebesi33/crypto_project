@@ -9,7 +9,7 @@ from crypto_calculator.models import (
 )
 import pandas as pd
 import numpy as np
-from factor_model.risk_calculations import HALF_LIFE_DEFAULT, MIN_OBS_DEFAULT
+from factor_model.risk_calculations import HALF_LIFE_DEFAULT, TIME_WINDOW_DEFAULT
 from factor_model.risk_calculations.core_universe_portfolio import (
     generate_market_portfolio,
 )
@@ -62,7 +62,7 @@ FRONTEND_TO_BACKEND = {
     "correlation_hl": "correlation_half_life",
     "factor_risk_hl": "variance_half_life",
     "specific_risk_hl": "specific_risk_half_life",
-    "min_ret_hist": "minimum_history_spec_ret",
+    "time_window_len": "minimum_history_spec_ret",
     "cob_date": "date",
 }
 
@@ -92,6 +92,7 @@ def get_core_avg_spec_risk(cob_date: str, halflife: int) -> pd.DataFrame:
         .values("date", "half_life", "specific_risk")
     )
     df = pd.DataFrame(list(spec_risks))
+    df["date"] = df["date"].apply(lambda x: x.strftime("%Y-%m-%d"))
     return df
 
 
@@ -247,7 +248,7 @@ def query_excess_returns(cob_date: str, symbols: list[str]) -> pd.DataFrame:
         .values("date", "return_field", "symbol")
     )
     df = pd.DataFrame(list(excess_returns))
-
+    df["date"] = df["date"].apply(lambda x: x.strftime("%Y-%m-%d"))
     return df.rename(columns={"return_field": "excess_return"})
 
 
@@ -255,6 +256,7 @@ def risk_calc_request_full(
     portfolio_details: dict[str, float],
     market_portfolio: dict[str, float],
     risk_calculation_parameters: dict,
+    log_elements: dict,
 ):
     # Step 1: cob_date and basic queries
     cob_date = risk_calculation_parameters["date"]
@@ -269,6 +271,25 @@ def risk_calc_request_full(
         cob_date=cob_date, symbols=all_tickers
     )
     factor_returns = query_factor_return_data(cob_date=cob_date)
+    core_spec_risk_df = get_core_avg_spec_risk(
+        cob_date, risk_calculation_parameters["specific_risk_half_life"]
+    )
+
+    # time window treatment
+    available_dates = sorted(list(set(factor_returns["date"])))[
+        -risk_calculation_parameters["time_window_len"] :
+    ]
+    factor_returns = factor_returns[factor_returns["date"].isin(available_dates)]
+    full_specific_returns = full_specific_returns[
+        full_specific_returns["date"].isin(available_dates)
+    ]
+    core_spec_risk_df = core_spec_risk_df[
+        core_spec_risk_df["date"].isin(available_dates)
+    ]
+
+    log_elements.append(
+        f"First date in time window: {available_dates[0]}, last date in time window: {available_dates[-1]}."
+    )
 
     # Step 2: calculate risk
     factor_covariance = generate_factor_covariance_matrix(
@@ -327,9 +348,6 @@ def risk_calc_request_full(
             full_specific_returns, risk_calculation_parameters, portfolios[portfolio]
         )
 
-        core_spec_risk_df = get_core_avg_spec_risk(
-            cob_date, risk_calculation_parameters["specific_risk_half_life"]
-        )
         combined_spec_risk[portfolio] = generate_combined_spec_risk(
             core_spec_risk_df,
             risk_calculation_parameters,
@@ -346,9 +364,7 @@ def risk_calc_request_full(
         total_risks[portfolio] = np.sqrt(
             factor_risks[portfolio] ** 2 + spec_risks[portfolio] ** 2
         )
-        factor_mctrs[portfolio] = (
-            2 * factor_attributions[portfolio]
-        )
+        factor_mctrs[portfolio] = 2 * factor_attributions[portfolio]
         spec_risk_attributions[portfolio], spec_risk_var_decomps[portfolio] = (
             calculate_spec_risk_mctr(
                 combined_spec_risk[portfolio],
@@ -356,9 +372,7 @@ def risk_calc_request_full(
                 True if portfolio != "active" else False,
             )
         )
-        spec_risk_mctrs[portfolio] = (
-            spec_risk_attributions[portfolio]
-        )
+        spec_risk_mctrs[portfolio] = spec_risk_attributions[portfolio]
         risk_decomposition[portfolio] = decompose_risk(
             total_risk=total_risks[portfolio],
             factor_covar=factor_covars[portfolio],
@@ -367,8 +381,10 @@ def risk_calc_request_full(
 
     # 3. beta calculation...
     factor_beta_covar, _ = generate_factor_covariance_attribution(
-        port_exposures["portfolio"], factor_covariance, port_exposures["market"],
-        variance_only = True
+        port_exposures["portfolio"],
+        factor_covariance,
+        port_exposures["market"],
+        variance_only=True,
     )
     spec_risk_covar = get_specific_risk_beta(
         portfolios["portfolio"],
@@ -478,9 +494,9 @@ def decode_risk_calc_input(request) -> tuple[dict, str, int]:
         )
 
     override_code += check_input_param_correctness(
-        parameter_name="min_ret_hist",
-        parameter_default=MIN_OBS_DEFAULT,
-        parameter_nickname="minimum number of observations for risk calculation",
+        parameter_name="time_window_len",
+        parameter_default=TIME_WINDOW_DEFAULT,
+        parameter_nickname="time window length (backward looking)",
         all_input=all_input,
         log_elements=log_elements,
         processed_input=processed_input,
@@ -536,9 +552,7 @@ def decode_risk_calc_input(request) -> tuple[dict, str, int]:
     else:
         processed_input["market"] = {}
         processed_input["portfolio"] = {}
-        log_elements.append(
-            "The benchmark data is incorrect! "
-        )
+        log_elements.append("The benchmark data is incorrect! ")
 
     if (
         bmrk_error_code == 404
@@ -572,6 +586,7 @@ def risk_calc_request_reduced(
     portfolio_details: dict[str, float],
     market_portfolio: dict[str, float],
     risk_calculation_parameters: dict,
+    log_elements: dict,
 ):
     # Step 1: cob_date and portfolio related
     cob_date = risk_calculation_parameters["date"]
@@ -587,7 +602,17 @@ def risk_calc_request_reduced(
 
     # Step 2: query and manipulate returns
     return_df = query_excess_returns(cob_date=cob_date, symbols=all_tickers)
+    available_dates = sorted(list(set(return_df["date"])))[
+        -risk_calculation_parameters["time_window_len"] :
+    ]
     fill_miss_returns = query_fillmiss_returns(cob_date=cob_date)
+    return_df = return_df[return_df["date"].isin(available_dates)]
+    log_elements.append(
+        f"First date in time window: {available_dates[0]}, last date in time window: {available_dates[-1]}."
+    )
+    fill_miss_returns = fill_miss_returns[
+        fill_miss_returns["date"].isin(available_dates)
+    ]
     factor_return_formatted_df = generate_processed_excess_returns(
         return_df, fill_miss_returns
     )
@@ -648,7 +673,7 @@ def risk_calc_request_reduced(
         all_exposure[[0]].rename(columns={0: "exposure"}),
         cov_for_beta,
         all_exposure[[1]].rename(columns={1: "exposure"}),
-        variance_only = True
+        variance_only=True,
     )
 
     portfolio_beta = (factor_beta_covar) / (total_risks["market"] ** 2)

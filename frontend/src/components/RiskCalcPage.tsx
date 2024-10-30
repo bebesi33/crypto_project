@@ -20,7 +20,7 @@ function RiskCalcPage() {
     correlation_hl: "60",
     factor_risk_hl: "30",
     specific_risk_hl: "30",
-    min_ret_hist: "20",
+    time_window_len: "365",
     portfolio: null,
     benchmark: null,
     mean_to_zero: false,
@@ -132,7 +132,7 @@ function RiskCalcPage() {
           correlation_hl: inputValues["correlation_hl"],
           factor_risk_hl: inputValues["factor_risk_hl"],
           specific_risk_hl: inputValues["specific_risk_hl"],
-          min_ret_hist: inputValues["min_ret_hist"],
+          time_window_len: inputValues["time_window_len"],
           portfolio: inputValues["portfolio"],
           benchmark: inputValues["benchmark"],
           mean_to_zero: inputValues["mean_to_zero"],
@@ -269,14 +269,14 @@ function RiskCalcPage() {
             className="min-ret-hist-input-label"
             style={{ textAlign: "left" }}
           >
-            Min. return history length
+            Time period in days
           </label>
           <input
             type="number"
             className="form-control"
             id="min-ret-hist-input"
-            value={inputValues.min_ret_hist}
-            onChange={handleInputChange("min_ret_hist")}
+            value={inputValues.time_window_len}
+            onChange={handleInputChange("time_window_len")}
             style={{ direction: "rtl" }}
             title="This should be a number greater than 1"
           ></input>

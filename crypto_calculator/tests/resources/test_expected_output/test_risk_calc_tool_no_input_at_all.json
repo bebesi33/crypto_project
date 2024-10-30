@@ -3,7 +3,7 @@
         "The correlation half-life input value of 10.0 is correct. ",
         "The factor risk half-life input value of 5.0 is correct. ",
         "The specific risk half-life input value of 5.0 is correct. ",
-        "The minimum number of observations for risk calculation input value of 5.0 is correct. ",
+        "The time window length (backward looking) input value of 30.0 is correct. ",
         "The portfolio input is empty!",
         "No benchmark was provided, hence the model universe based benchmark is loaded! ",
         "No portfolio coverage for date : 2023-01-23! ",

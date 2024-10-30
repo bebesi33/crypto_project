@@ -80,9 +80,10 @@
         "The factor risk half-life should be a positive number. ",
         "If specific risk half-life smaller than 0.0001: specific_risk_hl, specific risk half-life set to default 30 days. ",
         "The specific risk half-life should be a positive number. ",
-        "The minimum number of observations for risk calculation input value of 5.0 is correct. ",
+        "The time window length (backward looking) input value of 30.0 is correct. ",
         "The demeaned returns are used for the calculation of risk. ",
-        "All cryptocurrency is treated as a single factor. "
+        "All cryptocurrency is treated as a single factor. ",
+        "First date in time window: 2023-01-01, last date in time window: 2023-01-23."
     ],
     "ERROR_CODE": 1
 }
