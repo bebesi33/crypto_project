@@ -269,7 +269,7 @@ function RiskCalcPage() {
             className="min-ret-hist-input-label"
             style={{ textAlign: "left" }}
           >
-            Time period in days
+            Time period length
           </label>
           <input
             type="number"
