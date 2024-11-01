@@ -229,6 +229,7 @@ def query_specific_returns(cob_date: str, symbols: list[str]) -> pd.DataFrame:
         .values()
     )
     df = pd.DataFrame(list(specific_returns))
+    df["date"] = df["date"].apply(lambda x: x.strftime("%Y-%m-%d"))
     return df
 
 
@@ -348,7 +349,6 @@ def risk_calc_request_full(
         ) = generate_raw_specific_risk(
             full_specific_returns, risk_calculation_parameters, portfolios[portfolio]
         )
-
         combined_spec_risk[portfolio] = generate_combined_spec_risk(
             core_spec_risk_df,
             risk_calculation_parameters,
@@ -574,7 +574,7 @@ def decode_risk_calc_input(request) -> tuple[dict, str, int]:
     processed_input["mean_to_zero"] = all_input["mean_to_zero"]
     if processed_input["mean_to_zero"]:
         log_elements.append(
-            "The demeaned returns are used for the calculation of risk. "
+            "No mean calculation is used for the calculation of risk. "
         )
     processed_input["use_factors"] = all_input["use_factors"]
     if not processed_input["use_factors"]:
