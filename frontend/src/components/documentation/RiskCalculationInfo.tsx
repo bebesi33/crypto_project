@@ -1,15 +1,18 @@
 import { BlockMath } from "react-katex";
 import "katex/dist/katex.min.css";
 
-const ewma_std = `\\sigma_{i,t}(\\lambda) = \\sqrt{\\frac{(1 - \\lambda)}{1 - \\lambda^t} \\sum_{i=1}^{t} \\lambda^{t-i} (r_i - \\xi\\mu_t)^2}`;
+const ewma_std = `\\sigma_{ExplorerTool,i,t}(\\lambda) = \\sqrt{\\frac{(1 - \\lambda)}{1 - \\lambda^t} \\sum_{i=1}^{t} \\lambda^{t-i} (r_i - \\xi\\mu_t)^2}`;
+const ewma_std_risk_calc = `\\sigma_{i,t}(\\lambda) = \\sqrt{\\frac{(1 - \\lambda)}{1 - \\lambda^{L}} \\sum_{i=t-L+1}^{t} \\lambda^{t-i} (r_i - \\xi\\mu_t)^2}`;
+
 const ewma_lambda = `\\lambda = 2^{-\\frac{1}{\\text{HalfLife}}} \\text{ or } \\text{HalfLife} = \\frac{\\ln(2)}{\\ln\\left(\\frac{1}{\\lambda}\\right)}`;
 const ewma_r =
   "r_i : \\text{represents excess returns for a cryptocurrency or factor returns for date i}";
 const ewma_mu =
   "\\mu_t : \\text{represents the average of } r_i \\text{ over the time period between 1 and t}";
 const ewma_xi =
-  '\\xi: \\text{Represents the "Mean to Zero" flag, can have value 0 or 1. 0 representing the zero mean setting.}';
-const ewma_corr = `\\rho_{j,i,t}(\\lambda_c) =\\frac{1}{\\sigma_{i,t}(\\lambda_c)\\sigma_{j,t}(\\lambda_c)} \\sqrt{\\frac{(1 - \\lambda_c)}{1 - \\lambda_c^t} \\sum_{i=1}^{t} \\lambda_c^{t-i} (r_i - \\xi\\mu_{i,t})(r_j - \\xi\\mu_{j,t})}`;
+  '\\xi: \\text{represents the "Mean to Zero" flag, can have value 0 or 1. 0 representing the zero mean setting.}';
+const ewma_corr = `\\rho_{j,i,t}(\\lambda_c) =\\frac{1}{\\sigma_{i,t}(\\lambda_c)\\sigma_{j,t}(\\lambda_c)} \\frac{(1 - \\lambda_c)}{1 - \\lambda_c^L} \\sum_{i=t-L+1}^{t} \\lambda_c^{t-i} (r_i - \\xi\\mu_{i,t})(r_j - \\xi\\mu_{j,t})`;
+const ewma_l = "L : \\text{ represents the time window length in days}";
 
 const port_risk_cov =
   "\\kappa_{i,j,t} = \\rho_{j,i,t}(\\lambda_c)\\sigma_{j,t}(\\lambda)\\sigma_{i,t}(\\lambda)";
@@ -31,20 +34,24 @@ const port_sigma_lambda =
   "\\lambda_s: \\text{half-life parameter specified by the user for specific risk half-life}";
 
 const port_variance =
-  "\\sigma_{P,t, Factor}^2 = w_P\\Epsilon_{t,P}\\Kappa_t\\Epsilon_{t,P}^Tw_P^T+w_P\\Nu_tw_P^T";
+  "\\sigma_{P,t, FactorModel}^2 = w_P\\Epsilon_{t,P}\\Kappa_t\\Epsilon_{t,P}^Tw_P^T+w_P\\Nu_tw_P^T";
+
+const port_factor_risk =
+  "\\text{Factor risk: } \\sqrt{w_P\\Epsilon_{t,P}\\Kappa_t\\Epsilon_{t,P}^Tw_P^T}";
+const port_specific_risk = "\\text{Specific risk: } \\sqrt{w_P\\Nu_tw_P^T}";
 
 const port_variance_no_factor =
-  "\\sigma_{P,t, NoFactor}^2 = w_P\\Kappa_{t,NoFactor}w_P^T";
+  "\\sigma_{P,t, NoFactorModel}^2 = w_P\\Kappa_{t,NoFactorModel}w_P^T";
 
 const port_beta_theory = "Beta(P,B) = \\frac{cov(r_P, r_B)}{variance(r_B)}";
 const port_beta_factor =
-  "Beta_{t,Factor}(P,B) = \\frac{w_P\\Epsilon_{t,P}\\Kappa_t\\Epsilon_{t,B}^Tw_B^T+w_P\\Nu_tw_B^T}{w_B\\Epsilon_{t,B}\\Kappa_t\\Epsilon_{t,B}^Tw_B^T+w_B\\Nu_tw_B^T}";
+  "Beta_{t,FactorModel}(P,B) = \\frac{w_P\\Epsilon_{t,P}\\Kappa_t\\Epsilon_{t,B}^Tw_B^T+w_P\\Nu_tw_B^T}{w_B\\Epsilon_{t,B}\\Kappa_t\\Epsilon_{t,B}^Tw_B^T+w_B\\Nu_tw_B^T}";
 
 const port_beta_no_factor =
-  "Beta_{t,NoFactor}(P,B) = \\frac{w_P\\Kappa_{t,NoFactor}w_B^T}{w_B\\Kappa_{t,NoFactor}w_B^T}";
+  "Beta_{t,NoFactorModel}(P,B) = \\frac{w_P\\Kappa_{t,NoFactorModel}w_B^T}{w_B\\Kappa_{t,NoFactorModel}w_B^T}";
 
 const mcv_factor = "MCV_{t,P,Factor}= 2(w_P\\Epsilon_{t,P})\\Kappa_t";
-const mcv_no_factor = "MCV_{t,P,NoFactor}= 2w_P\\Kappa_t";
+const mcv_no_factor = "MCV_{t,P,NoFactorModel}= 2w_P\\Kappa_t";
 
 const mcv_spec_risk = "MCV_{t,P,Specific}= 2w_P\\Nu_t";
 
@@ -72,7 +79,7 @@ function RiskCalculationInfo() {
           methodology relies heavily on the exponentially weighted moving
           average (EWMA) processes, both on single time series and on portfolio
           level. The user has the option to remove the average term from the
-          risk calculation and hence introduce extra convervativism. To enhance
+          risk calculation and hence introduce extra conservativism. To enhance
           the user experience instead of specifying the so called &lambda;
           parameters, the half-life parameters can be supplied to the
           calculations.
@@ -90,7 +97,7 @@ function RiskCalculationInfo() {
         <p>
           Portfolio level Value-at-Risk (VaR) and Expected shortfall (ES)
           estimates are calculated using the normality assumption. Their
-          calculation are perfomed at both the 95 percent and 99 percent
+          calculation is performed at both the 95 percent and 99 percent
           confidence levels.
         </p>
         <h2> 2. Exponentially weighted risk calculation </h2>
@@ -101,18 +108,24 @@ function RiskCalculationInfo() {
           older observations given lower weights. The higher the lambda
           parameter (or the larger the half-life), the bigger the weight for
           more recent observations. This allows investors to match the risk
-          calculation to their specified investment horizon. (e.g.: a long term
+          calculation to their specified investment horizon. (e.g.: a long-term
           investor may choose 365 half-life, while a short term investor choose
-          only 30 day half-life.) The standard deviation formula (or in this
-          context the risk) for time period "t" for a given crypto ("i") excess
-          return time series with a user defined half-life can be given as:
+          only 30 day half-life.) A key difference between the Explorer tool and
+          Risk calculator tool is that the former uses a continuously expanding
+          window, while the latter uses a time period window. If a time period
+          window is specified only, the last L days are used for the risk
+          calculation. The standard deviation formula (or in this context the
+          risk) for time period "t" for a given crypto ("i") excess return time
+          series with a user defined half-life can be given as:
         </p>
         <BlockMath math={ewma_std} />
+        <BlockMath math={ewma_std_risk_calc} />
         <p>Where: </p>
         <BlockMath math={ewma_lambda} />
         <BlockMath math={ewma_r} />
         <BlockMath math={ewma_mu} />
         <BlockMath math={ewma_xi} />
+        <BlockMath math={ewma_l} />
         <p>
           The formula for standard deviation can be extended to cover
           correlation estimates as well:
@@ -124,7 +137,10 @@ function RiskCalculationInfo() {
           deviation estimation: &lambda;, while for correlation: &lambda;
           <sub>c</sub>) This coincides with financial industry standards, as it
           is allows the user to calculate the correlation with a longer memory,
-          than for risk estimations.
+          than the memory used for standard deviation estimations. Notice that
+          the L parameter (look back time horizon) is not used for Explorer tool
+          standard deviation calculation (marked by ExplorerTool suffix) as it
+          is using a continuously expanding window.
         </p>
         <h2> 3. Portfolio level risk calculation </h2>
         <p>
@@ -139,7 +155,7 @@ function RiskCalculationInfo() {
         <BlockMath math={port_risk_corr} />
         <BlockMath math={port_risk_fac_matrix} />
         <p>
-          A given portfolio can be represented by a 1 x n vector (
+          A user defined portfolio can be represented by a 1 x n vector (
           <b>
             w<sub>P</sub>
           </b>
@@ -180,11 +196,18 @@ function RiskCalculationInfo() {
         </p>
         <BlockMath math={port_variance} />
         <p>
-          If the user turns off the no factor flag, each crytocurrency excess
-          return time series are treated as a separate factor. (Hence a
+          The Factor model's total variance can be decomposed to factor and
+          specific risk components:
+        </p>
+        <BlockMath math={port_factor_risk} />
+        <BlockMath math={port_specific_risk} />
+        <p>
+          If the user turns off the "Use factors" flag, each cryptocurrency
+          excess return time series are treated as a separate factor. (Hence a
           covariance matrix is calculated for elements in the portfolio.) The
           user can govern the half-life of this covariance matrix with the
-          factor related half-life parameters. The variance for portfolio P can be specified:
+          factor related half-life parameters. The variance for portfolio P can
+          be specified:
         </p>
         <BlockMath math={port_variance_no_factor} />
         <p>
@@ -212,37 +235,42 @@ function RiskCalculationInfo() {
         <h2> 4. Marginal contribution to variance calculation </h2>
         <p>
           {" "}
-          Marginal contribution to variance (MCV) is a derivative, that shows how
-          1 unit of additional exposure can impact the total portfolio variance.
-          For the Factor model the MCV contribution of the factors and the
-          specific risks are presented, while for the No Factor model the
+          Marginal contribution to variance (MCV) is a derivative, that shows
+          how 1 unit of additional exposure can impact the total portfolio
+          variance. For the Factor model the MCV contribution of the factors and
+          the specific risks are presented, while for the No Factor model the
           individual cryptocurrencies contribution are presented.
         </p>
         <p>The MCV values for the Factor model are the following:</p>
         <BlockMath math={mcv_factor} />
         <BlockMath math={mcv_spec_risk} />
         <p>
-          The MCV for factors is basically the derivative of the porfolio
+          The MCV for factors is basically the derivative of the portfolio
           variance with respect to factor exposures. The specific risk related
           MCV is the derivative of the variance's specific risk part with
-          respect to portfolio weight vector. In the Risk calculator output only
-          those specific risk related MCV values are presented, which have the
-          larges impact.
+          respect to portfolio weight vector. In the Risk calculator output,
+          only those specific risk related MCV values are presented, which have
+          the larges impact.
         </p>
         <p>The MCV values for the No Factor model are the following:</p>
         <BlockMath math={mcv_no_factor} />
 
         <h2> 5. VaR and ES calculation </h2>
         <p>
-          For a fixed condifence level (&alpha;) over a given time period (1
-          day), Value-at-Risk (VaR) is defined as the maximum loss that can
-          occur with a confidence level of &alpha;. ES is the expected value of
-          the losses, which are greater than VaR. The risk calculator tool
+          For a fixed confidence level ( &alpha;) over a given time horizon (1
+          day), Value-at-Risk (VaR) represent the maximum expected loss not to
+          be exceeded with a confidence level of  &alpha; percent. Expected Shortfall
+          (ES) with confidence level ( &alpha;) is the expected value of the
+          losses exceeding the VaR(&alpha;) threshold. The risk calculator tool
           presents the VaR and ES on 95 and 99 percent confidence levels. By
-          concention both ES and VaR are positive numbers and represent a loss.
-          In the case of the risk calculator tool a value of 4 tells the user
-          that the VaR of the porfolio is 4 percent of the total portfolio
-          value.
+          construction, both ES and VaR are positive numbers. The risk measures represent a
+          percentage loss in this project. In the case of the risk calculator tool
+          a value of 4 tells the user that the VaR of the portfolio is 4 percent
+          of the total portfolio value. This 4 percent means that, with a
+          confidence level of  &alpha;, the portfolio’s losses are not expected
+          to exceed 4 percent of its value in a single day. A 4 percent results
+          on ES means, the portfolios average losses on its (1- &alpha;) worst
+          trading days.
         </p>
         <BlockMath math={var_formula} />
         <BlockMath math={es_formula} />

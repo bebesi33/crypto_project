@@ -114,7 +114,7 @@ class FactorReturns(FactorEstimResultContainer, DatePrimaryKeyWithVersionDate):
         db_table = "factor_returns"
 
 
-class RSquares(DateIdTableWithVersionDate):
+class RSquares(DatePrimaryKeyWithVersionDate):
     r2_core = models.FloatField(blank=True, null=True)
     r2_adj = models.FloatField(blank=True, null=True)
     nobs = models.FloatField(blank=True, null=True)
@@ -152,4 +152,4 @@ class CoreSpecificRisk(DateIdTableWithVersionDate):
     class Meta:
         managed = False
         db_table = "core_specific_risk"
-        unique_together = (("date", "half_life"),)
+        unique_together = (("date", "half_life", "version_date"),)

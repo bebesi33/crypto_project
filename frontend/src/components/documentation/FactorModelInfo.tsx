@@ -8,7 +8,7 @@ import SimpleTable from "../tables/SimpleTable";
 const volume_formula = `\\text{VolumeExposure}(t) = \\frac{1}{1,000,000} 
     \\sum_{i=t - TradingDays + 1}^{t} 
     \\text{Volume}(i)`;
-const volume_exposure = `\\text{VolumeExposure(t) is the aggregated volume at date \(t\)}`;
+const volume_exposure = `\\text{VolumeExposure(t): is the aggregated volume at date \(t\).}`;
 const volue_trade_days = `\\text{ TradingDays: is the number of days per month. Default: 30.}`;
 const volume_input = `\\text{ Volume(i): is the trade volume at date \(i\)}.`;
 
@@ -23,7 +23,7 @@ const coin_formula = `\\text{NewCoin} =  0 \\text{ if } \\frac{A(t)}{MarketPrese
 const coin_At = `\\text{A}(t) :  \\text{the age of the crypto in days}`;
 const coin_P = `\\text{MarketPresenceMax}:  \\text{Represents the maximum number of days to define a new crypto asset. Default: 1095}`;
 
-const excess_return_formula = `\\text{Excess Return}_i(t) = R_i(t) - r_f(t)`;
+const excess_return_formula = `\\text{ExcessReturn}_i(t) = R_i(t) - r_f(t)`;
 const excess_return_rf = `\\text{R}_i(t) : \\text{represents the total return between t and t-1}`;
 const excess_return_rf2 = `\\text{R}_i(t) : \\ln \\Bigl( 1+\\frac{\\text{Close}_i(t) - \\text{Close}_i(t - 1)}{\\text{Close}_i(t - 1)}\\Bigl) \\text{ where, Close}_i(t)\\text{ is the close price for crypto i at date t}`;
 const excess_return_totret = `\\text{r}_f(t) : \\text{represents the daily USD risk free rate.}`;
@@ -74,7 +74,7 @@ function FactorModelInfo() {
           estimations (estimated coefficients). The target variable in each
           cross-sectional regression is the logarithmic version of the excess
           returns, while the independent variables are the style factor
-          exposres. The style exposures (or regressors in the regressions) are
+          exposures. The style exposures (or regressors in the regressions) are
           calculated based on asset characteristics for each time period.
         </p>
         <h2> 2. Style factors</h2>
@@ -121,7 +121,7 @@ function FactorModelInfo() {
           market cap and low market cap cryptocurrencies. Market capitalization
           (or market cap) for cryptocurrencies is calculated by multiplying the
           total supply of a cryptocurrency by its current market price.
-          Typically cryptocurrencies with more than 10 billion USD market cap
+          Typically, cryptocurrencies with more than 10 billion USD market cap
           are considered Large-cap. Some examples are Bitcoin (BTC) and Ethereum
           (ETH).
         </p>
@@ -146,10 +146,10 @@ function FactorModelInfo() {
         <h2> 3. Factor return estimation</h2>
         <h4> 3.1 Estimation universe generation</h4>
         <p>
-          For each time period a reduced set of cryptocrurrencies are defined as
+          For each time period a reduced set of cryptocurrencies are defined as
           the estimation universe. The regression estimation is performed on
           these selected assets. There are two conditions that should be met for
-          a given crypto to be included into the estiamtion universe:
+          a given crypto to be included into the estimation universe:
           <ul>
             <li>
               {" "}
@@ -164,7 +164,7 @@ function FactorModelInfo() {
               smaller ones.
             </li>
             <li>
-              New coin inclusion: The newest coins are not immidiately included
+              New coin inclusion: The newest coins are not immediately included
               into the estimation universe. These should present in the market
               for at least 14 days.
             </li>
@@ -190,10 +190,10 @@ function FactorModelInfo() {
         <BlockMath math={excess_return_totret} />
         <p>
           In this model, 1/365th of the relevant SOFR (Secured overnight
-          Financing Rate) is used for all dates as a risk free rate.
+          Financing Rate) is used for all dates as a risk-free rate.
         </p>
         <p>
-          The daily crosssectional regressions can be specfied with the
+          The daily cross-sectional regressions can be specified with the
           following formula:
         </p>
         <BlockMath math={wls_formula} />

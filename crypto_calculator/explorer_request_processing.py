@@ -127,7 +127,7 @@ def decode_explorer_input(request) -> tuple[dict, str, int, bool]:
     processed_input["mean_to_zero"] = all_input["mean_to_zero"]
     if processed_input["mean_to_zero"]:
         log_elements.append(
-            "The demeaned returns are used for the calculation of risk. "
+            "No mean calculation is used for the calculation of risk. "
         )
 
     return processed_input, log_elements, override_code, is_factor
