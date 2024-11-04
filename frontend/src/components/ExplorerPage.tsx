@@ -9,14 +9,24 @@ import html2pdf from "html2pdf.js";
 import axios from "axios";
 
 // https://dev.to/deboragaleano/how-to-handle-multiple-inputs-in-react-55el
+type ErrorResponseData = {
+  log: string;
+};
 
 function ExplorerPage() {
   const [jsonData, setJsonData] = useState(null);
+  const [errorResponse, setErrorResponse] = useState<ErrorResponseData | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isContentReady, setIsContentReady] = useState(false);
   const [isUnderExport, setIsUnderExport] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   //  https://www.nutrient.io/blog/how-to-convert-html-to-pdf-using-html2df-and-react/
+
+  const defaultErrorResponse = {
+    log: "Explorer tool: No response from backend!",
+  };
 
   const initialValues = {
     symbol: "BTC-USD",
@@ -42,7 +52,6 @@ function ExplorerPage() {
     if (isUnderExport) {
       const filename = generateFileName();
       const contentReference = contentRef.current;
-      console.log(contentReference);
       if (contentReference) {
         const options = {
           margin: 1,
@@ -75,7 +84,6 @@ function ExplorerPage() {
             document.body.classList.remove("exclude-from-pdf");
           });
       } else {
-        console.error("Element not found");
         setIsUnderExport(false);
       }
     }
@@ -121,18 +129,23 @@ function ExplorerPage() {
         const jsonData = await response.data;
         console.log("Data received successfully!");
         setJsonData(jsonData);
-        setIsLoading(false);
-        setIsContentReady(true);
+        setErrorResponse(null);
+        setIsContentReady(jsonData["ERROR_CODE"] != "404");
       } else {
         console.error("Error sending data to the backend.");
-        setIsLoading(false);
         setIsContentReady(false);
+        const errorResponse = defaultErrorResponse;
+        errorResponse["log"] += "\n Error sending data to the backend.";
+        setErrorResponse(errorResponse);
       }
     } catch (error) {
       console.error("An error occurred:", error);
-      setIsLoading(false);
       setIsContentReady(false);
+      const errorResponse = defaultErrorResponse;
+      errorResponse["log"] += "\n" + error;
+      setErrorResponse(errorResponse);
     }
+    setIsLoading(false);
   }; // end handleSubmit
 
   return (
@@ -247,6 +260,15 @@ function ExplorerPage() {
           >
             {jsonData["log"]}
           </p>
+        )}
+        {errorResponse !== null && (
+          <div
+            className="alert alert-danger"
+            role="alert"
+            style={{ textAlign: "left" }}
+          >
+            {errorResponse["log"]}
+          </div>
         )}
         {jsonData !== null &&
           "raw_price" in jsonData &&

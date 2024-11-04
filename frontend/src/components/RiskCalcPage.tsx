@@ -11,9 +11,19 @@ import csrftoken from "./token/Token";
 import html2pdf from "html2pdf.js";
 import axios from "axios";
 
+type ErrorResponseData = {
+  log: string;
+};
 function RiskCalcPage() {
   const [jsonData, setJsonData] = useState(null);
+  const [errorResponse, setErrorResponse] = useState<ErrorResponseData | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(false);
+
+  const defaultErrorResponse = {
+    log: "Risk calculator tool: No response from backend!",
+  };
 
   const initialInputValues = {
     cob_date: "2023-12-31",
@@ -79,7 +89,6 @@ function RiskCalcPage() {
             document.body.classList.remove("exclude-from-pdf");
           });
       } else {
-        console.error("Element not found");
         setIsUnderExport(false);
       }
     }
@@ -151,18 +160,23 @@ function RiskCalcPage() {
         const jsonData = await response.data;
         console.log("Data received successfully!");
         setJsonData(jsonData);
-        setIsLoading(false);
-        setIsContentReady(true);
+        setErrorResponse(null);
+        setIsContentReady(jsonData["ERROR_CODE"] != "404");
       } else {
         console.error("Error sending data to the backend.");
-        setIsLoading(false);
+        const errorResponse = defaultErrorResponse;
+        errorResponse["log"] += "\n Error sending data to the backend.";
+        setErrorResponse(errorResponse);
         setIsContentReady(false);
       }
     } catch (error) {
       console.error("An error occurred:", error);
-      setIsLoading(false);
+      const errorResponse = defaultErrorResponse;
+      errorResponse["log"] += "\n" + error;
+      setErrorResponse(errorResponse);
       setIsContentReady(false);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -337,7 +351,9 @@ function RiskCalcPage() {
               className="btn btn-primary exclude-from-pdf"
               id="calc-btn"
               onClick={handleSubmit}
-              disabled={isLoading || isUnderExport || inputValues["portfolio"] == null}
+              disabled={
+                isLoading || isUnderExport || inputValues["portfolio"] == null
+              }
             >
               {isLoading && (
                 <span
@@ -378,6 +394,15 @@ function RiskCalcPage() {
             style={{ textAlign: "left" }}
           >
             {jsonData["log"]}
+          </div>
+        )}
+        {errorResponse !== null && (
+          <div
+            className="alert alert-danger"
+            role="alert"
+            style={{ textAlign: "left" }}
+          >
+            {errorResponse["log"]}
           </div>
         )}
       </div>
