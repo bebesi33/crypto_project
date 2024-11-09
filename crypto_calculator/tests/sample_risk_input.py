@@ -32,5 +32,5 @@ risk_calculation_parameters = {
     "variance_half_life": 365,  # days
     "specific_risk_half_life": 365,
     "date": "2023-03-01",
-    "minimum_history_spec_ret": 730,
+    "minimum_history_spec_ret": 365,
 }

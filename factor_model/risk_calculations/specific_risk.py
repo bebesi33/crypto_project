@@ -126,8 +126,8 @@ def generate_combined_spec_risk(
     # Step 2: add the core avg spec risk info if needed
     combined_spec_risk = {}
     for key in raw_spec_risk.keys():
-        hist_ratio = min(
-            0.0, max(spec_risk_hist[key] / parameters["minimum_history_spec_ret"], 1.0)
+        hist_ratio = max(
+            0.0, min(spec_risk_hist[key] / parameters["time_window_len"], 1.0)
         )
         if raw_spec_risk[key] is None:
             raw_spec_risk[key] = 0.0

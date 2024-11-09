@@ -1,17 +1,17 @@
 {
     "risk_metrics": {
-        "Total Risk (portfolio)": "7.739",
-        "Total Risk (benchmark)": "8.407",
-        "Total Risk (active)": "4.648",
+        "Total Risk (portfolio)": "7.745",
+        "Total Risk (benchmark)": "8.413",
+        "Total Risk (active)": "4.649",
         "Factor Risk (portfolio)": "7.739",
         "Factor Risk (active)": "4.648",
-        "Specific Risk (portfolio)": "0.007",
-        "Specific Risk (active)": "0.003",
-        "Portfolio Beta (vs benchmark)": "77.089",
-        "Portfolio VaR (1-day, 95%, total space)": "11.953",
-        "Portfolio ES (1-day, 95%, total space)": "14.720",
-        "Portfolio VaR (1-day, 99%, total space)": "16.477",
-        "Portfolio ES (1-day, 99%, total space)": "18.615"
+        "Specific Risk (portfolio)": "0.285",
+        "Specific Risk (active)": "0.108",
+        "Portfolio Beta (vs benchmark)": "77.104",
+        "Portfolio VaR (1-day, 95%, total space)": "11.961",
+        "Portfolio ES (1-day, 95%, total space)": "14.729",
+        "Portfolio VaR (1-day, 99%, total space)": "16.487",
+        "Portfolio ES (1-day, 99%, total space)": "18.627"
     },
     "exposures": {
         "portfolio": {
@@ -53,8 +53,8 @@
             "reversal": -0.001489310752375054,
             "size": 0.005015590888980426,
             "volume": 0.0020722569127321826,
-            "TEST-USD": 1e-08,
-            "EXAMPLE-USD": 1e-08
+            "TEST-USD": 1.7325359428781674e-05,
+            "EXAMPLE-USD": 1.5105806583312397e-05
         },
         "market": {
             "market": 0.007609118809324091,
@@ -63,8 +63,8 @@
             "reversal": -0.001591580789874095,
             "size": 5.408624781006919e-06,
             "volume": 0.006579163419344626,
-            "TEST-USD": 6.211180124223602e-09,
-            "EXAMPLE-USD": 1.3788819875776397e-08
+            "TEST-USD": 1.0761092812907871e-05,
+            "EXAMPLE-USD": 2.0829124605561194e-05
         },
         "active": {
             "market": 0,
@@ -73,8 +73,8 @@
             "reversal": 0.00010227003749904132,
             "size": 0.005010182264199419,
             "volume": -0.004506906506612442,
-            "TEST-USD": 3.7888198757763985e-09,
-            "EXAMPLE-USD": -3.788819875776397e-09
+            "TEST-USD": 6.564266615873803e-06,
+            "EXAMPLE-USD": -5.723318022248795e-06
         }
     },
     "all_portfolios": {
@@ -91,44 +91,44 @@
     },
     "decomposition": {
         "market": {
-            "portfolio": 4.569512453881076,
-            "benchmark": 4.206429078289107,
-            "active": 2.344697885678828e-32
+            "portfolio": 4.5664247895145325,
+            "benchmark": 4.203799529733838,
+            "active": 2.3440668801533437e-32
         },
         "size": {
-            "portfolio": 1.6815557662061813,
-            "benchmark": 1.8470267267187086e-07,
-            "active": 2.7981290798438856
+            "portfolio": 1.6804195224882628,
+            "benchmark": 1.8458721021261168e-07,
+            "active": 2.7973760468321776
         },
         "new_coin": {
-            "portfolio": 0.8578565562172822,
-            "benchmark": 1.2268457993522228,
-            "active": 0.08674355357438293
+            "portfolio": 0.8572768941314531,
+            "benchmark": 1.2260788660367712,
+            "active": 0.08672020913331872
         },
         "diversification": {
-            "portfolio": 0.3539680714724607,
-            "benchmark": 1.1762912755244472,
-            "active": 0.36111618411175067
+            "portfolio": 0.35372889177611216,
+            "benchmark": 1.17555594516072,
+            "active": 0.361019000457981
         },
         "momentum": {
-            "portfolio": 0.13293503023598627,
-            "benchmark": 0.7077226629038137,
-            "active": 0.4368805489433585
+            "portfolio": 0.13284520473270384,
+            "benchmark": 0.7072802470039771,
+            "active": 0.43676297556981486
         },
         "volume": {
-            "portfolio": 0.10536867287381833,
-            "benchmark": 1.0773744288243208,
-            "active": 0.9548012936059147
+            "portfolio": 0.10529747422847789,
+            "benchmark": 1.0767009339620348,
+            "active": 0.9545443373064764
         },
         "reversal": {
-            "portfolio": 0.03810345230174793,
-            "benchmark": 0.01266449738806057,
-            "active": 0.010106975150554472
+            "portfolio": 0.03807770542544508,
+            "benchmark": 0.012656580480348546,
+            "active": 0.0101042551595463
         },
         "specific_risk": {
-            "portfolio": 6.460527210598949e-06,
-            "benchmark": 6.8009160900646186e-06,
-            "active": 1.5443027192744118e-06
+            "portfolio": 0.010469042706602705,
+            "benchmark": 0.01052137270245393,
+            "active": 0.0025035029685405987
         }
     },
     "model": "factor",

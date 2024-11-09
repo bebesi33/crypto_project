@@ -5,8 +5,8 @@
         "Total Risk (active)": "1.471",
         "Factor Risk (portfolio)": "11.879",
         "Factor Risk (active)": "1.471",
-        "Specific Risk (portfolio)": "0.007",
-        "Specific Risk (active)": "0.001",
+        "Specific Risk (portfolio)": "0.032",
+        "Specific Risk (active)": "0.006",
         "Portfolio Beta (vs benchmark)": "88.983",
         "Portfolio VaR (1-day, 95%, total space)": "17.749",
         "Portfolio ES (1-day, 95%, total space)": "21.658",
@@ -53,8 +53,8 @@
             "reversal": 0.034056756904718904,
             "size": -0.02515171987545643,
             "volume": 0.0028216045493102498,
-            "TEST-USD": 1e-08,
-            "EXAMPLE-USD": 1e-08
+            "TEST-USD": 1.74241079387643e-07,
+            "EXAMPLE-USD": 2.237561443462703e-07
         },
         "market": {
             "market": -0.018267997415901134,
@@ -63,8 +63,8 @@
             "reversal": 0.03827326964423412,
             "size": -0.028265714187136918,
             "volume": 0.00317094290707949,
-            "TEST-USD": 1.2e-08,
-            "EXAMPLE-USD": 8e-09
+            "TEST-USD": 2.090892952651716e-07,
+            "EXAMPLE-USD": 1.7900491547701626e-07
         },
         "active": {
             "market": 0,
@@ -73,8 +73,8 @@
             "reversal": -0.004216512739515212,
             "size": 0.0031139943116804875,
             "volume": -0.0003493383577692402,
-            "TEST-USD": -1.9999999999999997e-09,
-            "EXAMPLE-USD": 1.9999999999999997e-09
+            "TEST-USD": -3.484821587752859e-08,
+            "EXAMPLE-USD": 4.475122886925405e-08
         }
     },
     "all_portfolios": {
@@ -91,44 +91,44 @@
     },
     "decomposition": {
         "size": {
-            "portfolio": 8.455232464512259,
-            "benchmark": 7.071767326834618,
-            "active": 0.06353386849170499
+            "portfolio": 8.455204154430053,
+            "benchmark": 7.07174881106492,
+            "active": 0.06353331338451057
         },
         "reversal": {
-            "portfolio": 6.256655580683422,
-            "benchmark": 5.333387823464453,
-            "active": 0.02279639975699355
+            "portfolio": 6.25663463194729,
+            "benchmark": 5.333373859235134,
+            "active": 0.022796200580620186
         },
         "market": {
-            "portfolio": 3.9406348906737914,
-            "benchmark": 3.506500750169979,
+            "portfolio": 3.9406216965128777,
+            "benchmark": 3.5064915692174203,
             "active": 0.0
         },
         "momentum": {
-            "portfolio": 1.1064250944515552,
-            "benchmark": 2.3858161803604974,
-            "active": 2.7695350419362605
+            "portfolio": 1.1064213898833473,
+            "benchmark": 2.3858099336585212,
+            "active": 2.769510843994856
         },
         "new_coin": {
-            "portfolio": 0.7827060006819853,
-            "benchmark": 0.6650313380300414,
-            "active": 0.003296511327610223
+            "portfolio": 0.7827033800004941,
+            "benchmark": 0.6650295968009359,
+            "active": 0.003296482525379258
         },
         "volume": {
-            "portfolio": 0.02089258919202266,
-            "benchmark": 0.029402172617939766,
-            "active": 0.011197116843250893
+            "portfolio": 0.020892519238781278,
+            "benchmark": 0.029402095635223616,
+            "active": 0.011197019011963991
         },
         "specific_risk": {
-            "portfolio": 4.2090062671537355e-06,
-            "benchmark": 3.895118275205143e-06,
-            "active": 1.3598446985302075e-06
+            "portfolio": 8.375836000690838e-05,
+            "benchmark": 7.380313831445033e-05,
+            "active": 2.7060484301678352e-05
         },
         "diversification": {
-            "portfolio": -8.683262268813484,
-            "benchmark": -5.641865578811941,
-            "active": -1.3996041139379283
+            "portfolio": -8.683233195234527,
+            "benchmark": -5.641850806905727,
+            "active": -1.3995918853371612
         }
     },
     "model": "factor",

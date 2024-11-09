@@ -7,7 +7,7 @@
         "Factor Risk (active)": "0.000",
         "Specific Risk (portfolio)": "0.000",
         "Specific Risk (active)": "0.000",
-        "Portfolio Beta (vs benchmark)": "100.000",
+        "Portfolio Beta (vs benchmark)": "100.030",
         "Portfolio VaR (1-day, 95%, total space)": "12.590",
         "Portfolio ES (1-day, 95%, total space)": "15.489",
         "Portfolio VaR (1-day, 99%, total space)": "17.330",
@@ -53,8 +53,8 @@
             "reversal": 0.0005853305128259101,
             "size": 0.006245560927360118,
             "volume": -0.004793154900032134,
-            "TEST-USD": 5e-09,
-            "EXAMPLE-USD": -5e-09
+            "TEST-USD": 8.662679714390837e-06,
+            "EXAMPLE-USD": -7.5529032916561984e-06
         },
         "market": {
             "market": 0.0064669768414657375,
@@ -63,8 +63,8 @@
             "reversal": 0.0005853305128259101,
             "size": 0.006245560927360118,
             "volume": -0.004793154900032134,
-            "TEST-USD": 5e-09,
-            "EXAMPLE-USD": -5e-09
+            "TEST-USD": 8.662679714390837e-06,
+            "EXAMPLE-USD": -7.5529032916561984e-06
         },
         "active": {
             "market": 0,
