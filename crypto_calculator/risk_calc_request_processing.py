@@ -65,6 +65,20 @@ FRONTEND_TO_BACKEND = {
     "time_window_len": "minimum_history_spec_ret",
     "cob_date": "date",
 }
+RISK_CATEGORIES_FULL = [
+    "Total Risk (portfolio)",
+    "Total Risk (benchmark)",
+    "Total Risk (active)",
+    "Factor Risk (portfolio)",
+    "Factor Risk (active)",
+    "Specific Risk (portfolio)",
+    "Specific Risk (active)",
+]
+RISK_CATEGORIES_REDUCED = [
+    "Total Risk (portfolio)",
+    "Total Risk (benchmark)",
+    "Total Risk (active)",
+]
 
 
 def get_available_estimation_dates() -> list[str]:
@@ -401,15 +415,6 @@ def risk_calc_request_full(
     es99, var99 = calculate_lognormal_es_var(total_risks["portfolio"], 0.99)
 
     # 5. assemble output
-    risk_categories = [
-        "Total Risk (portfolio)",
-        "Total Risk (benchmark)",
-        "Total Risk (active)",
-        "Factor Risk (portfolio)",
-        "Factor Risk (active)",
-        "Specific Risk (portfolio)",
-        "Specific Risk (active)",
-    ]
     risk_values = [
         total_risks["portfolio"] * 100,
         total_risks["market"] * 100,
@@ -419,7 +424,7 @@ def risk_calc_request_full(
         spec_risks["portfolio"] * 100,
         spec_risks["active"] * 100,
     ]
-    risk_metrics = dict(zip(risk_categories, risk_values))
+    risk_metrics = dict(zip(RISK_CATEGORIES_FULL, risk_values))
 
     risk_metrics_extended = risk_metrics.copy()
     risk_metrics_extended["Portfolio Beta (vs benchmark)"] = portfolio_beta * 100
@@ -573,9 +578,7 @@ def decode_risk_calc_input(request) -> tuple[dict, str, int]:
 
     processed_input["mean_to_zero"] = all_input["mean_to_zero"]
     if processed_input["mean_to_zero"]:
-        log_elements.append(
-            "No mean calculation is used for the calculation of risk. "
-        )
+        log_elements.append("No mean calculation is used for the calculation of risk. ")
     processed_input["use_factors"] = all_input["use_factors"]
     if not processed_input["use_factors"]:
         log_elements.append("All cryptocurrency is treated as a single factor. ")
@@ -682,17 +685,12 @@ def risk_calc_request_reduced(
     es95, var95 = calculate_lognormal_es_var(total_risks["portfolio"], 0.95)
     es99, var99 = calculate_lognormal_es_var(total_risks["portfolio"], 0.99)
     # 5. assemble output
-    risk_categories = [
-        "Total Risk (portfolio)",
-        "Total Risk (benchmark)",
-        "Total Risk (active)",
-    ]
     risk_values = [
         total_risks["portfolio"] * 100,
         total_risks["market"] * 100,
         total_risks["active"] * 100,
     ]
-    risk_metrics = dict(zip(risk_categories, risk_values))
+    risk_metrics = dict(zip(RISK_CATEGORIES_REDUCED, risk_values))
 
     risk_metrics_extended = risk_metrics.copy()
     risk_metrics_extended["Portfolio Beta (vs benchmark)"] = portfolio_beta * 100
