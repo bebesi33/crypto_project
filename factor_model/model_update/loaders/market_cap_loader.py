@@ -1,7 +1,9 @@
+from json import JSONDecodeError
 from factor_model.utilities.common_utility import convert_str_numbs_to_float
 import logging
 import pandas as pd
 import yfinance as yf
+import time
 logger = logging.getLogger(__name__)
 
 
@@ -15,7 +17,9 @@ def generate_market_cap_only(ticker_map: dict):
             )
         except KeyError:
             logger.info(f"No data for ticker: {ticker}")
-
+        except JSONDecodeError:
+            logger.info(f"No data for ticker: {ticker}. JsonDecoder problems...")
+        time.sleep(1)
     return pd.concat(market_caps)
 
 
