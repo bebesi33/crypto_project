@@ -1,6 +1,6 @@
 import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
-import "./assets/css/home_page.css"
+import "./assets/css/home_page.css";
 import risk_calc_image from "./assets/images/risk_calc_image.jpg";
 import explorer_image from "./assets/images/explorer_image.jpg";
 
@@ -11,45 +11,44 @@ function HomePage() {
       <div className="text-nowrap">
         <h4>Welcome to László's Cryptocurrency Risk Calculation Tool!</h4>
         <p style={{ textAlign: "left" }}>
-          This project serves as a fundamental component of my Bachelor of
-          Science thesis in Computer Science. <br />
-          As a culmination of my academic journey, this tool represents my
-          dedication to exploring the intricacies of risk assessment and
-          financial modeling within the realm of computer science.
+          This project serves as the basis of my BSc thesis in Computer Science.{" "}
+          <br />
+          In this project, I leverage my existing quailifications (Financial
+          Mathematics) along with the knowledge I gained as part of the ELTE
+          Computer Science BSc program.
         </p>
         <h5 style={{ textAlign: "left" }}>Key Features:</h5>
         <ul style={{ textAlign: "left" }} id="key-features">
           <li>
-            <strong>Accessibility:</strong> All the data utilized within this
-            tool is sourced from publicly available information. <br />{" "}
-            Transparency and accountability are central tenets of this project.
+            <strong>Accessibility:</strong> The Risk Calculation Tool relies on
+            publicly available data, which users can access this without any
+            restrictions.
           </li>
           <li>
-            <strong>Individual Endeavor:</strong> I developed this tool
-            independently, leveraging my skills and knowledge gained throughout
-            my academic studies <br /> to create a robust and user-friendly
-            platform for risk calculation.
+            <strong>Individual Endeavor:</strong> I developed the model on my
+            own, while receiving feedback from my consultant/teacher Zoltán
+            Illés Phd.
           </li>
           <li>
-            <strong>Versatility:</strong> The tool comprises two primary
-            functions: a risk calculator and an explorer. <br />
-            These features are designed to cater to diverse needs within the
-            realm of risk assessment and financial analysis.
+            <strong>Versatility:</strong> The tool allows for multiple risk
+            calculation settings, which accomodates the needs of a diverse user
+            base.
           </li>
           <li>
-            <strong>Support and Feedback:</strong> Your input is invaluable to
-            me. Should you encounter any errors or have suggestions for
-            improvement, please do not hesitate to <br /> reach out to me via
-            the "Credits & Contacts" page.
+            <strong>Support and Feedback:</strong> The documentation for the
+            tool is available within the application. You can reach out to me
+            (the author) through multiple channels.
           </li>
         </ul>
         <p style={{ textAlign: "left" }}>
           Thank you for utilizing this tool. I hope it can deliver valuable
           results to you, when analysing cryptocurrency portfolios. <br />
-          Feel free to explore, analyze, and innovate with confidence.
+          Feel free to explore, analyze with confidence. If you find any caveats
+          or if You have any feedback, please use the contacts in the contacts
+          page. <br />
+          All errors, caveats in this project are mine.
         </p>
-        <p style={{ textAlign: "left" }}>Best regards,</p>
-        <p style={{ textAlign: "left" }}>László Bebesi</p>
+        <p style={{ textAlign: "left" }}>Best regards, <br/> László Bebesi</p>
       </div>
 
       <div className="row">

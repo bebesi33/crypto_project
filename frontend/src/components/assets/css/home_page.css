@@ -13,7 +13,7 @@
 .row {
   position: absolute;
   width: 100%;
-  top: 500px;
+  top: 400px;
 }
 .card-body{
   width: 300px;
@@ -21,6 +21,7 @@
 }
 .card-text{
   height: 90px;
+  padding-right: 10px;
 }
 #card-img-explorer {
   position: absolute;
